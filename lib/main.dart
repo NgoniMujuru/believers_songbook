@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'about.dart';
 import 'songs.dart';
+import 'styles.dart';
 
 void main() => runApp(const MyApp());
 
@@ -63,7 +63,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green[800],
+        selectedItemColor: Styles.themeColor,
         onTap: _onItemTapped,
       ),
     );
