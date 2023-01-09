@@ -60,8 +60,21 @@ class _SongsState extends State<Songs> {
     });
   }
 
+  List<List<dynamic>>? filterSongs() {
+    if (_terms.isEmpty) {
+      return csvData;
+    }
+    final terms = _terms.toLowerCase().split(' ');
+    return csvData!.where((song) {
+      final songText = song.elementAt(3).toLowerCase();
+      return terms.every((term) => songText.contains(term));
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    var results = filterSongs();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Songs'),
@@ -83,17 +96,17 @@ class _SongsState extends State<Songs> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => Song(
-                                  songText: csvData!.elementAt(index).elementAt(3),
+                                  songText: results!.elementAt(index).elementAt(3),
                                   songTitle:
-                                      '${csvData!.elementAt(index).elementAt(0)} - ${csvData!.elementAt(index).elementAt(1)}')));
+                                      '${results!.elementAt(index).elementAt(0)} - ${results!.elementAt(index).elementAt(1)}')));
                     },
                     child: ListTile(
-                      title: Text(csvData == null
+                      title: Text(results == null
                           ? 'Loading'
-                          : '${csvData!.elementAt(index).elementAt(0)} - ${csvData!.elementAt(index).elementAt(1)}'),
+                          : '${results!.elementAt(index).elementAt(0)} - ${results!.elementAt(index).elementAt(1)}'),
                     ),
                   ),
-                  itemCount: 20,
+                  itemCount: results == null ? 1 : results!.length,
                 ),
               ),
             ],
