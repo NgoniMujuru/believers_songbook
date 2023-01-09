@@ -54,7 +54,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.music_note),
+            icon: Icon(Icons.lyrics),
             label: 'Songs',
           ),
           BottomNavigationBarItem(
