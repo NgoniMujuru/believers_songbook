@@ -92,6 +92,7 @@ class _SongsState extends State<Songs> {
                 child: ListView.builder(
                   itemBuilder: (context, index) => GestureDetector(
                     onTap: () {
+                      _focusNode.unfocus();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
