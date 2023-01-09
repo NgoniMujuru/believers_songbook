@@ -90,24 +90,31 @@ class _SongsState extends State<Songs> {
               _buildSearchBox(),
               Expanded(
                 child: ListView.builder(
-                  itemBuilder: (context, index) => GestureDetector(
-                    onTap: () {
-                      _focusNode.unfocus();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Song(
-                                  songText: results!.elementAt(index).elementAt(3),
-                                  songTitle:
-                                      '${results!.elementAt(index).elementAt(0)} - ${results!.elementAt(index).elementAt(1)}')));
-                    },
-                    child: ListTile(
-                      title: Text(results == null
-                          ? 'Loading'
-                          : '${results!.elementAt(index).elementAt(0)} - ${results!.elementAt(index).elementAt(1)}'),
-                    ),
+                  itemBuilder: (context, index) => Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _focusNode.unfocus();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Song(
+                                      songText: results!.elementAt(index).elementAt(3),
+                                      songTitle:
+                                          '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}')));
+                        },
+                        child: ListTile(
+                          title: Text(results == null
+                              ? 'Loading'
+                              : '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}'),
+                        ),
+                      ),
+                      const Divider(
+                        height: 0.5,
+                      ),
+                    ],
                   ),
-                  itemCount: results == null ? 1 : results!.length,
+                  itemCount: results == null ? 0 : results!.length,
                 ),
               ),
             ],
