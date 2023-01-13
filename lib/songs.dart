@@ -6,6 +6,7 @@ import 'search_bar.dart';
 import 'styles.dart';
 import 'song.dart';
 import '/models/song_search_result.dart';
+import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 
 class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _SongsState extends State<Songs> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   String _terms = '';
-  List<List<dynamic>>? csvData;
+  List<List<dynamic>>? _csvData;
   final int _searchThreshold = 75;
   final int _minSearchResults = 5;
 
@@ -30,7 +31,6 @@ class _SongsState extends State<Songs> {
     _controller = TextEditingController()..addListener(_onTextChanged);
     _focusNode = FocusNode();
     processCsv();
-    print('Testing fuzzy search');
   }
 
   @override
@@ -60,20 +60,23 @@ class _SongsState extends State<Songs> {
     var result = await DefaultAssetBundle.of(context).loadString(
       "assets/Songs.csv",
     );
+    var results = const CsvToListConverter().convert(result, fieldDelimiter: ';');
+    results.sort(
+        (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
     setState(() {
-      csvData = const CsvToListConverter().convert(result, fieldDelimiter: ';');
+      _csvData = results;
     });
   }
 
   List? filterSongs() {
     if (_terms.isEmpty) {
-      return csvData;
+      return _csvData;
     }
 
     var songSearchResults = [];
     double searchScore;
 
-    csvData?.forEach((element) {
+    _csvData?.forEach((element) {
       // search on song titles 1st
       searchScore = partialRatio(element.elementAt(1).toLowerCase(), _terms.toLowerCase())
           .toDouble();
@@ -84,7 +87,7 @@ class _SongsState extends State<Songs> {
 
     // search on song text if not enough results
     if (songSearchResults.length < _minSearchResults) {
-      csvData?.forEach((element) {
+      _csvData?.forEach((element) {
         searchScore =
             tokenSetPartialRatio(element.elementAt(3).toLowerCase(), _terms.toLowerCase())
                 .toDouble();
@@ -120,38 +123,73 @@ class _SongsState extends State<Songs> {
           child: Column(
             children: [
               _buildSearchBox(),
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) => Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          _focusNode.unfocus();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Song(
-                                      songText: results!.elementAt(index).elementAt(3),
-                                      songTitle:
-                                          '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}')));
-                        },
-                        child: ListTile(
-                          title: Text(results == null
-                              ? 'Loading'
-                              : '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}'),
-                        ),
-                      ),
-                      const Divider(
-                        height: 0.5,
-                      ),
-                    ],
-                  ),
-                  itemCount: results == null ? 0 : results!.length,
-                ),
-              ),
+              _buildSongList(results ?? []),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Expanded _buildSongList(List<dynamic> results) {
+    return Expanded(
+      child: AlphabetScrollView(
+        list: results.map((e) => AlphaModel(e.elementAt(1))).toList(),
+        alignment: LetterAlignment.right,
+        itemExtent: 60,
+        unselectedTextStyle: const TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
+        selectedTextStyle: const TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w800, color: Styles.themeColor),
+        overlayWidget: (value) => Container(
+          height: 100,
+          width: 100,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.black.withOpacity(0.5),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            value.toUpperCase(),
+            style: const TextStyle(
+                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
+        itemBuilder: (context, index, id) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
+            child: Column(
+              children: [
+                Flexible(
+                  child: GestureDetector(
+                    onTap: () {
+                      _focusNode.unfocus();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Song(
+                                  songText: results!.elementAt(index).elementAt(3),
+                                  songTitle:
+                                      // '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}')));
+                                      '${results!.elementAt(index).elementAt(1)}')));
+                    },
+                    child: ListTile(
+                      title: Text(
+                          results == null
+                              ? 'Loading'
+                              // : '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}'),
+                              : '${results!.elementAt(index).elementAt(1)}',
+                          style: const TextStyle(fontSize: 18)),
+                    ),
+                  ),
+                ),
+                const Divider(
+                  height: 5,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

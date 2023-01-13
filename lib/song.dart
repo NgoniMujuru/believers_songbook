@@ -19,15 +19,17 @@ class Song extends StatelessWidget {
       ),
       backgroundColor: Styles.scaffoldBackground,
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
           child: DecoratedBox(
             decoration: const BoxDecoration(
               color: Styles.scaffoldBackground,
             ),
             child: SafeArea(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(songText, style: Styles.productRowItemName),
                 ],

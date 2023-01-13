@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   csv: ^5.0.1
   fuzzywuzzy: ^0.2.0
+  alphabet_scroll_view: ^0.3.2
 
 dev_dependencies:
   flutter_test:

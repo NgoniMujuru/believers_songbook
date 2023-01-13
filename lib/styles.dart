@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 abstract class Styles {
   static const TextStyle productRowItemName = TextStyle(
     color: Color.fromRGBO(0, 0, 0, 0.8),
-    fontSize: 18,
+    fontSize: 20,
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.normal,
   );
