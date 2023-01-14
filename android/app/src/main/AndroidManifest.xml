@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.believers_songbook">
+    package="com.ngonimujuru.songbook_for_believers">
    <application
         android:label="believers_songbook"
         android:name="${applicationName}"

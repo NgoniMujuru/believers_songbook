@@ -1,4 +1,4 @@
-package com.example.believers_songbook
+package com.ngonimujuru.songbook_for_believers
 
 import io.flutter.embedding.android.FlutterActivity
 
