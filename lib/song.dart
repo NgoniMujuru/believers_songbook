@@ -1,7 +1,10 @@
+import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:flutter/material.dart';
 import 'styles.dart';
+import 'package:provider/provider.dart';
+import 'providers/song_settings.dart';
 
-class Song extends StatefulWidget {
+class Song extends StatelessWidget {
   final String songTitle;
   final String songText;
 
@@ -12,17 +15,10 @@ class Song extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<Song> createState() => _SongState();
-}
-
-class _SongState extends State<Song> {
-  double _fontSize = 22;
-
-  @override
   Widget build(Object context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(widget.songTitle),
+          title: Text(songTitle),
           shadowColor: Styles.themeColor,
           scrolledUnderElevation: 4,
           actions: <Widget>[
@@ -46,7 +42,10 @@ class _SongState extends State<Song> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.songText, style: TextStyle(fontSize: _fontSize)),
+                  Consumer<SongSettings>(builder: (context, songSettings, child) {
+                    return Text(songText,
+                        style: TextStyle(fontSize: songSettings.fontSize));
+                  })
                 ],
               ),
             ),
@@ -63,41 +62,34 @@ class _SongState extends State<Song> {
         borderRadius: BorderRadius.circular(15.0),
       ),
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setLocalState) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
-              child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      const Text('Font Size:'),
-                      Slider(
-                        value: _fontSize,
-                        min: 14,
-                        max: 30,
-                        divisions: 4,
-                        label: _fontSize.round().toString(),
-                        onChanged: (double value) {
-                          setLocalState(() {
-                            _fontSize = value;
-                          });
-                          setState(() {
-                            _fontSize = value;
-                          });
-                        },
-                      ),
-                    ],
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  const Text('Font Size:'),
+                  Consumer<SongSettings>(
+                    builder: (context, songSettings, child) => Slider(
+                      value: songSettings.fontSize,
+                      min: 14,
+                      max: 30,
+                      divisions: 4,
+                      label: songSettings.fontSize.round().toString(),
+                      onChanged: (double value) {
+                        var songSettings = context.read<SongSettings>();
+                        songSettings.setFontSize(value);
+                      },
+                    ),
                   ),
                 ],
               ),
-            );
-          },
+            ],
+          ),
         );
       },
     );

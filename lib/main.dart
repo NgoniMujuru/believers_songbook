@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'about.dart';
 import 'songs.dart';
 import 'styles.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'song_books.dart';
+import 'providers/song_settings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => SongSettings()),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -52,17 +57,12 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static final List<Widget> _widgetOptions = <Widget>[
     const Songs(),
-    const Center(
-      child: Text(
-        'Index 1: Songbooks',
-        style: optionStyle,
-      ),
-    ),
+    SongBooks(),
     const AboutPage(),
   ];
 
