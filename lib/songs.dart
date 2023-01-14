@@ -68,6 +68,10 @@ class _SongsState extends State<Songs> {
       "assets/Songs.csv",
     );
     var results = const CsvToListConverter().convert(result, fieldDelimiter: ';');
+    if (_sortBy == SortOrder.alphabetic) {
+      results.sort(
+          (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
+    }
     setState(() {
       _csvData = results;
     });
@@ -167,7 +171,7 @@ class _SongsState extends State<Songs> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Sort by:'),
+                      const Text('Sort Order:'),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
