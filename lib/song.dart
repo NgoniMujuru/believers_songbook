@@ -15,9 +15,10 @@ class Song extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(songTitle),
-        backgroundColor: Styles.themeColor,
+        shadowColor: Styles.themeColor,
+        scrolledUnderElevation: 4,
       ),
-      backgroundColor: Styles.scaffoldBackground,
+      // backgroundColor: Styles.scaffoldBackground,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Container(
@@ -25,8 +26,8 @@ class Song extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
           child: DecoratedBox(
             decoration: const BoxDecoration(
-              color: Styles.scaffoldBackground,
-            ),
+                // color: Styles.scaffoldBackground,
+                ),
             child: SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

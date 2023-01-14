@@ -9,7 +9,8 @@ class AboutPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('About'),
-        backgroundColor: Styles.themeColor,
+        shadowColor: Styles.themeColor,
+        scrolledUnderElevation: 4,
       ),
       body: Center(
         child: Padding(

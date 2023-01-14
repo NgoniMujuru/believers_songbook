@@ -41,7 +41,8 @@ abstract class Styles {
 
   static const Color scaffoldBackground = Color(0xfff0f0f0);
 
-  static const Color searchBackground = Color(0xffe0e0e0);
+  // static const Color searchBackground = Color(0xffe0e0e0);
+  static const Color searchBackground = Color.fromARGB(255, 240, 248, 224);
 
   static const Color searchCursorColor = Color.fromRGBO(0, 122, 255, 1);
 

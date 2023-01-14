@@ -12,7 +12,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Styles.themeColor,
+      ),
       debugShowCheckedModeBanner: false,
       title: _title,
       home: MyStatefulWidget(),
@@ -45,27 +49,26 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('BottomNavigationBar Sample'),
-      // ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.lyrics),
-            label: 'Songs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info),
-            label: 'About',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Styles.themeColor,
-        onTap: _onItemTapped,
-      ),
-    );
+        body: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
+        bottomNavigationBar: NavigationBar(
+          onDestinationSelected: (int index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          selectedIndex: _selectedIndex,
+          destinations: const <Widget>[
+            NavigationDestination(
+              icon: Icon(Icons.lyrics),
+              label: 'Songs',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.info),
+              label: 'About',
+            ),
+          ],
+        ));
   }
 }
