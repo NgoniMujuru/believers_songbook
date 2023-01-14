@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'styles.dart';
 
 class Song extends StatefulWidget {
-  final songTitle;
-  final songText;
+  final String songTitle;
+  final String songText;
 
-  Song({
+  const Song({
     required this.songText,
     required this.songTitle,
     Key? key,

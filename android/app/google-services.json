@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "107811782306",
+    "project_id": "songbook-for-believers",
+    "storage_bucket": "songbook-for-believers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107811782306:android:65798dbc33a55f95f4a1fb",
+        "android_client_info": {
+          "package_name": "com.ngonimujuru.songbook_for_believers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "107811782306-unnn1j6akmr879dvita4e2vl83gae4fo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpvK9z6-X-7xFL3sK0DLFpnZ8n9XclJvc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "107811782306-unnn1j6akmr879dvita4e2vl83gae4fo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.believersSongbook"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
