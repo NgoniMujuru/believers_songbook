@@ -1,3 +1,4 @@
+import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
@@ -8,6 +9,7 @@ import 'song.dart';
 import '/models/song_search_result.dart';
 import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import '/models/song_sort_order.dart';
+import 'package:provider/provider.dart';
 
 class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
@@ -34,6 +36,7 @@ class _SongsState extends State<Songs> {
 
   @override
   void initState() {
+    print('initState Songs');
     super.initState();
     _controller = TextEditingController()..addListener(_onTextChanged);
     _focusNode = FocusNode();
@@ -65,7 +68,7 @@ class _SongsState extends State<Songs> {
 
   void processCsv() async {
     var result = await DefaultAssetBundle.of(context).loadString(
-      "assets/Songs.csv",
+      context.read<SongBookSettings>().songBookPath,
     );
     var results = const CsvToListConverter().convert(result, fieldDelimiter: ';');
     if (_sortBy == SortOrder.alphabetic) {
@@ -122,6 +125,8 @@ class _SongsState extends State<Songs> {
 
   @override
   Widget build(BuildContext context) {
+    // rebuilt widget when song book settings change
+    context.watch<SongBookSettings>();
     var results = filterSongs();
     _songList = _sortBy == SortOrder.alphabetic
         ? _buildAlphabeticList(results ?? [])
@@ -225,7 +230,7 @@ class _SongsState extends State<Songs> {
         alignment: LetterAlignment.right,
         itemExtent: 60,
         unselectedTextStyle: const TextStyle(
-            fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
+            fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
         selectedTextStyle: const TextStyle(
             fontSize: 16, fontWeight: FontWeight.w800, color: Styles.themeColor),
         overlayWidget: (value) => Container(
@@ -233,7 +238,7 @@ class _SongsState extends State<Songs> {
           width: 100,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.black.withOpacity(0.5),
+            color: Styles.themeColor.withOpacity(0.6),
           ),
           alignment: Alignment.center,
           child: Text(
@@ -261,10 +266,10 @@ class _SongsState extends State<Songs> {
                     },
                     child: ListTile(
                       title: Text(
-                          results == null
-                              ? 'Loading'
-                              : '${results!.elementAt(index).elementAt(1)}',
-                          style: const TextStyle(fontSize: 18)),
+                        results == null
+                            ? 'Loading'
+                            : '${results!.elementAt(index).elementAt(1)}',
+                      ),
                     ),
                   ),
                 ),
@@ -281,32 +286,35 @@ class _SongsState extends State<Songs> {
 
   Expanded _buildNumericList(results) {
     return Expanded(
-      child: ListView.builder(
-        itemBuilder: (context, index) => Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                _focusNode.unfocus();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Song(
-                            songText: results!.elementAt(index).elementAt(3),
-                            songTitle:
-                                '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}')));
-              },
-              child: ListTile(
-                title: Text(results == null
-                    ? 'Loading'
-                    : '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}'),
+      child: Scrollbar(
+        thickness: 10.0,
+        child: ListView.builder(
+          itemBuilder: (context, index) => Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  _focusNode.unfocus();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Song(
+                              songText: results!.elementAt(index).elementAt(3),
+                              songTitle:
+                                  '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}')));
+                },
+                child: ListTile(
+                  title: Text(results == null
+                      ? 'Loading'
+                      : '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}'),
+                ),
               ),
-            ),
-            const Divider(
-              height: 0.5,
-            ),
-          ],
+              const Divider(
+                height: 0.5,
+              ),
+            ],
+          ),
+          itemCount: results == null ? 0 : results!.length,
         ),
-        itemCount: results == null ? 0 : results!.length,
       ),
     );
   }

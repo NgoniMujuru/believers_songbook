@@ -1,4 +1,3 @@
-import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:flutter/material.dart';
 import 'styles.dart';
 import 'package:provider/provider.dart';

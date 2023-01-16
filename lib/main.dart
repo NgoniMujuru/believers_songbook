@@ -4,14 +4,15 @@ import 'about.dart';
 import 'songs.dart';
 import 'styles.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'song_books.dart';
 import 'providers/song_settings.dart';
+import 'providers/song_book_settings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SongSettings()),
+    ListenableProvider(create: (context) => SongBookSettings())
   ], child: MyApp()));
 }
 
@@ -57,7 +58,7 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static final List<Widget> _widgetOptions = <Widget>[

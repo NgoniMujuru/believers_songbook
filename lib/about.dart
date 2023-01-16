@@ -19,7 +19,7 @@ class AboutPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: const [
               Text(
-                'Psalm 98:4.',
+                'Psalm 98:4',
                 style: Styles.productRowItemName,
               ),
               Text(
@@ -28,9 +28,10 @@ class AboutPage extends StatelessWidget {
               ),
               Divider(),
               Text(
-                'This songbook is a work in progress. Currently being built by Mr N. Mujuru with support from the distinguished gentlemen, Mr F. Mwashita and Mr D. Mabanga ',
+                'May this songbook be a blessing unto you!',
                 style: Styles.productRowItemName,
               ),
+              Card(child: Icon(Icons.handshake, color: Styles.themeColor, size: 50.0))
             ],
           ),
         ),
