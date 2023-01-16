@@ -9,20 +9,28 @@ class SongBooks extends StatelessWidget {
 
   final List songList = [
     {
-      'Title': 'Bible Tabernacle',
-      'Location': 'CapeTown, South Africa',
-      'Songs': '3416',
-      'Path': 'assets/2.csv',
-      'Last Updated': '2023-01-15',
-      'Languages': ['English']
-    },
-    {
       'Title': 'Harare Christian Fellowship',
       'Location': 'Harare, Zimbabwe',
       'Songs': '2136',
       'Path': 'assets/Songs.csv',
       'Last Updated': '2022-08-01',
       'Languages': ['English', 'Shona', 'Ndebele'],
+    },
+    {
+      'Title': 'Cloverdale Bibleway',
+      'Location': 'Surrey, Canada',
+      'Songs': '2136',
+      'Path': 'assets/Bibleway.csv',
+      'Last Updated': '2022-09-01',
+      'Languages': ['English'],
+    },
+    {
+      'Title': 'Bible Tabernacle',
+      'Location': 'CapeTown, South Africa',
+      'Songs': '3416',
+      'Path': 'assets/2.csv',
+      'Last Updated': '2023-01-15',
+      'Languages': ['English']
     },
     {
       'Title': 'Elandsfontein Tabernacle',
