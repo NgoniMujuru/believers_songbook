@@ -13,42 +13,48 @@ class SongBooks extends StatelessWidget {
       'Location': 'CapeTown, South Africa',
       'Songs': '3416',
       'Path': 'assets/2.csv',
-      'Last Updated': '2023-01-15'
+      'Last Updated': '2023-01-15',
+      'Languages': ['English']
     },
     {
       'Title': 'Harare Christian Fellowship',
       'Location': 'Harare, Zimbabwe',
       'Songs': '2136',
       'Path': 'assets/Songs.csv',
-      'Last Updated': '2022-08-01'
+      'Last Updated': '2022-08-01',
+      'Languages': ['English', 'Shona', 'Ndebele'],
     },
     {
       'Title': 'Elandsfontein Tabernacle',
       'Location': 'Johannesburg, South Africa',
       'Songs': '2136',
       'Path': 'assets/SampleSongs_20.csv',
-      'Last Updated': '2022-09-01'
+      'Last Updated': '2022-09-01',
+      'Languages': ['English', 'Afrikaans', 'Zulu'],
     },
     {
       'Title': 'Willows Tabernacle',
       'Location': 'Pretoria, South Africa',
       'Songs': '1356',
       'Path': 'assets/3.csv',
-      'Last Updated': '2023-01-10'
+      'Last Updated': '2023-01-10',
+      'Languages': ['English', 'Xhosa'],
     },
     {
       'Title': 'Shalom Tabernacle',
       'Location': 'Masvingo, Zimbabwe',
       'Songs': '1223',
       'Path': 'assets/4.csv',
-      'Last Updated': '2022-12-10'
+      'Last Updated': '2022-12-10',
+      'Languages': ['English', 'Shona'],
     },
     {
       'Title': 'Polokwane Tabernacle',
       'Location': 'Polokwane, South Africa',
       'Songs': '2136',
       'Path': 'assets/5.csv',
-      'Last Updated': '2022-09-01'
+      'Last Updated': '2022-09-01',
+      'Languages': ['English', 'Pedi', 'Zulu'],
     },
   ];
   @override
@@ -105,7 +111,8 @@ class SongBooks extends StatelessWidget {
                                       style: TextStyle(color: Colors.grey[800]),
                                     ),
                                     Text(
-                                      'Last updated: ' + songList[index]['Last Updated'],
+                                      // comma separated languages from array
+                                      songList[index]['Languages'].join(', '),
                                       style: TextStyle(color: Colors.grey[800]),
                                     ),
                                   ],

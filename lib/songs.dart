@@ -286,34 +286,41 @@ class _SongsState extends State<Songs> {
 
   Expanded _buildNumericList(results) {
     return Expanded(
-      child: Scrollbar(
-        thickness: 10.0,
-        child: ListView.builder(
-          itemBuilder: (context, index) => Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  _focusNode.unfocus();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Song(
-                              songText: results!.elementAt(index).elementAt(3),
-                              songTitle:
-                                  '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}')));
-                },
-                child: ListTile(
-                  title: Text(results == null
-                      ? 'Loading'
-                      : '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}'),
-                ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+        child: Scrollbar(
+          thickness: 10.0,
+          thumbVisibility: true,
+          child: ListView.builder(
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      _focusNode.unfocus();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Song(
+                                  songText: results!.elementAt(index).elementAt(3),
+                                  songTitle:
+                                      '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}')));
+                    },
+                    child: ListTile(
+                      title: Text(results == null
+                          ? 'Loading'
+                          : '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}'),
+                    ),
+                  ),
+                  const Divider(
+                    height: 0.5,
+                  ),
+                ],
               ),
-              const Divider(
-                height: 0.5,
-              ),
-            ],
+            ),
+            itemCount: results == null ? 0 : results!.length,
           ),
-          itemCount: results == null ? 0 : results!.length,
         ),
       ),
     );
