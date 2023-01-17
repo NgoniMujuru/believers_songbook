@@ -24,7 +24,7 @@ class _SongsState extends State<Songs> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   String _terms = '';
-  SortOrder? _sortBy = SortOrder.alphabetic;
+  SortOrder? _sortBy = SortOrder.numerical;
   Expanded _songList = const Expanded(
     child: Center(
       child: Text('Loading...'),
@@ -181,6 +181,21 @@ class _SongsState extends State<Songs> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           ChoiceChip(
+                            label: const Text('Numerical'),
+                            selected: _sortBy == SortOrder.numerical,
+                            onSelected: (bool selected) {
+                              _csvData?.sort(
+                                  (a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
+                              setState(() {
+                                _sortBy = SortOrder.numerical;
+                              });
+                              setLocalState(() {
+                                _sortBy = SortOrder.numerical;
+                              });
+                            },
+                          ),
+                          const SizedBox(width: 20),
+                          ChoiceChip(
                               label: const Text('Alphabetical'),
                               selected: _sortBy == SortOrder.alphabetic,
                               onSelected: (bool selected) {
@@ -195,21 +210,6 @@ class _SongsState extends State<Songs> {
                                   _sortBy = SortOrder.alphabetic;
                                 });
                               }),
-                          const SizedBox(width: 20),
-                          ChoiceChip(
-                            label: const Text('Numerical'),
-                            selected: _sortBy == SortOrder.numerical,
-                            onSelected: (bool selected) {
-                              _csvData?.sort(
-                                  (a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
-                              setState(() {
-                                _sortBy = SortOrder.numerical;
-                              });
-                              setLocalState(() {
-                                _sortBy = SortOrder.numerical;
-                              });
-                            },
-                          ),
                         ],
                       ),
                     ],
@@ -288,8 +288,10 @@ class _SongsState extends State<Songs> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-        child: Scrollbar(
+        child: RawScrollbar(
+          minThumbLength: 40,
           thickness: 10.0,
+          radius: const Radius.circular(5.0),
           thumbVisibility: true,
           child: ListView.builder(
             itemBuilder: (context, index) => Padding(
