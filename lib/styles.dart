@@ -12,6 +12,12 @@ abstract class Styles {
     fontWeight: FontWeight.normal,
   );
 
+  static const TextStyle appInfo = TextStyle(
+    color: Color.fromRGBO(0, 0, 0, 0.8),
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+  );
+
   static const TextStyle productRowTotal = TextStyle(
     color: Color.fromRGBO(0, 0, 0, 0.8),
     fontSize: 18,

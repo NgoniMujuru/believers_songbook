@@ -1,13 +1,16 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SongBookSettings extends ChangeNotifier {
-  String _songBookPath = 'assets/Songs.csv'; // Default song book
+  late String _songBookFile; // Default song book
 
-  String get songBookPath => _songBookPath;
+  String get songBookFile => _songBookFile;
 
-  void setSongBookPath(String path) {
-    _songBookPath = path;
+  Future<void> setSongBookFile(String songBookFile) async {
+    _songBookFile = songBookFile;
     notifyListeners();
+    final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
+    prefs.setString('songBookFile', songBookFile);
   }
 }

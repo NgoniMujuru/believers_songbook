@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'song_books.dart';
 import 'providers/song_settings.dart';
 import 'providers/song_book_settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,6 +71,15 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      final songSettings = context.read<SongSettings>();
+      songSettings.setFontSize(prefs.getDouble('fontSize') ?? 30);
     });
   }
 

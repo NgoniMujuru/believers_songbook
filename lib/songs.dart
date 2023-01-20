@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'search_bar.dart';
 import 'styles.dart';
@@ -24,7 +27,7 @@ class _SongsState extends State<Songs> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   String _terms = '';
-  SortOrder? _sortBy = SortOrder.numerical;
+  SortOrder? _sortBy;
   Expanded _songList = const Expanded(
     child: Center(
       child: Text('Loading...'),
@@ -36,11 +39,22 @@ class _SongsState extends State<Songs> {
 
   @override
   void initState() {
-    print('initState Songs');
     super.initState();
     _controller = TextEditingController()..addListener(_onTextChanged);
     _focusNode = FocusNode();
-    processCsv();
+    SharedPreferences.getInstance().then((prefs) {
+      final songBookSettings = context.read<SongBookSettings>();
+      songBookSettings.setSongBookFile(prefs.getString('songBookFile') ??
+          'HarareChristianFellowship_Harare_Zimbabwe.csv');
+
+      if (prefs.getString('sortOrder') == 'alphabetic') {
+        _sortBy = SortOrder.alphabetic;
+      } else {
+        _sortBy = SortOrder.numerical;
+      }
+
+      processCsv();
+    });
   }
 
   @override
@@ -68,7 +82,7 @@ class _SongsState extends State<Songs> {
 
   void processCsv() async {
     var result = await DefaultAssetBundle.of(context).loadString(
-      context.read<SongBookSettings>().songBookPath,
+      'assets/${context.read<SongBookSettings>().songBookFile}',
     );
     var results = const CsvToListConverter().convert(result, fieldDelimiter: ';');
     if (_sortBy == SortOrder.alphabetic) {
@@ -105,12 +119,14 @@ class _SongsState extends State<Songs> {
     // search on song text if not enough results
     if (songSearchResults.length < _minSearchResults) {
       _csvData?.forEach((element) {
-        searchScore =
-            tokenSetPartialRatio(element.elementAt(3).toLowerCase(), processedSearchTerm)
-                .toDouble();
-        if (searchScore > _searchThreshold) {
-          // divide by 10 to make the score less powerful than the title search
-          songSearchResults.add(SongSearchResult(element, searchScore / 10));
+        if (songDoesNotExist(element, songSearchResults)) {
+          searchScore = tokenSetPartialRatio(
+                  element.elementAt(3).toLowerCase(), processedSearchTerm)
+              .toDouble();
+          if (searchScore > _searchThreshold) {
+            // divide by 10 to make the score less powerful than the title search
+            songSearchResults.add(SongSearchResult(element, searchScore / 10));
+          }
         }
       });
     }
@@ -121,6 +137,15 @@ class _SongsState extends State<Songs> {
       results.add(songSearchResult.song);
     }
     return results;
+  }
+
+  bool songDoesNotExist(element, results) {
+    for (var songSearchResult in results) {
+      if (songSearchResult.song.elementAt(0) == element.elementAt(0)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @override
@@ -186,8 +211,12 @@ class _SongsState extends State<Songs> {
                             onSelected: (bool selected) {
                               _csvData?.sort(
                                   (a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
-                              setState(() {
+                              setState(() async {
                                 _sortBy = SortOrder.numerical;
+                                final Future<SharedPreferences> _prefs =
+                                    SharedPreferences.getInstance();
+                                final SharedPreferences prefs = await _prefs;
+                                prefs.setString('sortOrder', SortOrder.numerical.name);
                               });
                               setLocalState(() {
                                 _sortBy = SortOrder.numerical;
@@ -203,8 +232,12 @@ class _SongsState extends State<Songs> {
                                     .elementAt(1)
                                     .toLowerCase()
                                     .compareTo(b.elementAt(1).toLowerCase()));
-                                setState(() {
+                                setState(() async {
                                   _sortBy = SortOrder.alphabetic;
+                                  final Future<SharedPreferences> _prefs =
+                                      SharedPreferences.getInstance();
+                                  final SharedPreferences prefs = await _prefs;
+                                  prefs.setString('sortOrder', SortOrder.alphabetic.name);
                                 });
                                 setLocalState(() {
                                   _sortBy = SortOrder.alphabetic;

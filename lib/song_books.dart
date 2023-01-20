@@ -12,7 +12,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Harare Christian Fellowship',
       'Location': 'Harare, Zimbabwe',
       'Songs': '2136',
-      'Path': 'assets/Songs.csv',
+      'FileName': 'HarareChristianFellowship_Harare_Zimbabwe.csv',
       'Last Updated': '2022-08-01',
       'Languages': ['English', 'Shona', 'Ndebele'],
     },
@@ -20,7 +20,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Bible Tabernacle',
       'Location': 'CapeTown, South Africa',
       'Songs': '3416',
-      'Path': 'assets/2.csv',
+      'FileName': '2.csv',
       'Last Updated': '2023-01-15',
       'Languages': ['English']
     },
@@ -28,7 +28,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Cloverdale Bibleway',
       'Location': 'Surrey, Canada',
       'Songs': '508',
-      'Path': 'assets/Bibleway.csv',
+      'FileName': 'Bibleway.csv',
       'Last Updated': '2022-09-01',
       'Languages': ['English'],
     },
@@ -36,7 +36,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Believers Christian Fellowship',
       'Location': 'Ohio, USA',
       'Songs': '1006',
-      'Path': 'assets/BCF.csv',
+      'FileName': 'BCF.csv',
       'Last Updated': '2023-01-15',
       'Languages': ['English']
     },
@@ -44,7 +44,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Elandsfontein Tabernacle',
       'Location': 'Johannesburg, South Africa',
       'Songs': '2136',
-      'Path': 'assets/SampleSongs_20.csv',
+      'FileName': 'SampleSongs_20.csv',
       'Last Updated': '2022-09-01',
       'Languages': ['English', 'Afrikaans', 'Zulu'],
     },
@@ -52,7 +52,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Willows Tabernacle',
       'Location': 'Pretoria, South Africa',
       'Songs': '1356',
-      'Path': 'assets/3.csv',
+      'FileName': '3.csv',
       'Last Updated': '2023-01-10',
       'Languages': ['English', 'Xhosa'],
     },
@@ -60,7 +60,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Shalom Tabernacle',
       'Location': 'Masvingo, Zimbabwe',
       'Songs': '1223',
-      'Path': 'assets/4.csv',
+      'FileName': '4.csv',
       'Last Updated': '2022-12-10',
       'Languages': ['English', 'Shona'],
     },
@@ -68,7 +68,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Polokwane Tabernacle',
       'Location': 'Polokwane, South Africa',
       'Songs': '2136',
-      'Path': 'assets/5.csv',
+      'FileName': '5.csv',
       'Last Updated': '2022-09-01',
       'Languages': ['English', 'Pedi', 'Zulu'],
     },
@@ -92,13 +92,15 @@ class SongBooks extends StatelessWidget {
                       itemBuilder: (itemBuilder, index) {
                         return Card(
                           clipBehavior: Clip.hardEdge,
-                          color: songBookSettings.songBookPath == songList[index]['Path']
-                              ? Styles.searchBackground
-                              : Colors.white,
+                          color:
+                              songBookSettings.songBookFile == songList[index]['FileName']
+                                  ? Styles.searchBackground
+                                  : Colors.white,
                           child: InkWell(
                             splashColor: Styles.themeColor.withAlpha(30),
                             onTap: () {
-                              songBookSettings.setSongBookPath(songList[index]['Path']);
+                              songBookSettings
+                                  .setSongBookFile(songList[index]['FileName']);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(

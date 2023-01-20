@@ -43,6 +43,8 @@ dependencies:
   firebase_database: ^10.0.9
   firebase_analytics: ^10.1.0
   provider: ^6.0.5
+  shared_preferences: ^2.0.16
+  url_launcher: ^6.1.7
 
 dev_dependencies:
   flutter_test:
