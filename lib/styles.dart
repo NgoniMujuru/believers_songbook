@@ -43,6 +43,8 @@ abstract class Styles {
     fontWeight: FontWeight.w300,
   );
 
+  static const TextStyle link = TextStyle(color: Colors.blue, fontSize: 16.0);
+
   static const Color productRowDivider = Color(0xFFD9D9D9);
 
   static const Color scaffoldBackground = Color(0xfff0f0f0);

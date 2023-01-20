@@ -38,32 +38,17 @@ class AboutPage extends StatelessWidget {
                 ),
                 TextSpan(
                   text: 'reach out',
-                  style: const TextStyle(color: Colors.blue, fontSize: 16.0),
-                  // send email when user taps text
-                  recognizer: TapGestureRecognizer()
+                  style: Styles.link,
+``                  recognizer: TapGestureRecognizer()
                     ..onTap = () async {
                       String emailUrl = "mailto:songbookforbelievers@gmail.com";
                       if (await canLaunchUrlString(emailUrl)) {
                         await launchUrlString(emailUrl);
                       } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text(
-                                    'Email App Could Not Be Opened Automatically'),
-                                content: const Text(
-                                    'You can use the following email address: songbookforbelievers@gmail.com'),
-                                actions: [
-                                  TextButton(
-                                    child: const Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  )
-                                ],
-                              );
-                            });
+                        createDialog(
+                            context,
+                            'Email App Could Not Be Opened Automatically',
+                            'You can use the following email address: songbookforbelievers@gmail.com');
                       }
                     },
                 ),
@@ -74,35 +59,44 @@ class AboutPage extends StatelessWidget {
                 ),
                 TextSpan(
                   text: 'website',
-                  style: const TextStyle(color: Colors.blue, fontSize: 16.0),
-                  // open website when user taps text
+                  style: Styles.link,
                   recognizer: TapGestureRecognizer()
                     ..onTap = () async {
                       String url = "https://branham.org/en/apps";
                       if (await canLaunchUrlString(url)) {
                         await launchUrlString(url);
                       } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text(
-                                    'Website Could Not Be Launched Automatically'),
-                                content: Text(
-                                    'Visit website by copying the following url into your browser app: $url'),
-                                actions: [
-                                  TextButton(
-                                    child: const Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  )
-                                ],
-                              );
-                            });
+                        createDialog(
+                            context,
+                            'Website Could Not Be Launched Automatically',
+                            'Visit website by copying the following url into your browser app: $url');
                       }
                     },
                 ),
+                const TextSpan(
+                  text: '.',
+                  style: Styles.appInfo,
+                ),
+                const TextSpan(
+                  text:
+                      'This app does not collect any personal information. Details about how data is handled can be found in the ',
+                  style: Styles.appInfo,
+                ),
+                TextSpan(
+                    text: 'privacy policy',
+                    style: Styles.link,
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        String url = "https://branham.org/en/apps";
+                        if (await canLaunchUrlString(url)) {
+                          await launchUrlString(url);
+                        } else {
+                          createDialog(
+                              context,
+                              'Policy Could Not Be Launched Automatically',
+                              'Visit website by copying the following url into your browser app: https://ngonimujuru.com/songbookforbelievers/privacy_policy.html');
+                        }
+                      }),
                 const TextSpan(
                   text: '.',
                   style: Styles.appInfo,
@@ -122,5 +116,24 @@ class AboutPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  createDialog(BuildContext context, String heading, String content) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(heading),
+            content: Text(content),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 }
