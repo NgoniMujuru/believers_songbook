@@ -39,7 +39,7 @@ class AboutPage extends StatelessWidget {
                 TextSpan(
                   text: 'reach out',
                   style: Styles.link,
-``                  recognizer: TapGestureRecognizer()
+                  recognizer: TapGestureRecognizer()
                     ..onTap = () async {
                       String emailUrl = "mailto:songbookforbelievers@gmail.com";
                       if (await canLaunchUrlString(emailUrl)) {
