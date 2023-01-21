@@ -55,5 +55,5 @@ abstract class Styles {
 
   static const Color searchIconColor = Color.fromRGBO(128, 128, 128, 1);
 
-  static const Color themeColor = Color.fromARGB(255, 46, 125, 0);
+  static const Color themeColor = Color.fromRGBO(46, 125, 0, 1);
 }
