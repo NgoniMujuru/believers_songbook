@@ -32,8 +32,28 @@ class AboutPage extends StatelessWidget {
               RichText(
                   text: TextSpan(children: <TextSpan>[
                 const TextSpan(
+                  text: "This app was crafted with ❤️ by a ",
+                  style: Styles.appInfo,
+                ),
+                TextSpan(
+                  text: 'solo developer',
+                  style: Styles.link,
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () async {
+                      String url = "https://ngonimujuru.com";
+                      if (await canLaunchUrlString(url)) {
+                        await launchUrlString(url);
+                      } else {
+                        createDialog(
+                            context,
+                            'Website Could Not Be Launched Automatically',
+                            'Visit website by copying the following url into your browser app: $url');
+                      }
+                    },
+                ),
+                const TextSpan(
                   text:
-                      "This app was made with ❤️ by Ngoni Mujuru with the invaluable support of family and friends. Together, lets continue to spread the love and share this app with anyone who will find it helpful. Your support doesn't stop there, a positive review on the app store will help others discover it too. We're always looking for ways to improve, so if you have any suggestions for features or would like to see your songbook added, don't hesitate to ",
+                      " with the invaluable support of family and friends. Together, lets continue to spread the love and share this app with anyone who will find it helpful. Your support doesn't stop there, a positive review on the app store will help others discover it too. We're always looking for ways to improve, so if you have any suggestions for features or would like to see your congregation's songbook added, don't hesitate to ",
                   style: Styles.appInfo,
                 ),
                 TextSpan(
@@ -74,12 +94,8 @@ class AboutPage extends StatelessWidget {
                     },
                 ),
                 const TextSpan(
-                  text: '.',
-                  style: Styles.appInfo,
-                ),
-                const TextSpan(
                   text:
-                      'This app does not collect any personal information. Details about how data is handled can be found in the ',
+                      '. This app does not collect any personal information, as specified in the ',
                   style: Styles.appInfo,
                 ),
                 TextSpan(
@@ -87,14 +103,15 @@ class AboutPage extends StatelessWidget {
                     style: Styles.link,
                     recognizer: TapGestureRecognizer()
                       ..onTap = () async {
-                        String url = "https://branham.org/en/apps";
+                        String url =
+                            "https://ngonimujuru.com/songbook_for_believers/privacy_policy.html";
                         if (await canLaunchUrlString(url)) {
                           await launchUrlString(url);
                         } else {
                           createDialog(
                               context,
                               'Policy Could Not Be Launched Automatically',
-                              'Visit website by copying the following url into your browser app: https://ngonimujuru.com/songbookforbelievers/privacy_policy.html');
+                              'Visit website by copying the following url into your browser app: $url');
                         }
                       }),
                 const TextSpan(

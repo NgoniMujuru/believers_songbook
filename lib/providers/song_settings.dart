@@ -9,8 +9,8 @@ class SongSettings extends ChangeNotifier {
   Future<void> setFontSize(double size) async {
     _fontSize = size;
     notifyListeners();
-    final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-    final SharedPreferences prefs = await _prefs;
+    final Future<SharedPreferences> prefsRef = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await prefsRef;
     prefs.setDouble('fontSize', size);
   }
 }

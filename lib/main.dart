@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         future: _fbApp,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            print('You have an error! ${snapshot.error.toString()}');
+            // print('You have an error! ${snapshot.error.toString()}');
             return const Text('Loading songbooks failed, please try again later');
           } else if (snapshot.hasData) {
             return const MyStatefulWidget();
@@ -60,19 +60,11 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static final List<Widget> _widgetOptions = <Widget>[
     const Songs(),
     SongBooks(),
     const AboutPage(),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   void initState() {

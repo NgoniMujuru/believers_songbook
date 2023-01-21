@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
@@ -213,9 +211,9 @@ class _SongsState extends State<Songs> {
                                   (a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
                               setState(() async {
                                 _sortBy = SortOrder.numerical;
-                                final Future<SharedPreferences> _prefs =
+                                final Future<SharedPreferences> prefsRef =
                                     SharedPreferences.getInstance();
-                                final SharedPreferences prefs = await _prefs;
+                                final SharedPreferences prefs = await prefsRef;
                                 prefs.setString('sortOrder', SortOrder.numerical.name);
                               });
                               setLocalState(() {
@@ -234,9 +232,9 @@ class _SongsState extends State<Songs> {
                                     .compareTo(b.elementAt(1).toLowerCase()));
                                 setState(() async {
                                   _sortBy = SortOrder.alphabetic;
-                                  final Future<SharedPreferences> _prefs =
+                                  final Future<SharedPreferences> prefsRef =
                                       SharedPreferences.getInstance();
-                                  final SharedPreferences prefs = await _prefs;
+                                  final SharedPreferences prefs = await prefsRef;
                                   prefs.setString('sortOrder', SortOrder.alphabetic.name);
                                 });
                                 setLocalState(() {

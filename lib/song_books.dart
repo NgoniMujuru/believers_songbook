@@ -1,5 +1,5 @@
 import 'package:believers_songbook/styles.dart';
-import 'package:firebase_database/firebase_database.dart';
+// import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/song_book_settings.dart';
@@ -104,11 +104,11 @@ class SongBooks extends StatelessWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    'Songbook changed to ' + songList[index]['Title'],
-                                    style: TextStyle(color: Colors.white),
+                                    'Songbook changed to ${songList[index]['Title']}',
+                                    style: const TextStyle(color: Colors.white),
                                   ),
                                   backgroundColor: Styles.themeColor,
-                                  duration: Duration(seconds: 2),
+                                  duration: const Duration(seconds: 3),
                                 ),
                               );
                             },
