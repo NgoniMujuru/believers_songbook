@@ -67,8 +67,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '107811782306',
     projectId: 'songbook-for-believers',
     storageBucket: 'songbook-for-believers.appspot.com',
-    iosClientId: '107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com',
-    iosBundleId: 'com.example.believersSongbook',
+    iosClientId:
+        '107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com',
+    iosBundleId: 'com.ngonimujuru.songbookForBelievers',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -77,7 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '107811782306',
     projectId: 'songbook-for-believers',
     storageBucket: 'songbook-for-believers.appspot.com',
-    iosClientId: '107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com',
-    iosBundleId: 'com.example.believersSongbook',
+    iosClientId:
+        '107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com',
+    iosBundleId: 'com.ngonimujuru.songbookForBelievers',
   );
 }

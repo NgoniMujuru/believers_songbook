@@ -17,10 +17,18 @@ class SongBooks extends StatelessWidget {
       'Languages': ['English', 'Shona', 'Ndebele'],
     },
     {
+      'Title': 'Shekinah Tabernacle',
+      'Location': 'Kinshasa, Congo',
+      'Songs': '807',
+      'FileName': 'ShekinahTabernacle_Kinshasa_DRC.csv',
+      'Last Updated': '2022-08-01',
+      'Languages': ['French', 'Lingala', 'Swahili'],
+    },
+    {
       'Title': 'Bible Tabernacle',
       'Location': 'CapeTown, South Africa',
       'Songs': '3416',
-      'FileName': '2.csv',
+      'FileName': '5.csv',
       'Last Updated': '2023-01-15',
       'Languages': ['English']
     },
@@ -47,14 +55,6 @@ class SongBooks extends StatelessWidget {
       'FileName': 'SampleSongs_20.csv',
       'Last Updated': '2022-09-01',
       'Languages': ['English', 'Afrikaans', 'Zulu'],
-    },
-    {
-      'Title': 'Polokwane Tabernacle',
-      'Location': 'Polokwane, South Africa',
-      'Songs': '2136',
-      'FileName': '5.csv',
-      'Last Updated': '2022-09-01',
-      'Languages': ['English', 'Pedi', 'Zulu'],
     },
   ];
   @override
@@ -108,12 +108,8 @@ class SongBooks extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.fromLTRB(16.0, 0, 8.0, 8.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        songList[index]['Songs'] + ' songs',
-                                        style: TextStyle(color: Colors.grey[800]),
-                                      ),
                                       Text(
                                         // comma separated languages from array
                                         songList[index]['Languages'].join(', '),

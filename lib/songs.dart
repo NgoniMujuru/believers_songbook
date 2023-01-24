@@ -82,6 +82,7 @@ class _SongsState extends State<Songs> {
     var result = await DefaultAssetBundle.of(context).loadString(
       'assets/${context.read<SongBookSettings>().songBookFile}',
     );
+
     var results = const CsvToListConverter().convert(result, fieldDelimiter: ';');
     if (_sortBy == SortOrder.alphabetic) {
       results.sort(
@@ -206,40 +207,40 @@ class _SongsState extends State<Songs> {
                           ChoiceChip(
                             label: const Text('Numerical'),
                             selected: _sortBy == SortOrder.numerical,
-                            onSelected: (bool selected) {
+                            onSelected: (bool selected) async {
                               _csvData?.sort(
                                   (a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
-                              setState(() async {
+                              setState(() {
                                 _sortBy = SortOrder.numerical;
-                                final Future<SharedPreferences> prefsRef =
-                                    SharedPreferences.getInstance();
-                                final SharedPreferences prefs = await prefsRef;
-                                prefs.setString('sortOrder', SortOrder.numerical.name);
                               });
                               setLocalState(() {
                                 _sortBy = SortOrder.numerical;
                               });
+                              final Future<SharedPreferences> prefsRef =
+                                  SharedPreferences.getInstance();
+                              final SharedPreferences prefs = await prefsRef;
+                              prefs.setString('sortOrder', SortOrder.numerical.name);
                             },
                           ),
                           const SizedBox(width: 20),
                           ChoiceChip(
                               label: const Text('Alphabetical'),
                               selected: _sortBy == SortOrder.alphabetic,
-                              onSelected: (bool selected) {
+                              onSelected: (bool selected) async {
                                 _csvData?.sort((a, b) => a
                                     .elementAt(1)
                                     .toLowerCase()
                                     .compareTo(b.elementAt(1).toLowerCase()));
-                                setState(() async {
+                                setState(() {
                                   _sortBy = SortOrder.alphabetic;
-                                  final Future<SharedPreferences> prefsRef =
-                                      SharedPreferences.getInstance();
-                                  final SharedPreferences prefs = await prefsRef;
-                                  prefs.setString('sortOrder', SortOrder.alphabetic.name);
                                 });
                                 setLocalState(() {
                                   _sortBy = SortOrder.alphabetic;
                                 });
+                                final Future<SharedPreferences> prefsRef =
+                                    SharedPreferences.getInstance();
+                                final SharedPreferences prefs = await prefsRef;
+                                prefs.setString('sortOrder', SortOrder.alphabetic.name);
                               }),
                         ],
                       ),
