@@ -33,6 +33,22 @@ class SongBooks extends StatelessWidget {
       'Languages': ['English']
     },
     {
+      'Title': 'Nairobi Tabernacle',
+      'Location': 'Nairobi, Kenya',
+      'Songs': '',
+      'FileName': 'Swahili_Nairobi_Kenya.csv',
+      'Last Updated': '2022-08-01',
+      'Languages': ['Swahili'],
+    },
+    {
+      'Title': 'Third Exodus Assembly',
+      'Location': 'Longdenville, Trinidad and Tobago',
+      'Songs': '',
+      'FileName': 'TEA_Trinidad.csv',
+      'Last Updated': '2022-08-01',
+      'Languages': ['English'],
+    },
+    {
       'Title': 'Cloverdale Bibleway',
       'Location': 'Surrey, Canada',
       'Songs': '508',

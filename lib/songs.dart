@@ -294,13 +294,13 @@ class _SongsState extends State<Songs> {
                               builder: (context) => Song(
                                   songText: results!.elementAt(index).elementAt(3),
                                   songTitle:
-                                      '${results!.elementAt(index).elementAt(1)}')));
+                                      '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
                     },
                     child: ListTile(
                       title: Text(
                         results == null
                             ? 'Loading'
-                            : '${results!.elementAt(index).elementAt(1)}',
+                            : '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}',
                       ),
                     ),
                   ),
@@ -339,12 +339,12 @@ class _SongsState extends State<Songs> {
                               builder: (context) => Song(
                                   songText: results!.elementAt(index).elementAt(3),
                                   songTitle:
-                                      '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}')));
+                                      '${results!.elementAt(index).elementAt(0)}. ${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
                     },
                     child: ListTile(
                       title: Text(results == null
                           ? 'Loading'
-                          : '${results!.elementAt(index).elementAt(0)}. ${results!.elementAt(index).elementAt(1)}'),
+                          : '${results!.elementAt(index).elementAt(0)}. ${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}'),
                     ),
                   ),
                   const Divider(
@@ -358,5 +358,13 @@ class _SongsState extends State<Songs> {
         ),
       ),
     );
+  }
+
+  capitalizeFirstLetters(String s) {
+    return s
+        .split(' ')
+        .map((str) =>
+            str.isEmpty ? str : str[0].toUpperCase() + str.substring(1).toLowerCase())
+        .join(' ');
   }
 }
