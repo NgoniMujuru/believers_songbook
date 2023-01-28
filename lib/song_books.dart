@@ -9,20 +9,20 @@ class SongBooks extends StatelessWidget {
 
   final List songList = [
     {
+      'Title': 'Emmanuel Gospel Centre',
+      'Location': 'Johannesburg, South Africa',
+      'Songs': '20',
+      'FileName': 'EGC_Joburg_SA.csv',
+      'Last Updated': '2022-09-01',
+      'Languages': ['English'],
+    },
+    {
       'Title': 'Harare Christian Fellowship',
       'Location': 'Harare, Zimbabwe',
       'Songs': '2136',
       'FileName': 'HarareChristianFellowship_Harare_Zimbabwe.csv',
       'Last Updated': '2022-08-01',
-      'Languages': ['English', 'Shona', 'Ndebele'],
-    },
-    {
-      'Title': 'Shekinah Tabernacle',
-      'Location': 'Kinshasa, Congo',
-      'Songs': '807',
-      'FileName': 'ShekinahTabernacle_Kinshasa_DRC.csv',
-      'Last Updated': '2022-08-01',
-      'Languages': ['French', 'Lingala', 'Swahili'],
+      'Languages': ['English', 'Ndebele', 'Shona'],
     },
     // {
     //   'Title': 'Bible Tabernacle',
@@ -32,14 +32,7 @@ class SongBooks extends StatelessWidget {
     //   'Last Updated': '2023-01-15',
     //   'Languages': ['English']
     // },
-    {
-      'Title': 'Emmanuel Gospel Centre',
-      'Location': 'Johannesburg, South Africa',
-      'Songs': '20',
-      'FileName': 'EGC_Joburg_SA.csv',
-      'Last Updated': '2022-09-01',
-      'Languages': ['English', 'Afrikaans'],
-    },
+
     {
       'Title': 'Nairobi Tabernacle',
       'Location': 'Nairobi, Kenya',
@@ -47,6 +40,14 @@ class SongBooks extends StatelessWidget {
       'FileName': 'Swahili_Nairobi_Kenya.csv',
       'Last Updated': '2022-08-01',
       'Languages': ['Swahili'],
+    },
+    {
+      'Title': 'Shekinah Tabernacle',
+      'Location': 'Kinshasa, Congo',
+      'Songs': '807',
+      'FileName': 'ShekinahTabernacle_Kinshasa_DRC.csv',
+      'Last Updated': '2022-08-01',
+      'Languages': ['French', 'Lingala'],
     },
     {
       'Title': 'Third Exodus Assembly',
@@ -81,7 +82,9 @@ class SongBooks extends StatelessWidget {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+          padding: MediaQuery.of(context).size.width > 600
+              ? const EdgeInsets.fromLTRB(80, 0, 80, 0)
+              : const EdgeInsets.fromLTRB(10, 0, 10, 0),
           child: Column(
             children: [
               Expanded(

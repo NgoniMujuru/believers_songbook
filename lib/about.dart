@@ -18,7 +18,9 @@ class AboutPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: MediaQuery.of(context).size.width > 600
+                  ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
+                  : const EdgeInsets.all(20.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [

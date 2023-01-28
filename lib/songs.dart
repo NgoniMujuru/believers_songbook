@@ -179,8 +179,13 @@ class _SongsState extends State<Songs> {
             // color: Styles.scaffoldBackground,
             ),
         child: SafeArea(
-          child: Column(
-            children: [_buildSearchBox(), _songList],
+          child: Padding(
+            padding: MediaQuery.of(context).size.width > 600
+                ? const EdgeInsets.fromLTRB(20, 0, 20, 0)
+                : const EdgeInsets.all(0),
+            child: Column(
+              children: [_buildSearchBox(), _songList],
+            ),
           ),
         ),
       ),
@@ -327,13 +332,15 @@ class _SongsState extends State<Songs> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
         child: RawScrollbar(
-          minThumbLength: 40,
-          thickness: 10.0,
+          minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
+          thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
           radius: const Radius.circular(5.0),
           thumbVisibility: true,
           child: ListView.builder(
             itemBuilder: (context, index) => Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              padding: MediaQuery.of(context).size.width > 600
+                  ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
+                  : const EdgeInsets.fromLTRB(0, 0, 15, 0),
               child: Column(
                 children: [
                   GestureDetector(
