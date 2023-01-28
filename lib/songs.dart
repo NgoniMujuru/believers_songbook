@@ -79,15 +79,20 @@ class _SongsState extends State<Songs> {
   }
 
   void processCsv() async {
+    String fileName = context.read<SongBookSettings>().songBookFile;
     var result = await DefaultAssetBundle.of(context).loadString(
-      'assets/${context.read<SongBookSettings>().songBookFile}',
+      'assets/$fileName',
     );
 
+    // if more examples exist, map for each file
+    String eol = fileName == 'TEA_Trinidad.csv' ? '\r\n' : '\n';
     var results =
-        const CsvToListConverter().convert(result, fieldDelimiter: ';', eol: '\n');
+        const CsvToListConverter().convert(result, fieldDelimiter: ';', eol: eol);
     if (_sortBy == SortOrder.alphabetic) {
       results.sort(
           (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
+    } else {
+      results.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
     }
     setState(() {
       _csvData = results;
