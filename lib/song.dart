@@ -80,8 +80,8 @@ class Song extends StatelessWidget {
                     builder: (context, songSettings, child) => Slider(
                       value: songSettings.fontSize,
                       min: 14,
-                      max: 30,
-                      divisions: 4,
+                      max: 38,
+                      divisions: 6,
                       label: songSettings.fontSize.round().toString(),
                       onChanged: (double value) {
                         var songSettings = context.read<SongSettings>();
