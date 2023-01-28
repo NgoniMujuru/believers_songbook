@@ -30,9 +30,8 @@ class Song extends StatelessWidget {
       // backgroundColor: Styles.scaffoldBackground,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
           child: DecoratedBox(
             decoration: const BoxDecoration(
                 // color: Styles.scaffoldBackground,
@@ -42,8 +41,13 @@ class Song extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Consumer<SongSettings>(builder: (context, songSettings, child) {
-                    return Text(songText,
-                        style: TextStyle(fontSize: songSettings.fontSize));
+                    return Padding(
+                      padding: MediaQuery.of(context).size.width > 600
+                          ? const EdgeInsets.fromLTRB(80, 20, 16, 40)
+                          : const EdgeInsets.fromLTRB(16, 20, 16, 40),
+                      child: Text(songText,
+                          style: TextStyle(fontSize: songSettings.fontSize)),
+                    );
                   })
                 ],
               ),
