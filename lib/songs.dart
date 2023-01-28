@@ -83,7 +83,8 @@ class _SongsState extends State<Songs> {
       'assets/${context.read<SongBookSettings>().songBookFile}',
     );
 
-    var results = const CsvToListConverter().convert(result, fieldDelimiter: ';');
+    var results =
+        const CsvToListConverter().convert(result, fieldDelimiter: ';', eol: '\n');
     if (_sortBy == SortOrder.alphabetic) {
       results.sort(
           (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));

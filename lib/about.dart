@@ -32,7 +32,7 @@ class AboutPage extends StatelessWidget {
               RichText(
                   text: TextSpan(children: <TextSpan>[
                 const TextSpan(
-                  text: "This app was crafted with ❤️ by a ",
+                  text: "This app was made by a ",
                   style: Styles.appInfo,
                 ),
                 TextSpan(
@@ -53,7 +53,12 @@ class AboutPage extends StatelessWidget {
                 ),
                 const TextSpan(
                   text:
-                      " with the invaluable support of family and friends. Together, lets continue to spread the love and share this app with anyone who will find it helpful. Your support doesn't stop there, a positive review on the app store will help others discover it too. We're always looking for ways to improve, so if you have any suggestions for features or would like to see your congregation's songbook added, don't hesitate to ",
+                      " with the invaluable support of family and friends. A special thanks goes to the wonderful saints who provided the songbooks and helped with testing. Please share this app with anyone who will find it helpful. A positive review on the app store will also help others discover it too!",
+                  style: Styles.appInfo,
+                ),
+                const TextSpan(
+                  text:
+                      "\n\nIf you have any feedback or would like to see your congregation's songbook added, don't hesitate to ",
                   style: Styles.appInfo,
                 ),
                 TextSpan(

@@ -24,13 +24,21 @@ class SongBooks extends StatelessWidget {
       'Last Updated': '2022-08-01',
       'Languages': ['French', 'Lingala', 'Swahili'],
     },
+    // {
+    //   'Title': 'Bible Tabernacle',
+    //   'Location': 'CapeTown, South Africa',
+    //   'Songs': '3416',
+    //   'FileName': '5.csv',
+    //   'Last Updated': '2023-01-15',
+    //   'Languages': ['English']
+    // },
     {
-      'Title': 'Bible Tabernacle',
-      'Location': 'CapeTown, South Africa',
-      'Songs': '3416',
-      'FileName': '5.csv',
-      'Last Updated': '2023-01-15',
-      'Languages': ['English']
+      'Title': 'Emmanuel Gospel Centre',
+      'Location': 'Johannesburg, South Africa',
+      'Songs': '20',
+      'FileName': 'EGC_Joburg_SA.csv',
+      'Last Updated': '2022-09-01',
+      'Languages': ['English', 'Afrikaans'],
     },
     {
       'Title': 'Nairobi Tabernacle',
@@ -48,30 +56,22 @@ class SongBooks extends StatelessWidget {
       'Last Updated': '2022-08-01',
       'Languages': ['English'],
     },
-    {
-      'Title': 'Cloverdale Bibleway',
-      'Location': 'Surrey, Canada',
-      'Songs': '508',
-      'FileName': 'Bibleway.csv',
-      'Last Updated': '2022-09-01',
-      'Languages': ['English'],
-    },
-    {
-      'Title': 'Believers Christian Fellowship',
-      'Location': 'Ohio, USA',
-      'Songs': '1006',
-      'FileName': 'BCF.csv',
-      'Last Updated': '2023-01-15',
-      'Languages': ['English']
-    },
-    {
-      'Title': 'Elandsfontein Tabernacle',
-      'Location': 'Johannesburg, South Africa',
-      'Songs': '20',
-      'FileName': 'SampleSongs_20.csv',
-      'Last Updated': '2022-09-01',
-      'Languages': ['English', 'Afrikaans', 'Zulu'],
-    },
+    // {
+    //   'Title': 'Cloverdale Bibleway',
+    //   'Location': 'Surrey, Canada',
+    //   'Songs': '508',
+    //   'FileName': 'Bibleway.csv',
+    //   'Last Updated': '2022-09-01',
+    //   'Languages': ['English'],
+    // },
+    // {
+    //   'Title': 'Believers Christian Fellowship',
+    //   'Location': 'Ohio, USA',
+    //   'Songs': '1006',
+    //   'FileName': 'BCF.csv',
+    //   'Last Updated': '2023-01-15',
+    //   'Languages': ['English']
+    // },
   ];
   @override
   Widget build(BuildContext context) {
