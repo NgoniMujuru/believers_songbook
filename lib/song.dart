@@ -6,10 +6,12 @@ import 'providers/song_settings.dart';
 class Song extends StatelessWidget {
   final String songTitle;
   final String songText;
+  final String songKey;
 
   const Song({
     required this.songText,
     required this.songTitle,
+    required this.songKey,
     Key? key,
   }) : super(key: key);
 
@@ -45,8 +47,19 @@ class Song extends StatelessWidget {
                       padding: MediaQuery.of(context).size.width > 600
                           ? const EdgeInsets.fromLTRB(80, 20, 16, 40)
                           : const EdgeInsets.fromLTRB(16, 20, 16, 40),
-                      child: Text(songText,
-                          style: TextStyle(fontSize: songSettings.fontSize)),
+                      child: Column(
+                        children: [
+                          if (songSettings.displayKey)
+                            Text(songKey == '' ? '---' : songKey,
+                                style: TextStyle(
+                                    fontSize: songSettings.fontSize,
+                                    fontWeight: FontWeight.bold))
+                          else
+                            const SizedBox(),
+                          Text(songText,
+                              style: TextStyle(fontSize: songSettings.fontSize)),
+                        ],
+                      ),
                     );
                   })
                 ],
@@ -74,6 +87,32 @@ class Song extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 10),
+                  const Text('Display Song Key:'),
+                  Consumer<SongSettings>(
+                    builder: (context, songSettings, child) => Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ChoiceChip(
+                          label: const Text('Yes'),
+                          selected: songSettings.displayKey == true,
+                          onSelected: (bool selected) async {
+                            var songSettings = context.read<SongSettings>();
+                            songSettings.setDisplayKey(true);
+                          },
+                        ),
+                        const SizedBox(width: 20),
+                        ChoiceChip(
+                          label: const Text('No'),
+                          selected: songSettings.displayKey == false,
+                          onSelected: (bool selected) async {
+                            var songSettings = context.read<SongSettings>();
+                            songSettings.setDisplayKey(false);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   const Text('Font Size:'),
                   Consumer<SongSettings>(

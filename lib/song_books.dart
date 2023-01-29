@@ -9,10 +9,18 @@ class SongBooks extends StatelessWidget {
 
   final List songList = [
     {
+      'Title': 'Bible Tabernacle',
+      'Location': 'Cape Town, South Africa',
+      'Songs': '3416',
+      'FileName': 'BibleTabernacle_CapeTown_SA',
+      'Last Updated': '2023-01-15',
+      'Languages': ['Afrikaans', 'English']
+    },
+    {
       'Title': 'Emmanuel Gospel Centre',
       'Location': 'Johannesburg, South Africa',
       'Songs': '20',
-      'FileName': 'EGC_Joburg_SA.csv',
+      'FileName': 'EmmanuelGospelCentre_Joburg_SA',
       'Last Updated': '2022-09-01',
       'Languages': ['English'],
     },
@@ -20,24 +28,23 @@ class SongBooks extends StatelessWidget {
       'Title': 'Harare Christian Fellowship',
       'Location': 'Harare, Zimbabwe',
       'Songs': '2136',
-      'FileName': 'HarareChristianFellowship_Harare_Zimbabwe.csv',
+      'FileName': 'HarareChristianFellowship_Harare_Zimbabwe',
       'Last Updated': '2022-08-01',
       'Languages': ['English', 'Ndebele', 'Shona'],
     },
-    // {
-    //   'Title': 'Bible Tabernacle',
-    //   'Location': 'CapeTown, South Africa',
-    //   'Songs': '3416',
-    //   'FileName': '5.csv',
-    //   'Last Updated': '2023-01-15',
-    //   'Languages': ['English']
-    // },
-
     {
-      'Title': 'Nairobi Tabernacle',
+      'Title': 'Kenya Local Believers',
       'Location': 'Nairobi, Kenya',
       'Songs': '',
-      'FileName': 'Swahili_Nairobi_Kenya.csv',
+      'FileName': 'KenyaLocalBelievers_Nairobi_Kenya',
+      'Last Updated': '2022-08-01',
+      'Languages': ['English', 'Swahili'],
+    },
+    {
+      'Title': 'Nyimbo za Injili',
+      'Location': 'Nairobi, Kenya',
+      'Songs': '',
+      'FileName': 'NyimboZaInjili_Nairobi_Kenya',
       'Last Updated': '2022-08-01',
       'Languages': ['Swahili'],
     },
@@ -45,7 +52,7 @@ class SongBooks extends StatelessWidget {
       'Title': 'Shekinah Tabernacle',
       'Location': 'Kinshasa, Congo',
       'Songs': '807',
-      'FileName': 'ShekinahTabernacle_Kinshasa_DRC.csv',
+      'FileName': 'ShekinahTabernacle_Kinshasa_DRC',
       'Last Updated': '2022-08-01',
       'Languages': ['French', 'Lingala'],
     },
@@ -53,26 +60,10 @@ class SongBooks extends StatelessWidget {
       'Title': 'Third Exodus Assembly',
       'Location': 'Longdenville, Trinidad and Tobago',
       'Songs': '',
-      'FileName': 'TEA_Trinidad.csv',
+      'FileName': 'ThirdExodusAssembly_Trinidad',
       'Last Updated': '2022-08-01',
       'Languages': ['English'],
     },
-    // {
-    //   'Title': 'Cloverdale Bibleway',
-    //   'Location': 'Surrey, Canada',
-    //   'Songs': '508',
-    //   'FileName': 'Bibleway.csv',
-    //   'Last Updated': '2022-09-01',
-    //   'Languages': ['English'],
-    // },
-    // {
-    //   'Title': 'Believers Christian Fellowship',
-    //   'Location': 'Ohio, USA',
-    //   'Songs': '1006',
-    //   'FileName': 'BCF.csv',
-    //   'Last Updated': '2023-01-15',
-    //   'Languages': ['English']
-    // },
   ];
   @override
   Widget build(BuildContext context) {

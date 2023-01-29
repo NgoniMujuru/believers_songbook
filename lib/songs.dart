@@ -24,6 +24,7 @@ class Songs extends StatefulWidget {
 class _SongsState extends State<Songs> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
+  String _fileName = '';
   String _terms = '';
   SortOrder? _sortBy;
   Expanded _songList = const Expanded(
@@ -42,8 +43,8 @@ class _SongsState extends State<Songs> {
     _focusNode = FocusNode();
     SharedPreferences.getInstance().then((prefs) {
       final songBookSettings = context.read<SongBookSettings>();
-      songBookSettings.setSongBookFile(prefs.getString('songBookFile') ??
-          'HarareChristianFellowship_Harare_Zimbabwe.csv');
+      songBookSettings.setSongBookFile(
+          prefs.getString('songBookFile') ?? 'HarareChristianFellowship_Harare_Zimbabwe');
 
       if (prefs.getString('sortOrder') == 'alphabetic') {
         _sortBy = SortOrder.alphabetic;
@@ -79,13 +80,17 @@ class _SongsState extends State<Songs> {
   }
 
   void processCsv() async {
-    String fileName = context.read<SongBookSettings>().songBookFile;
+    _fileName = context.read<SongBookSettings>().songBookFile;
     var result = await DefaultAssetBundle.of(context).loadString(
-      'assets/$fileName',
+      'assets/$_fileName.csv',
     );
 
     // if more examples exist, map for each file
-    String eol = fileName == 'TEA_Trinidad.csv' ? '\r\n' : '\n';
+    String eol = _fileName == 'ThirdExodusAssembly_Trinidad' ||
+            _fileName == 'KenyaLocalBelievers_Nairobi_Kenya' ||
+            _fileName == 'BibleTabernacle_CapeTown_SA'
+        ? '\r\n'
+        : '\n';
     var results =
         const CsvToListConverter().convert(result, fieldDelimiter: ';', eol: eol);
     if (_sortBy == SortOrder.alphabetic) {
@@ -158,9 +163,11 @@ class _SongsState extends State<Songs> {
     // rebuilt widget when song book settings change
     context.watch<SongBookSettings>();
     var results = filterSongs();
-    _songList = _sortBy == SortOrder.alphabetic
-        ? _buildAlphabeticList(results ?? [])
-        : _buildNumericList(results ?? []);
+    _songList = results?.length == 0
+        ? noSearchSongsFound()
+        : _sortBy == SortOrder.alphabetic
+            ? _buildAlphabeticList(results ?? [])
+            : _buildNumericList(results ?? []);
 
     return Scaffold(
       appBar: AppBar(
@@ -304,6 +311,7 @@ class _SongsState extends State<Songs> {
                           MaterialPageRoute(
                               builder: (context) => Song(
                                   songText: results!.elementAt(index).elementAt(3),
+                                  songKey: results!.elementAt(index).elementAt(2),
                                   songTitle:
                                       '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
                     },
@@ -351,6 +359,7 @@ class _SongsState extends State<Songs> {
                           MaterialPageRoute(
                               builder: (context) => Song(
                                   songText: results!.elementAt(index).elementAt(3),
+                                  songKey: results!.elementAt(index).elementAt(2),
                                   songTitle:
                                       '${results!.elementAt(index).elementAt(0)}. ${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
                     },
@@ -379,5 +388,37 @@ class _SongsState extends State<Songs> {
         .map((str) =>
             str.isEmpty ? str : str[0].toUpperCase() + str.substring(1).toLowerCase())
         .join(' ');
+  }
+
+  noSearchSongsFound() {
+    String songbook = _fileName.split('_').first;
+    songbook = songbook.replaceAllMapped(
+        RegExp(r'([a-z])([A-Z])'), (Match m) => '${m[1]} ${m[2]}');
+
+    return Expanded(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.search_off,
+              size: 100,
+              color: Colors.grey,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(40.0, 0, 40.0, 0),
+              child: Text(
+                'No songs found with words "$_terms" in $songbook Songbook.',
+                style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
