@@ -1,3 +1,5 @@
+import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
 // import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -105,6 +107,8 @@ class SongBooks extends StatelessWidget {
                                   duration: const Duration(seconds: 3),
                                 ),
                               );
+                              Provider.of<MainPageSettings>(context, listen: false)
+                                  .setOpenPageIndex(0);
                             },
                             child: Column(
                               children: [
