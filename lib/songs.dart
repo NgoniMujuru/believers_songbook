@@ -1,4 +1,5 @@
 import 'package:believers_songbook/providers/song_book_settings.dart';
+import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
@@ -218,6 +219,29 @@ class _SongsState extends State<Songs> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const Text('Theme:'),
+                      Consumer<ThemeSettings>(
+                          builder: (context, themeSettings, child) => (Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  ChoiceChip(
+                                      label: const Text('Light'),
+                                      selected: !themeSettings.isDarkMode,
+                                      onSelected: (bool selected) async {
+                                        var themeSettings = context.read<ThemeSettings>();
+                                        themeSettings.setIsDarkMode(false);
+                                      }),
+                                  const SizedBox(width: 20),
+                                  ChoiceChip(
+                                      label: const Text('Dark'),
+                                      selected: themeSettings.isDarkMode,
+                                      onSelected: (bool selected) async {
+                                        var themeSettings = context.read<ThemeSettings>();
+                                        themeSettings.setIsDarkMode(true);
+                                      }),
+                                ],
+                              ))),
+                      const SizedBox(height: 10),
                       const Text('Sort Order:'),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -390,7 +414,7 @@ class _SongsState extends State<Songs> {
         .join(' ');
   }
 
-  noSearchSongsFound() {
+  Expanded noSearchSongsFound() {
     String songbook = _fileName.split('_').first;
     songbook = songbook.replaceAllMapped(
         RegExp(r'([a-z])([A-Z])'), (Match m) => '${m[1]} ${m[2]}');
