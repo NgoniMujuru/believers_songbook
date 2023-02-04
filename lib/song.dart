@@ -115,19 +115,33 @@ class Song extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   const Text('Font Size:'),
-                  Consumer<SongSettings>(
-                    builder: (context, songSettings, child) => Slider(
-                      value: songSettings.fontSize,
-                      min: 14,
-                      max: 38,
-                      divisions: 6,
-                      label: songSettings.fontSize.round().toString(),
-                      onChanged: (double value) {
-                        var songSettings = context.read<SongSettings>();
-                        songSettings.setFontSize(value);
-                      },
+                  Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                    const Text(
+                      'Aa',
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
+                    Consumer<SongSettings>(
+                      builder: (context, songSettings, child) => Slider(
+                        value: songSettings.fontSize,
+                        min: 14,
+                        max: 38,
+                        divisions: 6,
+                        label: songSettings.fontSize.round().toString(),
+                        onChanged: (double value) {
+                          var songSettings = context.read<SongSettings>();
+                          songSettings.setFontSize(value);
+                        },
+                      ),
+                    ),
+                    const Text(
+                      'Aa',
+                      style: TextStyle(
+                        fontSize: 38,
+                      ),
+                    ),
+                  ]),
                 ],
               ),
             ],
