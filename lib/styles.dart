@@ -21,8 +21,11 @@ abstract class Styles {
   static const TextStyle searchText = TextStyle(
     color: Color.fromRGBO(0, 0, 0, 1),
     fontSize: 14,
-    fontStyle: FontStyle.normal,
-    fontWeight: FontWeight.normal,
+  );
+
+  static const TextStyle searchTextDark = TextStyle(
+    color: Colors.white,
+    fontSize: 14,
   );
 
   static const TextStyle link =
@@ -30,12 +33,14 @@ abstract class Styles {
 
   static const Color scaffoldBackground = Colors.white;
 
-  // static const Color searchBackground = Color(0xffe0e0e0);
   static const Color searchBackground = Color.fromARGB(255, 240, 248, 224);
+  static Color searchBackgroundDark = Colors.grey.shade700;
 
   static const Color searchCursorColor = Color.fromARGB(255, 46, 125, 0);
+  static const Color searchCursorColorDark = Colors.white;
 
   static const Color searchIconColor = Color.fromRGBO(128, 128, 128, 1);
+  static const Color searchIconColorDark = Colors.white;
 
   static const Color themeColor = Color.fromRGBO(46, 125, 0, 1);
 }
