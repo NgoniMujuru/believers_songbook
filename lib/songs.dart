@@ -34,8 +34,6 @@ class _SongsState extends State<Songs> {
     ),
   );
   List<List<dynamic>>? _csvData;
-  final int _searchThreshold = 75;
-  final int _minSearchResults = 5;
 
   @override
   void initState() {
@@ -106,6 +104,11 @@ class _SongsState extends State<Songs> {
     });
   }
 
+  final int _songTextSearchThreshold = 75;
+  final int _songBodySearchThreshold = 20;
+  final int _minSearchResults = 5;
+  final int _maxSearchResults = 20;
+
   List? filterSongs() {
     if (_terms.isEmpty) {
       return _csvData;
@@ -123,7 +126,7 @@ class _SongsState extends State<Songs> {
           : '${element.elementAt(0)} ${element.elementAt(1).toLowerCase()}';
       // search on song titles 1st
       searchScore = partialRatio(processedSongTitle, processedSearchTerm).toDouble();
-      if (searchScore > _searchThreshold) {
+      if (searchScore > _songTextSearchThreshold) {
         songSearchResults.add(SongSearchResult(element, searchScore));
       }
     });
@@ -132,10 +135,10 @@ class _SongsState extends State<Songs> {
     if (songSearchResults.length < _minSearchResults) {
       _csvData?.forEach((element) {
         if (songDoesNotExist(element, songSearchResults)) {
-          searchScore = tokenSetPartialRatio(
+          searchScore = tokenSortPartialRatio(
                   element.elementAt(3).toLowerCase(), processedSearchTerm)
               .toDouble();
-          if (searchScore > _searchThreshold) {
+          if (searchScore > _songBodySearchThreshold) {
             // divide by 10 to make the score less powerful than the title search
             songSearchResults.add(SongSearchResult(element, searchScore / 10));
           }
@@ -145,8 +148,8 @@ class _SongsState extends State<Songs> {
 
     songSearchResults.sort((a, b) => b.score.compareTo(a.score));
     var results = [];
-    for (var songSearchResult in songSearchResults) {
-      results.add(songSearchResult.song);
+    for (var i = 0; i < songSearchResults.length && i < _maxSearchResults; i++) {
+      results.add(songSearchResults[i].song);
     }
     return results;
   }
