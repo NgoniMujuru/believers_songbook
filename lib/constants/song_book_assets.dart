@@ -41,6 +41,14 @@ class SongBookAssets {
       'Languages': ['Swahili'],
     },
     {
+      'Title': 'Revealed Word Tabernacle',
+      'Location': 'Bulawayo, Zimbabwe',
+      'Songs': '',
+      'FileName': 'RevealedWordTabernacle_Bulawayo_Zimbabwe',
+      'Last Updated': '2022-08-01',
+      'Languages': ['English', 'Ndebele', 'Shona'],
+    },
+    {
       'Title': 'Shekinah Tabernacle',
       'Location': 'Kinshasa, Congo',
       'Songs': '807',

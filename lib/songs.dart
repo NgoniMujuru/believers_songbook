@@ -89,7 +89,8 @@ class _SongsState extends State<Songs> {
     // if more examples exist, map for each file
     String eol = _fileName == 'ThirdExodusAssembly_Trinidad' ||
             _fileName == 'KenyaLocalBelievers_Nairobi_Kenya' ||
-            _fileName == 'BibleTabernacle_CapeTown_SA'
+            _fileName == 'BibleTabernacle_CapeTown_SA' ||
+            _fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe'
         ? '\r\n'
         : '\n';
     var results =
