@@ -300,63 +300,67 @@ class _SongsState extends State<Songs> {
 
   Expanded _buildAlphabeticList(results) {
     return Expanded(
-      child: AlphabetScrollView(
-        list: results.map<AlphaModel>((e) => AlphaModel(e.elementAt(1))).toList(),
-        alignment: LetterAlignment.right,
-        itemExtent: 60,
-        unselectedTextStyle: const TextStyle(
-            fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
-        selectedTextStyle: const TextStyle(
-            fontSize: 16, fontWeight: FontWeight.w800, color: Styles.themeColor),
-        overlayWidget: (value) => Container(
-          height: 100,
-          width: 100,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Styles.themeColor.withOpacity(0.6),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            value.toUpperCase(),
-            style: const TextStyle(
-                fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-        itemBuilder: (context, index, id) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
-            child: Column(
-              children: [
-                Flexible(
-                  child: GestureDetector(
-                    onTap: () {
-                      _focusNode.unfocus();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Song(
-                                  songText: results!.elementAt(index).elementAt(3),
-                                  songKey: results!.elementAt(index).elementAt(2),
-                                  songTitle:
-                                      '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
-                    },
-                    child: ListTile(
-                      title: Text(
-                        results == null
-                            ? 'Loading'
-                            : '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}',
-                      ),
-                    ),
+      child: Consumer<ThemeSettings>(
+          builder: (context, themeSettings, child) => ((AlphabetScrollView(
+                list: results.map<AlphaModel>((e) => AlphaModel(e.elementAt(1))).toList(),
+                alignment: LetterAlignment.right,
+                itemExtent: 60,
+                unselectedTextStyle: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: themeSettings.isDarkMode ? Colors.white : Colors.black),
+                selectedTextStyle: const TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w800, color: Styles.themeColor),
+                overlayWidget: (value) => Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Styles.themeColor.withOpacity(0.6),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    value.toUpperCase(),
+                    style: const TextStyle(
+                        fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const Divider(
-                  height: 5,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+                itemBuilder: (context, index, id) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
+                    child: Column(
+                      children: [
+                        Flexible(
+                          child: GestureDetector(
+                            onTap: () {
+                              _focusNode.unfocus();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Song(
+                                          songText:
+                                              results!.elementAt(index).elementAt(3),
+                                          songKey: results!.elementAt(index).elementAt(2),
+                                          songTitle:
+                                              '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
+                            },
+                            child: ListTile(
+                              title: Text(
+                                results == null
+                                    ? 'Loading'
+                                    : '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}',
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Divider(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              )))),
     );
   }
 
