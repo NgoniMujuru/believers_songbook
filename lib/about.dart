@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'styles.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AboutPage extends StatelessWidget {
   AboutPage({super.key});
@@ -174,7 +175,10 @@ class AboutPage extends StatelessWidget {
                           child: const Text('Rate App'),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Share.share(
+                                'Check out the Songbook for Believers app, available for Android: https://bit.ly/songbook-for-believers-android and iOS: https://apps.apple.com/app/songbook-for-believers/id1667531237');
+                          },
                           child: const Text('Share App'),
                         ),
                       ],
@@ -208,7 +212,7 @@ class AboutPage extends StatelessWidget {
         });
   }
 
-  contactUs(context) async {
+  void contactUs(context) async {
     String emailUrl = "mailto:songbookforbelievers@gmail.com";
     if (await canLaunchUrlString(emailUrl)) {
       await launchUrlString(emailUrl);
@@ -218,7 +222,7 @@ class AboutPage extends StatelessWidget {
     }
   }
 
-  manualReview(context) async {
+  void manualReview(context) async {
     bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
     String url = isIOS
         ? "https://apps.apple.com/app/songbook-for-believers/id1667531237"
