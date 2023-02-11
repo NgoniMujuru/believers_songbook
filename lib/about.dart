@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'styles.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class AboutPage extends StatelessWidget {
-  const AboutPage({super.key});
+  AboutPage({super.key});
+  final InAppReview _inAppReview = InAppReview.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -81,18 +83,7 @@ class AboutPage extends StatelessWidget {
                       TextSpan(
                         text: 'reach out',
                         style: Styles.link,
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            String emailUrl = "mailto:songbookforbelievers@gmail.com";
-                            if (await canLaunchUrlString(emailUrl)) {
-                              await launchUrlString(emailUrl);
-                            } else {
-                              createDialog(
-                                  context,
-                                  'Email App Could Not Be Opened Automatically',
-                                  'You can use the following email address: songbookforbelievers@gmail.com');
-                            }
-                          },
+                        recognizer: TapGestureRecognizer()..onTap = () async {},
                       ),
                       TextSpan(
                         text:
@@ -158,6 +149,35 @@ class AboutPage extends StatelessWidget {
                             Icon(Icons.handshake, color: Styles.themeColor, size: 50.0)),
                     const Text(
                       'Version 1.1.0',
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            contactUs(context);
+                          },
+                          child: const Text('Contact Us'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            try {
+                              if (await _inAppReview.isAvailable()) {
+                                _inAppReview.requestReview();
+                              } else {
+                                manualReview(context);
+                              }
+                            } catch (e) {
+                              manualReview(context);
+                            }
+                          },
+                          child: const Text('Rate App'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: const Text('Share App'),
+                        ),
+                      ],
                     )
                   ],
                 )),
@@ -186,5 +206,28 @@ class AboutPage extends StatelessWidget {
             ],
           );
         });
+  }
+
+  contactUs(context) async {
+    String emailUrl = "mailto:songbookforbelievers@gmail.com";
+    if (await canLaunchUrlString(emailUrl)) {
+      await launchUrlString(emailUrl);
+    } else {
+      createDialog(context, 'Email App Could Not Be Opened Automatically',
+          'You can use the following email address: songbookforbelievers@gmail.com');
+    }
+  }
+
+  manualReview(context) async {
+    bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    String url = isIOS
+        ? "https://apps.apple.com/app/songbook-for-believers/id1667531237"
+        : "https://play.google.com/store/apps/details?id=com.ngonimujuru.songbook_for_believers";
+    if (await canLaunchUrlString(url)) {
+      await launchUrlString(url);
+    } else {
+      createDialog(context, 'App Store Could Not Be Launched Automatically',
+          'Visit website by copying the following url into your browser app: $url');
+    }
   }
 }

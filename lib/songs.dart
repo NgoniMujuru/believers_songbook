@@ -177,7 +177,7 @@ class _SongsState extends State<Songs> {
     return Scaffold(
       appBar: AppBar(
           title: const Text('Songs'),
-          shadowColor: Styles.themeColor,
+          // shadowColor: Styles.themeColor,
           scrolledUnderElevation: 4,
           actions: <Widget>[
             IconButton(

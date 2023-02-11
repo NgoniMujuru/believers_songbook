@@ -11,8 +11,8 @@ class AppPages extends StatelessWidget {
 
   static final List<Widget> _widgetOptions = <Widget>[
     const Songs(),
-    SongBooks(),
-    const AboutPage(),
+    const SongBooks(),
+    AboutPage(),
   ];
 
   @override
