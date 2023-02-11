@@ -16,7 +16,6 @@ class AboutPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('About'),
-        shadowColor: Styles.themeColor,
         scrolledUnderElevation: 4,
       ),
       body: SafeArea(
@@ -53,7 +52,7 @@ class AboutPage extends StatelessWidget {
                       ),
                       TextSpan(
                         text: 'solo developer',
-                        style: Styles.link,
+                        style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
                             String url = "https://ngonimujuru.com";
@@ -69,7 +68,7 @@ class AboutPage extends StatelessWidget {
                       ),
                       TextSpan(
                         text:
-                            " with the invaluable support of family and friends. A special thanks goes to the wonderful saints who provided the songbooks and helped with testing. Please share this app with anyone who will find it helpful. A positive review on the app store will also help others discover it too!",
+                            " with the invaluable support of family and friends. A special thanks goes to the wonderful saints who provided the songbooks and helped with testing. Please share this app with anyone who will find it helpful. A positive review on the app store will help others discover it too!",
                         style: themeSettings.isDarkMode
                             ? Styles.appInfoDark
                             : Styles.appInfo,
@@ -82,8 +81,8 @@ class AboutPage extends StatelessWidget {
                             : Styles.appInfo,
                       ),
                       TextSpan(
-                        text: 'reach out',
-                        style: Styles.link,
+                        text: 'contact us',
+                        style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
                         recognizer: TapGestureRecognizer()..onTap = () async {},
                       ),
                       TextSpan(
@@ -95,7 +94,7 @@ class AboutPage extends StatelessWidget {
                       ),
                       TextSpan(
                         text: 'website',
-                        style: Styles.link,
+                        style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
                         recognizer: TapGestureRecognizer()
                           ..onTap = () async {
                             String url = "https://branham.org/en/apps";
@@ -118,7 +117,7 @@ class AboutPage extends StatelessWidget {
                       ),
                       TextSpan(
                           text: 'privacy policy',
-                          style: Styles.link,
+                          style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
                               String url =

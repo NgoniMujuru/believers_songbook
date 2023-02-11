@@ -36,6 +36,8 @@ abstract class Styles {
 
   static const TextStyle link =
       TextStyle(color: Color.fromARGB(255, 46, 125, 0), fontSize: 16.0);
+  static const TextStyle linkDark =
+      TextStyle(color: Color.fromARGB(255, 120, 216, 64), fontSize: 16.0);
 
   static const Color scaffoldBackground = Colors.white;
 
