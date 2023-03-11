@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'song_player.dart';
 import 'styles.dart';
 import 'package:provider/provider.dart';
 import 'providers/song_settings.dart';
@@ -49,6 +50,9 @@ class Song extends StatelessWidget {
                           : const EdgeInsets.fromLTRB(16, 20, 16, 40),
                       child: Column(
                         children: [
+                          const SongPlayer(
+                              audioLink:
+                                  'https://firebasestorage.googleapis.com/v0/b/songbook-for-believers.appspot.com/o/SongAudioFiles%2FBroDonnyReagan-LetMeWalkWithYou%2CJesus-InTheGarden.mp3?alt=media&token=39c22b2c-1518-4060-9619-109011e7afb9'),
                           if (songSettings.displayKey)
                             Text(songKey == '' ? '---' : songKey,
                                 style: TextStyle(
