@@ -12,6 +12,7 @@ import '/models/song_search_result.dart';
 import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import '/models/song_sort_order.dart';
 import 'package:provider/provider.dart';
+import 'constants/song_book_assets.dart';
 
 class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
@@ -33,7 +34,8 @@ class _SongsState extends State<Songs> {
       child: Text('Loading...'),
     ),
   );
-  List<List<dynamic>>? _csvData;
+  List<List<dynamic>>? _csvData = [];
+  bool _loadingSongs = true;
 
   @override
   void initState() {
@@ -42,8 +44,7 @@ class _SongsState extends State<Songs> {
     _focusNode = FocusNode();
     SharedPreferences.getInstance().then((prefs) {
       final songBookSettings = context.read<SongBookSettings>();
-      songBookSettings.setSongBookFile(
-          prefs.getString('songBookFile') ?? 'HarareChristianFellowship_Harare_Zimbabwe');
+      songBookSettings.setSongBookFile(prefs.getString('songBookFile') ?? 'All');
 
       if (prefs.getString('sortOrder') == 'alphabetic') {
         _sortBy = SortOrder.alphabetic;
@@ -51,7 +52,15 @@ class _SongsState extends State<Songs> {
         _sortBy = SortOrder.numerical;
       }
 
-      processCsv();
+      _fileName = context.read<SongBookSettings>().songBookFile;
+      if (_fileName == 'All') {
+        processAllSongBooks();
+      } else {
+        setState(() {
+          _loadingSongs = false;
+        });
+        processSongBook();
+      }
     });
   }
 
@@ -78,30 +87,77 @@ class _SongsState extends State<Songs> {
     );
   }
 
-  void processCsv() async {
+  void processSongBook() async {
     _fileName = context.read<SongBookSettings>().songBookFile;
-    var result = await DefaultAssetBundle.of(context).loadString(
+    var fileData = await DefaultAssetBundle.of(context).loadString(
       'assets/$_fileName.csv',
     );
 
-    // if more examples exist, map for each file
-    String eol = _fileName == 'ThirdExodusAssembly_Trinidad' ||
-            _fileName == 'KenyaLocalBelievers_Nairobi_Kenya' ||
-            _fileName == 'BibleTabernacle_CapeTown_SA' ||
-            _fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe'
-        ? '\r\n'
-        : '\n';
-    var results =
-        const CsvToListConverter().convert(result, fieldDelimiter: ';', eol: eol);
+    var songList = createSongList(_fileName, fileData);
     if (_sortBy == SortOrder.alphabetic) {
-      results.sort(
+      songList.sort(
           (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
     } else {
-      results.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
+      songList.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
     }
     setState(() {
-      _csvData = results;
+      _csvData = songList;
     });
+  }
+
+  void processAllSongBooks() async {
+    for (var songBook in SongBookAssets.songList) {
+      if (songBook['FileName'] == 'All') {
+        continue;
+      }
+      _fileName = songBook['FileName'];
+      String fileData = await DefaultAssetBundle.of(context).loadString(
+        'assets/$_fileName.csv',
+      );
+      var songList = createSongList(_fileName, fileData);
+      _csvData?.addAll(songList);
+    }
+
+    _csvData?.sort(
+        (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
+
+    double searchScore = 0;
+    double maxSimilarityScore = 90;
+
+    for (int i = 0; i + 1 < (_csvData?.length ?? 0); i++) {
+      var currentSong = _csvData?.elementAt(i);
+      var nextSong = _csvData?.elementAt(i + 1);
+
+      String processedSongTitle = currentSong!.elementAt(1).toString().toLowerCase();
+      processedSongTitle = processedSongTitle.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+      String processedNextSongTitle = nextSong!.elementAt(1).toString().toLowerCase();
+      processedNextSongTitle =
+          processedNextSongTitle.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+      searchScore = ratio(processedSongTitle, processedNextSongTitle).toDouble();
+      if (searchScore > maxSimilarityScore) {
+        _csvData?.removeAt(i);
+        i--;
+      }
+    }
+
+    if (_sortBy == SortOrder.numerical) {
+      _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
+    }
+    setState(() {
+      _csvData;
+      _loadingSongs = false;
+    });
+  }
+
+  List<List> createSongList(String fileName, String fileData) {
+    // if more examples exist, map for each file
+    String eol = fileName == 'ThirdExodusAssembly_Trinidad' ||
+            fileName == 'KenyaLocalBelievers_Nairobi_Kenya' ||
+            fileName == 'BibleTabernacle_CapeTown_SA' ||
+            fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe'
+        ? '\r\n'
+        : '\n';
+    return const CsvToListConverter().convert(fileData, fieldDelimiter: ';', eol: eol);
   }
 
   final int _songTextSearchThreshold = 75;
@@ -168,11 +224,15 @@ class _SongsState extends State<Songs> {
     // rebuilt widget when song book settings change
     context.watch<SongBookSettings>();
     var results = filterSongs();
-    _songList = results?.length == 0
-        ? noSearchSongsFound()
-        : _sortBy == SortOrder.alphabetic
-            ? _buildAlphabeticList(results ?? [])
-            : _buildNumericList(results ?? []);
+    if (_loadingSongs) {
+      _songList = loadingSongbooks();
+    } else {
+      _songList = results?.length == 0
+          ? noSearchSongsFound()
+          : _sortBy == SortOrder.alphabetic
+              ? _buildAlphabeticList(results ?? [])
+              : _buildNumericList(results ?? []);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -445,6 +505,36 @@ class _SongsState extends State<Songs> {
               child: Text(
                 'No songs found with words "$_terms" in $songbook Songbook.',
                 style: const TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Expanded loadingSongbooks() {
+    return Expanded(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            //loading icon
+            Icon(
+              Icons.hourglass_bottom,
+              size: 200,
+              color: Colors.grey,
+            ),
+
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(40.0, 0, 40.0, 0),
+              child: Text(
+                'Loading songs. Please be patient, this can take a bit of time.',
+                style: TextStyle(
                     fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
               ),
             ),

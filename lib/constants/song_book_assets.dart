@@ -1,6 +1,22 @@
 class SongBookAssets {
   static List songList = [
     {
+      'Title': 'All Songs',
+      'Location': 'Global',
+      'Songs': '3416',
+      'FileName': 'All',
+      'Last Updated': '2023-01-15',
+      'Languages': [
+        'Afrikaans',
+        'English',
+        'French',
+        'Lingala',
+        'Ndebele',
+        'Shona',
+        'Swahili'
+      ]
+    },
+    {
       'Title': 'Bible Tabernacle',
       'Location': 'Cape Town, South Africa',
       'Songs': '3416',

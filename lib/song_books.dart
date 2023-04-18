@@ -44,8 +44,6 @@ class SongBooks extends StatelessWidget {
                             child: InkWell(
                               splashColor: Styles.themeColor.withAlpha(30),
                               onTap: () {
-                                songBookSettings.setSongBookFile(
-                                    SongBookAssets.songList[index]['FileName']);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
@@ -60,8 +58,11 @@ class SongBooks extends StatelessWidget {
                                 );
                                 Provider.of<MainPageSettings>(context, listen: false)
                                     .setOpenPageIndex(0);
+                                songBookSettings.setSongBookFile(
+                                    SongBookAssets.songList[index]['FileName']);
                               },
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ListTile(
                                     title: Text(SongBookAssets.songList[index]['Title']),
@@ -73,18 +74,14 @@ class SongBooks extends StatelessWidget {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(16.0, 0, 8.0, 8.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          SongBookAssets.songList[index]['Languages']
-                                              .join(', '),
-                                          style: TextStyle(
-                                              color: themeSettings.isDarkMode
-                                                  ? Styles.songBookLanguagesDark
-                                                  : Styles.songBookLanguages),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      SongBookAssets.songList[index]['Languages']
+                                          .join(', '),
+                                      style: TextStyle(
+                                          color: themeSettings.isDarkMode
+                                              ? Styles.songBookLanguagesDark
+                                              : Styles.songBookLanguages),
+                                      softWrap: true,
                                     ),
                                   )
                                 ],
