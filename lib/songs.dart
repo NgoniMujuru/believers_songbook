@@ -286,10 +286,12 @@ class _SongsState extends State<Songs> {
                       const Text('Theme:'),
                       Consumer<ThemeSettings>(
                           builder: (context, themeSettings, child) => (Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   ChoiceChip(
-                                      label: const Text('Light'),
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      label: const Text('    Light    '),
                                       selected: !themeSettings.isDarkMode,
                                       onSelected: (bool selected) async {
                                         var themeSettings = context.read<ThemeSettings>();
@@ -297,7 +299,7 @@ class _SongsState extends State<Songs> {
                                       }),
                                   const SizedBox(width: 20),
                                   ChoiceChip(
-                                      label: const Text('Dark'),
+                                      label: const Text('      Dark      '),
                                       selected: themeSettings.isDarkMode,
                                       onSelected: (bool selected) async {
                                         var themeSettings = context.read<ThemeSettings>();
@@ -308,7 +310,7 @@ class _SongsState extends State<Songs> {
                       const SizedBox(height: 10),
                       const Text('Sort Order:'),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           ChoiceChip(
                             label: const Text('Numerical'),
