@@ -98,7 +98,7 @@ class _SongsState extends State<Songs> {
       songList.sort(
           (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
     } else {
-      songList.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
+      songList.sort((a, b) => a.elementAt(0) - b.elementAt(0));
     }
     setState(() {
       _csvData = songList;
