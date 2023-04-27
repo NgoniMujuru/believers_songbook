@@ -2,6 +2,7 @@ import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
+import 'package:flutter/services.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,14 +54,20 @@ class _SongsState extends State<Songs> {
       }
 
       _fileName = context.read<SongBookSettings>().songBookFile;
-      if (_fileName == 'All') {
-        processAllSongBooks();
-      } else {
-        setState(() {
-          _loadingSongs = false;
-        });
-        processSongBook();
-      }
+      setState(() {
+        _loadingSongs = false;
+      });
+      processSongBook();
+
+      // Use the following code anytime a new songbook is added.
+      // if (_fileName == 'All') {
+      //   processAllSongBooks();
+      // } else {
+      //   setState(() {
+      //     _loadingSongs = false;
+      //   });
+      //   processSongBook();
+      // }
     });
   }
 
@@ -143,7 +150,11 @@ class _SongsState extends State<Songs> {
     if (_sortBy == SortOrder.numerical) {
       _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
     }
-    print(_csvData?.length);
+    String csv =
+        const ListToCsvConverter(fieldDelimiter: ';', eol: '\n').convert(_csvData!);
+    // Adds csv data to clipboard: copy and paste it over the contents of 'All.csv'
+    Clipboard.setData(ClipboardData(text: csv)).then((_) {});
+
     setState(() {
       _csvData;
       _loadingSongs = false;
