@@ -1,7 +1,7 @@
 class SongBookAssets {
   static List songList = [
     {
-      'Title': 'All Songs',
+      'Title': 'All Songs (Experimental Feature)',
       'Location': 'Global',
       'Songs': '3416',
       'FileName': 'All',
@@ -10,6 +10,7 @@ class SongBookAssets {
         'Afrikaans',
         'English',
         'French',
+        'German',
         'Lingala',
         'Ndebele',
         'Shona',
@@ -51,10 +52,10 @@ class SongBookAssets {
     {
       'Title': 'Kilsyth Believers Christian Fellowship',
       'Location': 'Kilsyth, Scotland',
-      'Songs': '3416',
+      'Songs': '2078',
       'FileName': 'KilsythBelieversChristianFellowship_Kilsyth_Scotland',
       'Last Updated': '2023-01-15',
-      'Languages': ['Danish', 'German', 'English']
+      'Languages': ['German', 'English']
     },
     {
       'Title': 'Nyimbo za Injili',

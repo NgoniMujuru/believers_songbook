@@ -17,7 +17,7 @@ abstract class Styles {
 
   static const TextStyle appInfo = TextStyle(
     color: Color.fromRGBO(0, 0, 0, 0.8),
-    fontSize: 16,
+    fontSize: 14,
   );
   static const TextStyle appInfoDark = TextStyle(
     color: Colors.white,

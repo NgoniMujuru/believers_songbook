@@ -70,7 +70,7 @@ class AboutPage extends StatelessWidget {
                         ),
                         TextSpan(
                           text:
-                              " with the invaluable support of family and friends. A special thanks goes to the wonderful saints who provided the songbooks and helped with testing. Please share this app with anyone who will find it helpful. A positive review on the app store will help others discover it too!",
+                              " with the invaluable support of family and friends. A special thanks goes to the wonderful saints who provided the songbooks and helped with testing. A special thank you also goes out to all the composers of the songs included in this app, whose beautiful and inspiring music has touched the hearts of so many. Please share this app with anyone who will find it helpful. A positive review on the app store will help others discover it too!",
                           style: themeSettings.isDarkMode
                               ? Styles.appInfoDark
                               : Styles.appInfo,

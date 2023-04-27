@@ -143,6 +143,7 @@ class _SongsState extends State<Songs> {
     if (_sortBy == SortOrder.numerical) {
       _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
     }
+    print(_csvData?.length);
     setState(() {
       _csvData;
       _loadingSongs = false;
