@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'providers/song_settings.dart';
 import 'providers/song_book_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wakelock/wakelock.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Wakelock.enable();
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
         theme: ThemeData(

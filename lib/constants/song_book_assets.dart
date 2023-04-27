@@ -49,6 +49,14 @@ class SongBookAssets {
       'Languages': ['English', 'Swahili'],
     },
     {
+      'Title': 'Kilsyth Believers Christian Fellowship',
+      'Location': 'Kilsyth, Scotland',
+      'Songs': '3416',
+      'FileName': 'KilsythBelieversChristianFellowship_Kilsyth_Scotland',
+      'Last Updated': '2023-01-15',
+      'Languages': ['Danish', 'German', 'English']
+    },
+    {
       'Title': 'Nyimbo za Injili',
       'Location': 'Nairobi, Kenya',
       'Songs': '',

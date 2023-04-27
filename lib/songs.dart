@@ -234,29 +234,31 @@ class _SongsState extends State<Songs> {
               : _buildNumericList(results ?? []);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-          title: const Text('Songs'),
-          // shadowColor: Styles.themeColor,
-          scrolledUnderElevation: 4,
-          actions: <Widget>[
-            IconButton(
-                icon: const Icon(Icons.more_vert),
-                onPressed: () {
-                  buildBottomSheet();
-                }),
-          ]),
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-            // color: Styles.scaffoldBackground,
-            ),
-        child: SafeArea(
-          child: Padding(
-            padding: MediaQuery.of(context).size.width > 600
-                ? const EdgeInsets.fromLTRB(20, 0, 20, 0)
-                : const EdgeInsets.all(0),
-            child: Column(
-              children: [_buildSearchBox(), _songList],
+    return SelectionArea(
+      child: Scaffold(
+        appBar: AppBar(
+            title: const Text('Songs'),
+            // shadowColor: Styles.themeColor,
+            scrolledUnderElevation: 4,
+            actions: <Widget>[
+              IconButton(
+                  icon: const Icon(Icons.more_vert),
+                  onPressed: () {
+                    buildBottomSheet();
+                  }),
+            ]),
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+              // color: Styles.scaffoldBackground,
+              ),
+          child: SafeArea(
+            child: Padding(
+              padding: MediaQuery.of(context).size.width > 600
+                  ? const EdgeInsets.fromLTRB(20, 0, 20, 0)
+                  : const EdgeInsets.all(0),
+              child: Column(
+                children: [_buildSearchBox(), _songList],
+              ),
             ),
           ),
         ),
