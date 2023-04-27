@@ -152,7 +152,7 @@ class AboutPage extends StatelessWidget {
                           child: Icon(Icons.handshake,
                               color: Styles.themeColor, size: 50.0)),
                       const Text(
-                        'Version 1.1.0',
+                        'Version 1.2.0',
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
