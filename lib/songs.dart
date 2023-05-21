@@ -30,6 +30,7 @@ class _SongsState extends State<Songs> {
   String _fileName = '';
   String _terms = '';
   SortOrder? _sortBy;
+  SearchBy? _searchBy;
   Expanded _songList = const Expanded(
     child: Center(
       child: Text('Loading...'),
@@ -51,6 +52,14 @@ class _SongsState extends State<Songs> {
         _sortBy = SortOrder.alphabetic;
       } else {
         _sortBy = SortOrder.numerical;
+      }
+
+      if (prefs.getString('searchBy') == 'title') {
+        _searchBy = SearchBy.title;
+      } else if (prefs.getString('searchBy') == 'lyrics') {
+        _searchBy = SearchBy.lyrics;
+      } else {
+        _searchBy = SearchBy.both;
       }
 
       _fileName = context.read<SongBookSettings>().songBookFile;
@@ -125,6 +134,8 @@ class _SongsState extends State<Songs> {
       _csvData?.addAll(songList);
     }
 
+    print(_csvData?.length ?? 0);
+
     _csvData?.sort(
         (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
 
@@ -146,6 +157,8 @@ class _SongsState extends State<Songs> {
         i--;
       }
     }
+
+    print(_csvData?.length ?? 0);
 
     if (_sortBy == SortOrder.numerical) {
       _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
@@ -172,9 +185,7 @@ class _SongsState extends State<Songs> {
     return const CsvToListConverter().convert(fileData, fieldDelimiter: ';', eol: eol);
   }
 
-  final int _songTextSearchThreshold = 75;
-  final int _songBodySearchThreshold = 20;
-  final int _minSearchResults = 5;
+  final int _songSearchThreshold = 70;
   final int _maxSearchResults = 20;
 
   List? filterSongs() {
@@ -182,40 +193,20 @@ class _SongsState extends State<Songs> {
       return _csvData;
     }
 
-    var songSearchResults = [];
-    double searchScore;
-
-    String processedSearchTerm = _terms.toLowerCase();
-    String processedSongTitle;
-
-    _csvData?.forEach((element) {
-      processedSongTitle = _sortBy == SortOrder.alphabetic
-          ? element.elementAt(1).toLowerCase()
-          : '${element.elementAt(0)} ${element.elementAt(1).toLowerCase()}';
-      // search on song titles 1st
-      searchScore = partialRatio(processedSongTitle, processedSearchTerm).toDouble();
-      if (searchScore > _songTextSearchThreshold) {
-        songSearchResults.add(SongSearchResult(element, searchScore));
-      }
-    });
-
-    // search on song text if not enough results
-    if (songSearchResults.length < _minSearchResults) {
-      _csvData?.forEach((element) {
-        if (songDoesNotExist(element, songSearchResults)) {
-          searchScore = tokenSortPartialRatio(
-                  element.elementAt(3).toLowerCase(), processedSearchTerm)
-              .toDouble();
-          if (searchScore > _songBodySearchThreshold) {
-            // divide by 10 to make the score less powerful than the title search
-            songSearchResults.add(SongSearchResult(element, searchScore / 10));
+    List<SongSearchResult> songSearchResults = searchSongs(_searchBy);
+    if (_searchBy == SearchBy.both) {
+      List<SongSearchResult> potentialLyricsSearchResults = searchSongs(SearchBy.lyrics);
+      if (potentialLyricsSearchResults.isNotEmpty) {
+        for (var element in potentialLyricsSearchResults) {
+          if (songDoesNotExist(element, songSearchResults)) {
+            songSearchResults.add(element);
           }
         }
-      });
+      }
     }
-
     songSearchResults.sort((a, b) => b.score.compareTo(a.score));
-    var results = [];
+
+    List<dynamic> results = [];
     for (var i = 0; i < songSearchResults.length && i < _maxSearchResults; i++) {
       results.add(songSearchResults[i].song);
     }
@@ -224,7 +215,7 @@ class _SongsState extends State<Songs> {
 
   bool songDoesNotExist(element, results) {
     for (var songSearchResult in results) {
-      if (songSearchResult.song.elementAt(0) == element.elementAt(0)) {
+      if (songSearchResult.song.elementAt(0) == element.song.elementAt(0)) {
         return false;
       }
     }
@@ -300,7 +291,7 @@ class _SongsState extends State<Songs> {
                       const Text('Theme:'),
                       Consumer<ThemeSettings>(
                           builder: (context, themeSettings, child) => (Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   ChoiceChip(
                                       materialTapTargetSize:
@@ -324,7 +315,7 @@ class _SongsState extends State<Songs> {
                       const SizedBox(height: 10),
                       const Text('Sort Order:'),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ChoiceChip(
                             label: const Text('Numerical'),
@@ -363,6 +354,61 @@ class _SongsState extends State<Songs> {
                                     SharedPreferences.getInstance();
                                 final SharedPreferences prefs = await prefsRef;
                                 prefs.setString('sortOrder', SortOrder.alphabetic.name);
+                              }),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      const Text('Search Songs By:'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ChoiceChip(
+                              label: const Text('Both'),
+                              selected: _searchBy == SearchBy.both,
+                              onSelected: (bool selected) async {
+                                setState(() {
+                                  _searchBy = SearchBy.both;
+                                });
+                                setLocalState(() {
+                                  _searchBy = SearchBy.both;
+                                });
+                                final Future<SharedPreferences> prefsRef =
+                                    SharedPreferences.getInstance();
+                                final SharedPreferences prefs = await prefsRef;
+                                prefs.setString('searchBy', SearchBy.both.name);
+                              }),
+                          const SizedBox(width: 20),
+                          ChoiceChip(
+                            label: const Text('Title'),
+                            selected: _searchBy == SearchBy.title,
+                            onSelected: (bool selected) async {
+                              setState(() {
+                                _searchBy = SearchBy.title;
+                              });
+                              setLocalState(() {
+                                _searchBy = SearchBy.title;
+                              });
+                              final Future<SharedPreferences> prefsRef =
+                                  SharedPreferences.getInstance();
+                              final SharedPreferences prefs = await prefsRef;
+                              prefs.setString('searchBy', SearchBy.title.name);
+                            },
+                          ),
+                          const SizedBox(width: 20),
+                          ChoiceChip(
+                              label: const Text('Lyrics'),
+                              selected: _searchBy == SearchBy.lyrics,
+                              onSelected: (bool selected) async {
+                                setState(() {
+                                  _searchBy = SearchBy.lyrics;
+                                });
+                                setLocalState(() {
+                                  _searchBy = SearchBy.lyrics;
+                                });
+                                final Future<SharedPreferences> prefsRef =
+                                    SharedPreferences.getInstance();
+                                final SharedPreferences prefs = await prefsRef;
+                                prefs.setString('searchBy', SearchBy.lyrics.name);
                               }),
                         ],
                       ),
@@ -558,5 +604,31 @@ class _SongsState extends State<Songs> {
         ),
       ),
     );
+  }
+
+  List<SongSearchResult> searchSongs(SearchBy? criteria) {
+    int elementPos;
+    if (criteria == SearchBy.lyrics) {
+      elementPos = 3;
+    } else {
+      elementPos = 1;
+    }
+
+    List<SongSearchResult> songSearchResults = [];
+    double searchScore;
+
+    String processedSearchTerm = _terms.toLowerCase();
+    String processedSongTitle;
+
+    _csvData?.forEach((element) {
+      processedSongTitle = _sortBy == SortOrder.alphabetic
+          ? element.elementAt(elementPos).toLowerCase()
+          : '${element.elementAt(0)} ${element.elementAt(elementPos).toLowerCase()}';
+      searchScore = partialRatio(processedSongTitle, processedSearchTerm).toDouble();
+      if (searchScore > _songSearchThreshold) {
+        songSearchResults.add(SongSearchResult(element, searchScore));
+      }
+    });
+    return songSearchResults;
   }
 }
