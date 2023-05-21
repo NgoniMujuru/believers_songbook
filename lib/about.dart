@@ -142,18 +142,6 @@ class AboutPage extends StatelessWidget {
                         ),
                       ])),
                       const Divider(),
-                      Text(
-                        'May God richly bless you!',
-                        style: themeSettings.isDarkMode
-                            ? Styles.appInfoDark
-                            : Styles.appInfo,
-                      ),
-                      const Card(
-                          child: Icon(Icons.handshake,
-                              color: Styles.themeColor, size: 50.0)),
-                      const Text(
-                        'Version 1.2.0',
-                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -208,7 +196,19 @@ class AboutPage extends StatelessWidget {
                             child: const Text('Share App'),
                           ),
                         ],
-                      )
+                      ),
+                      Text(
+                        'May God richly bless you!',
+                        style: themeSettings.isDarkMode
+                            ? Styles.appInfoDark
+                            : Styles.appInfo,
+                      ),
+                      const Card(
+                          child: Icon(Icons.handshake,
+                              color: Styles.themeColor, size: 50.0)),
+                      const Text(
+                        'Version 1.3.0',
+                      ),
                     ],
                   )),
                 ),
