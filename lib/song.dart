@@ -91,11 +91,25 @@ class Song extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Text('Font Size:'),
+                  Consumer<SongSettings>(
+                    builder: (context, songSettings, child) => Slider(
+                      value: songSettings.fontSize,
+                      min: 14,
+                      max: 38,
+                      divisions: 6,
+                      label: songSettings.fontSize.round().toString(),
+                      onChanged: (double value) {
+                        var songSettings = context.read<SongSettings>();
+                        songSettings.setFontSize(value);
+                      },
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   const Text('Display Song Key:'),
                   Consumer<SongSettings>(
                     builder: (context, songSettings, child) => Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         ChoiceChip(
                           label: const Text('     Yes     '),
@@ -118,24 +132,9 @@ class Song extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text('Font Size:'),
-                  Consumer<SongSettings>(
-                    builder: (context, songSettings, child) => Slider(
-                      value: songSettings.fontSize,
-                      min: 14,
-                      max: 38,
-                      divisions: 6,
-                      label: songSettings.fontSize.round().toString(),
-                      onChanged: (double value) {
-                        var songSettings = context.read<SongSettings>();
-                        songSettings.setFontSize(value);
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 10),
                   const Text('Options:'),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButton(
                         style: ButtonStyle(
