@@ -27,9 +27,14 @@ class Song extends StatelessWidget {
             scrolledUnderElevation: 4,
             actions: <Widget>[
               IconButton(
+                  icon: const Icon(Icons.playlist_add),
+                  onPressed: () {
+                    collectionsBottomSheet(context);
+                  }),
+              IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    buildBottomSheet(context);
+                    settingsBottomSheet(context);
                   }),
             ]),
         // backgroundColor: Styles.scaffoldBackground,
@@ -75,7 +80,47 @@ class Song extends StatelessWidget {
     );
   }
 
-  buildBottomSheet(context) {
+  Future<void> collectionsBottomSheet(context) {
+    return showModalBottomSheet<void>(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text('Collections', style: TextStyle(fontSize: 25)),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {},
+                        ),
+                        const Text('Add New', style: TextStyle(fontSize: 15)),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> settingsBottomSheet(context) {
     return showModalBottomSheet<void>(
       context: context,
       shape: RoundedRectangleBorder(
