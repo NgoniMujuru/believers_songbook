@@ -1,3 +1,4 @@
+import 'package:believers_songbook/collections.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
@@ -12,6 +13,7 @@ class AppPages extends StatelessWidget {
   static final List<Widget> _widgetOptions = <Widget>[
     const Songs(),
     const SongBooks(),
+    const Collections(),
     AboutPage(),
   ];
 
@@ -43,7 +45,11 @@ class AppPages extends StatelessWidget {
                       label: Text('Songbooks'),
                       padding: EdgeInsets.all(10)),
                   NavigationRailDestination(
-                      icon: Icon(Icons.account_circle),
+                      icon: Icon(Icons.library_music),
+                      label: Text('Collections'),
+                      padding: EdgeInsets.all(10)),
+                  NavigationRailDestination(
+                      icon: Icon(Icons.info),
                       label: Text('About'),
                       padding: EdgeInsets.all(10)),
                 ],
@@ -68,6 +74,10 @@ class AppPages extends StatelessWidget {
                     NavigationDestination(
                       icon: Icon(Icons.book),
                       label: 'Songbooks',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.library_music),
+                      label: 'Collections',
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.info),
