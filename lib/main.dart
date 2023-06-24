@@ -1,3 +1,7 @@
+import 'package:believers_songbook/collections.dart';
+import 'package:believers_songbook/models/collection.dart';
+import 'package:believers_songbook/models/local_database.dart';
+import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +16,45 @@ import 'package:wakelock/wakelock.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // LocalDatabase localDatabase = LocalDatabase();
+
+  // await localDatabase.deleteDatabaseFile();
+
+  // await localDatabase.initDatabase();
+
+  // Collection collection = Collection(
+  //   id: 1,
+  //   name: 'Believers Songbook',
+  //   description: 'A collection of songs for believers',
+  //   dateCreated: DateTime.now().toString(),
+  // );
+
+  // await localDatabase.insertCollection(collection);
+
+  // collection = Collection(
+  //   id: 2,
+  //   name: 'Test Collection',
+  //   description: 'Yeah yeah yeah!',
+  //   dateCreated: DateTime.now().toString(),
+  // );
+
+  // collection = Collection(
+  //   id: 3,
+  //   name: 'Col 3',
+  //   description: 'Col 3',
+  //   dateCreated: DateTime.now().toString(),
+  // );
+
+  // await localDatabase.insertCollection(collection);
+
+  // print(await localDatabase.getCollections());
+
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SongSettings()),
     ChangeNotifierProvider(create: (context) => MainPageSettings()),
     ChangeNotifierProvider(create: (context) => ThemeSettings()),
+    ChangeNotifierProvider(create: (context) => CollectionsData()),
     ListenableProvider(create: (context) => SongBookSettings())
   ], child: MyApp()));
 }
@@ -28,6 +67,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    initCollections(context);
     Wakelock.enable();
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
@@ -66,4 +106,12 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+void initCollections(BuildContext context) async {
+  final collectionsData = context.read<CollectionsData>();
+  final localDatabase = LocalDatabase();
+  await localDatabase.initDatabase();
+  final collections = await localDatabase.getCollections();
+  collectionsData.setCollections(collections);
 }

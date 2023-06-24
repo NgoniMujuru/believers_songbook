@@ -49,6 +49,8 @@ dependencies:
   in_app_review: ^2.0.6
   share_plus: ^6.3.1
   wakelock: ^0.6.2
+  sqflite: ^2.2.8+4
+  path: ^1.8.2
 
 flutter_icons:
   image_path: "assets/icon.png"

@@ -1,3 +1,4 @@
+import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
@@ -112,6 +113,26 @@ class Song extends StatelessWidget {
                     ),
                   )
                 ],
+              ),
+              const Divider(),
+              Consumer<CollectionsData>(
+                builder: (context, collectionsData, child) => ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: collectionsData.collections.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(collectionsData.collections[index].name,
+                            style: const TextStyle(fontSize: 20)),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {},
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ],
           ),
