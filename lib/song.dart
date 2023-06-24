@@ -1,3 +1,4 @@
+import 'package:believers_songbook/models/collection.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +12,7 @@ class Song extends StatelessWidget {
   final String songText;
   final String songKey;
 
-  const Song({
+  Song({
     required this.songText,
     required this.songTitle,
     required this.songKey,
@@ -81,6 +82,9 @@ class Song extends StatelessWidget {
     );
   }
 
+  bool _isSelectingCollection = true;
+  final _formKey = GlobalKey<FormState>();
+
   Future<void> collectionsBottomSheet(context) {
     return showModalBottomSheet<void>(
       context: context,
@@ -88,54 +92,115 @@ class Song extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0),
       ),
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text('Collections', style: TextStyle(fontSize: 25)),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Row(
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setLocalState) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
+              child: Consumer<CollectionsData>(
+                builder: (context, collectionsData, child) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () {},
-                        ),
-                        const Text('Add New', style: TextStyle(fontSize: 15)),
+                        const Text('Collections', style: TextStyle(fontSize: 25)),
+                        TextButton(
+                          onPressed: () {
+                            if (!_isSelectingCollection) {
+                              if (_formKey.currentState!.validate()) {
+                                //save form
+                                _formKey.currentState!.save();
+
+                                setLocalState(() {
+                                  _isSelectingCollection = true;
+                                });
+                              }
+                            } else {
+                              setLocalState(() {
+                                _isSelectingCollection = false;
+                              });
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Icon(_isSelectingCollection ? Icons.add : Icons.check),
+                              Text(_isSelectingCollection ? 'Create' : ' Save',
+                                  style: const TextStyle(fontSize: 15)),
+                            ],
+                          ),
+                        )
                       ],
                     ),
-                  )
-                ],
-              ),
-              const Divider(),
-              Consumer<CollectionsData>(
-                builder: (context, collectionsData, child) => ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: collectionsData.collections.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(collectionsData.collections[index].name,
-                            style: const TextStyle(fontSize: 20)),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () {},
-                        ),
-                      ],
-                    );
-                  },
+                    const Divider(),
+                    _isSelectingCollection
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: collectionsData.collections.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Column(
+                                children: [
+                                  CheckboxListTile(
+                                    title: Text(collectionsData.collections[index].name),
+                                    value: true,
+                                    onChanged: (bool? value) {
+                                      setLocalState(() {
+                                        value = true;
+                                      });
+                                    },
+                                  ),
+                                  const Divider(),
+                                ],
+                              );
+                            },
+                          )
+                        : Form(
+                            key: _formKey,
+                            child: TextFormField(
+                              decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                labelText: 'Collection name',
+                              ),
+                              // The validator receives the text that the user has entered.
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter the collection name.';
+                                }
+                                // if value exists in collectionsData.collections.name
+                                // return 'Collection name already exists.';
+                                if (collectionsData.collections
+                                    .any((collection) => collection.name == value)) {
+                                  return 'Collection name already exists.';
+                                }
+
+                                return null;
+                              },
+                              onSaved: (value) {
+                                int nextId;
+                                if (collectionsData.collections.isEmpty) {
+                                  nextId = 1;
+                                } else {
+                                  nextId = collectionsData.collections
+                                          .map((collection) => collection.id)
+                                          .reduce((value, element) =>
+                                              value > element ? value : element) +
+                                      1;
+                                }
+
+                                var collection = Collection(
+                                  id: nextId,
+                                  name: value!,
+                                  dateCreated: DateTime.now().toString(),
+                                );
+                                collectionsData.addCollection(collection);
+                              },
+                            ),
+                          )
+                  ],
                 ),
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

@@ -110,8 +110,7 @@ class MyApp extends StatelessWidget {
 
 void initCollections(BuildContext context) async {
   final collectionsData = context.read<CollectionsData>();
-  final localDatabase = LocalDatabase();
-  await localDatabase.initDatabase();
-  final collections = await localDatabase.getCollections();
+  await LocalDatabase.initDatabase();
+  final collections = await LocalDatabase.getCollections();
   collectionsData.setCollections(collections);
 }

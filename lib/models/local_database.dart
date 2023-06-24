@@ -6,9 +6,9 @@ import 'package:sqflite/sqflite.dart';
 import 'collection.dart';
 
 class LocalDatabase {
-  late Future<Database> database;
+  static var database;
 
-  initDatabase() async {
+  static initDatabase() async {
     database = openDatabase(
       join(await getDatabasesPath(), 'local_database.db'),
       // When the database is first created, create a table to store collections.
@@ -17,9 +17,10 @@ class LocalDatabase {
       // path to perform database upgrades and downgrades.
       version: 1,
     );
+    print('Database initialized');
   }
 
-  Future<void> createDatabase(Database db, int version) async {
+  static Future<void> createDatabase(Database db, int version) async {
     await db.execute(
       'CREATE TABLE collections(id INTEGER PRIMARY KEY, name TEXT UNIQUE, description TEXT, dateCreated TEXT)',
     );
@@ -29,7 +30,7 @@ class LocalDatabase {
     // Additional SQL statements or table creations can be executed here
   }
 
-  Future<void> insertCollection(Collection collection) async {
+  static Future<void> insertCollection(Collection collection) async {
     // Get a reference to the database.
     final db = await database;
 
@@ -44,7 +45,7 @@ class LocalDatabase {
     );
   }
 
-  Future<List<Collection>> getCollections() async {
+  static Future<List<Collection>> getCollections() async {
     // Get a reference to the database.
     final db = await database;
 
@@ -56,13 +57,12 @@ class LocalDatabase {
       return Collection(
         id: collectionMaps[i]['id'],
         name: collectionMaps[i]['name'],
-        description: collectionMaps[i]['description'],
         dateCreated: collectionMaps[i]['dateCreated'],
       );
     });
   }
 
-  Future<void> deleteDatabaseFile() async {
+  static Future<void> deleteDatabaseFile() async {
     final databasePath = await getDatabasesPath();
     final databasePathToDelete = join(databasePath, 'local_database.db');
     await deleteDatabase(databasePathToDelete);

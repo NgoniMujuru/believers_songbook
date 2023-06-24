@@ -17,7 +17,6 @@ class CollectionsData extends ChangeNotifier {
   Future<void> addCollection(Collection collection) async {
     _collections.add(collection);
     notifyListeners();
-    LocalDatabase localDatabase = LocalDatabase();
-    await localDatabase.insertCollection(collection);
+    await LocalDatabase.insertCollection(collection);
   }
 }
