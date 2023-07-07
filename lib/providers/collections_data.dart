@@ -14,18 +14,14 @@ class CollectionsData extends ChangeNotifier {
   Map<int, List<CollectionSong>> get songsByCollection => _songsByCollection;
 
   Future<void> setCollections(List<Collection> collections) async {
-    // sort collections alphabetically by name
     collections.sort((a, b) => a.name.compareTo(b.name));
     _collections = collections;
     notifyListeners();
-    print(collections);
   }
 
   Future<void> setCollectionSongs(List<CollectionSong> collectionSongs) async {
     _collectionSongs = collectionSongs;
     _songsByCollection = createSongsByCollection(_collections, _collectionSongs);
-
-    print(collectionSongs);
   }
 
   Future<void> addCollection(Collection collection) async {

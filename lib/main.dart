@@ -1,6 +1,3 @@
-import 'package:believers_songbook/collections.dart';
-import 'package:believers_songbook/models/collection.dart';
-import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/models/local_database.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
@@ -17,39 +14,6 @@ import 'package:wakelock/wakelock.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // LocalDatabase localDatabase = LocalDatabase();
-
-  // await localDatabase.deleteDatabaseFile();
-
-  // await localDatabase.initDatabase();
-
-  // Collection collection = Collection(
-  //   id: 1,
-  //   name: 'Believers Songbook',
-  //   description: 'A collection of songs for believers',
-  //   dateCreated: DateTime.now().toString(),
-  // );
-
-  // await localDatabase.insertCollection(collection);
-
-  // collection = Collection(
-  //   id: 2,
-  //   name: 'Test Collection',
-  //   description: 'Yeah yeah yeah!',
-  //   dateCreated: DateTime.now().toString(),
-  // );
-
-  // collection = Collection(
-  //   id: 3,
-  //   name: 'Col 3',
-  //   description: 'Col 3',
-  //   dateCreated: DateTime.now().toString(),
-  // );
-
-  // await localDatabase.insertCollection(collection);
-
-  // print(await localDatabase.getCollections());
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SongSettings()),
