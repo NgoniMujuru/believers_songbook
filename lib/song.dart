@@ -104,6 +104,21 @@ class Song extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        _isSelectingCollection
+                            ? IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.close),
+                              )
+                            : IconButton(
+                                onPressed: () {
+                                  setLocalState(() {
+                                    _isSelectingCollection = true;
+                                  });
+                                },
+                                icon: const Icon(Icons.arrow_back),
+                              ),
                         const Text('Collections', style: TextStyle(fontSize: 25)),
                         TextButton(
                           onPressed: () {
