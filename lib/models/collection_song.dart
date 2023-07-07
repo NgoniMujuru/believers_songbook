@@ -1,5 +1,5 @@
 class CollectionSong {
-  int? id;
+  final int id;
   final int collectionId;
   final String title;
   final String key;
@@ -10,6 +10,7 @@ class CollectionSong {
     required this.title,
     required this.key,
     required this.lyrics,
+    required this.id,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,5 +21,10 @@ class CollectionSong {
       'key': key,
       'lyrics': lyrics,
     };
+  }
+
+  @override
+  String toString() {
+    return 'CollectionSong{id: $id, collectionId: $collectionId, title: $title';
   }
 }

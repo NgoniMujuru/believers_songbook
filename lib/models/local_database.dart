@@ -4,6 +4,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'collection.dart';
+import 'collection_song.dart';
 
 class LocalDatabase {
   static var database;
@@ -35,13 +36,46 @@ class LocalDatabase {
     final db = await database;
 
     // Insert the Collection into the correct table. You might also specify the
-    // `conflictAlgorithm` to use in case the same dog is inserted twice.
+    // `conflictAlgorithm` to use in case the same collection is inserted twice.
     //
     // In this case, replace any previous data.
     await db.insert(
       'collections',
       collection.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // delete collection and remove all songs in the collection from the collectionSongs table
+  static Future<void> deleteCollection(int collectionId) async {
+    final db = await database;
+    await db.delete(
+      'collections',
+      where: 'id = ?',
+      whereArgs: [collectionId],
+    );
+    await db.delete(
+      'collectionSongs',
+      where: 'collectionId = ?',
+      whereArgs: [collectionId],
+    );
+  }
+
+  static Future<void> insertCollectionSong(CollectionSong collectionSong) async {
+    final db = await database;
+    await db.insert(
+      'collectionSongs',
+      collectionSong.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  static Future<void> deleteCollectionSong(int collectionSongId) async {
+    final db = await database;
+    await db.delete(
+      'collectionSongs',
+      where: 'id = ?',
+      whereArgs: [collectionSongId],
     );
   }
 
@@ -58,6 +92,21 @@ class LocalDatabase {
         id: collectionMaps[i]['id'],
         name: collectionMaps[i]['name'],
         dateCreated: collectionMaps[i]['dateCreated'],
+      );
+    });
+  }
+
+  static Future<List<CollectionSong>> getCollectionSongs() async {
+    final db = await database;
+    final List<Map<String, dynamic>> collectionSongMaps =
+        await db.query('collectionSongs');
+    return List.generate(collectionSongMaps.length, (i) {
+      return CollectionSong(
+        id: collectionSongMaps[i]['id'],
+        collectionId: collectionSongMaps[i]['collectionId'],
+        title: collectionSongMaps[i]['title'],
+        key: collectionSongMaps[i]['key'],
+        lyrics: collectionSongMaps[i]['lyrics'],
       );
     });
   }

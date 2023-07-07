@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:believers_songbook/models/collection.dart';
+import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -174,6 +177,35 @@ class Song extends StatelessWidget {
                                             Text(collectionsData.collections[index].name),
                                         value: _songPresentInCollection[index],
                                         onChanged: (bool? value) {
+                                          if (value == true) {
+                                            CollectionSong collectionSong =
+                                                CollectionSong(
+                                              id: getAvailableId(
+                                                  collectionsData.collectionSongs),
+                                              collectionId:
+                                                  collectionsData.collections[index].id,
+                                              title: songTitle,
+                                              key: songKey,
+                                              lyrics: songText,
+                                            );
+                                            collectionsData.addCollectionSong(
+                                              collectionSong,
+                                            );
+                                          } else {
+                                            // get collectionSongId based on title and collectionId
+                                            var collectionSongId = collectionsData
+                                                .collectionSongs
+                                                .firstWhere((collectionSong) =>
+                                                    collectionSong.collectionId ==
+                                                        collectionsData
+                                                            .collections[index].id &&
+                                                    collectionSong.title == songTitle)
+                                                .id;
+
+                                            collectionsData.deleteCollectionSong(
+                                              collectionSongId,
+                                            );
+                                          }
                                           setLocalState(() {
                                             _songPresentInCollection[index] = value!;
                                           });
@@ -208,16 +240,8 @@ class Song extends StatelessWidget {
                                 },
                                 onSaved: (value) {
                                   _songPresentInCollection.add(false);
-                                  int nextId;
-                                  if (collectionsData.collections.isEmpty) {
-                                    nextId = 1;
-                                  } else {
-                                    nextId = collectionsData.collections
-                                            .map((collection) => collection.id)
-                                            .reduce((value, element) =>
-                                                value > element ? value : element) +
-                                        1;
-                                  }
+                                  int nextId =
+                                      getAvailableId(collectionsData.collections);
 
                                   var collection = Collection(
                                     id: nextId,
@@ -239,9 +263,37 @@ class Song extends StatelessWidget {
     );
   }
 
+  int getAvailableId(list) {
+    int nextId = 0;
+    if (list.isEmpty) {
+      nextId = 1;
+    } else {
+      // iterate through list ids and find the smallest available number
+      var ids = list.map((item) => item.id).toList();
+      ids.sort();
+      for (var i = 0; i < ids.length; i++) {
+        if (ids[i] != i + 1) {
+          nextId = i + 1;
+          break;
+        }
+        nextId = i + 2;
+      }
+    }
+    return nextId;
+  }
+
   void initializeSongCollections(collectionsData) {
-    if (collectionsData.collections.isNotEmpty) {
-      _songPresentInCollection = List.filled(collectionsData.collections.length, false);
+    _songPresentInCollection.clear();
+    var collectionSongs = collectionsData.collectionSongs;
+    // for each collection, check if any collectionSong has the songTitle and add true or false to _songPresentInCollection
+    for (var collection in collectionsData.collections) {
+      if (collectionSongs.any((collectionSong) =>
+          collectionSong.collectionId == collection.id &&
+          collectionSong.title == songTitle)) {
+        _songPresentInCollection.add(true);
+      } else {
+        _songPresentInCollection.add(false);
+      }
     }
   }
 

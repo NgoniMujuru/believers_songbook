@@ -1,5 +1,6 @@
 import 'package:believers_songbook/collections.dart';
 import 'package:believers_songbook/models/collection.dart';
+import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/models/local_database.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
@@ -113,4 +114,6 @@ void initCollections(BuildContext context) async {
   await LocalDatabase.initDatabase();
   final collections = await LocalDatabase.getCollections();
   collectionsData.setCollections(collections);
+  final collectionSongs = await LocalDatabase.getCollectionSongs();
+  collectionsData.setCollectionSongs(collectionSongs);
 }
