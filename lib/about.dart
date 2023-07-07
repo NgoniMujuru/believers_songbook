@@ -207,7 +207,7 @@ class AboutPage extends StatelessWidget {
                           child: Icon(Icons.handshake,
                               color: Styles.themeColor, size: 50.0)),
                       const Text(
-                        'Version 1.3.0',
+                        'v1.4.0 - 07/23',
                       ),
                     ],
                   )),
