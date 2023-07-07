@@ -84,8 +84,13 @@ class Song extends StatelessWidget {
 
   bool _isSelectingCollection = true;
   final _formKey = GlobalKey<FormState>();
+  List<bool> _songPresentInCollection = [];
 
   Future<void> collectionsBottomSheet(context) {
+    var collectionsData = Provider.of<CollectionsData>(context, listen: false);
+
+    initializeSongCollections(collectionsData);
+
     return showModalBottomSheet<void>(
       context: context,
       shape: RoundedRectangleBorder(
@@ -148,69 +153,82 @@ class Song extends StatelessWidget {
                       ],
                     ),
                     const Divider(),
-                    _isSelectingCollection
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: collectionsData.collections.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Column(
-                                children: [
-                                  CheckboxListTile(
-                                    title: Text(collectionsData.collections[index].name),
-                                    value: true,
-                                    onChanged: (bool? value) {
-                                      setLocalState(() {
-                                        value = true;
-                                      });
-                                    },
-                                  ),
-                                  const Divider(),
-                                ],
-                              );
-                            },
-                          )
-                        : Form(
-                            key: _formKey,
-                            child: TextFormField(
-                              decoration: const InputDecoration(
-                                border: UnderlineInputBorder(),
-                                labelText: 'Collection name',
+                    SizedBox(
+                      height: 300,
+                      child: _isSelectingCollection
+                          ? RawScrollbar(
+                              minThumbLength:
+                                  MediaQuery.of(context).size.width > 600 ? 100 : 40,
+                              thickness:
+                                  MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
+                              radius: const Radius.circular(5.0),
+                              thumbVisibility: true,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: collectionsData.collections.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Column(
+                                    children: [
+                                      CheckboxListTile(
+                                        title:
+                                            Text(collectionsData.collections[index].name),
+                                        value: _songPresentInCollection[index],
+                                        onChanged: (bool? value) {
+                                          setLocalState(() {
+                                            _songPresentInCollection[index] = value!;
+                                          });
+                                        },
+                                      ),
+                                      const Divider(),
+                                    ],
+                                  );
+                                },
                               ),
-                              // The validator receives the text that the user has entered.
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter the collection name.';
-                                }
-                                // if value exists in collectionsData.collections.name
-                                // return 'Collection name already exists.';
-                                if (collectionsData.collections
-                                    .any((collection) => collection.name == value)) {
-                                  return 'Collection name already exists.';
-                                }
+                            )
+                          : Form(
+                              key: _formKey,
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: 'Collection name',
+                                ),
+                                // The validator receives the text that the user has entered.
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter the collection name.';
+                                  }
+                                  // if value exists in collectionsData.collections.name
+                                  // return 'Collection name already exists.';
+                                  if (collectionsData.collections
+                                      .any((collection) => collection.name == value)) {
+                                    return 'Collection name already exists.';
+                                  }
 
-                                return null;
-                              },
-                              onSaved: (value) {
-                                int nextId;
-                                if (collectionsData.collections.isEmpty) {
-                                  nextId = 1;
-                                } else {
-                                  nextId = collectionsData.collections
-                                          .map((collection) => collection.id)
-                                          .reduce((value, element) =>
-                                              value > element ? value : element) +
-                                      1;
-                                }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  _songPresentInCollection.add(false);
+                                  int nextId;
+                                  if (collectionsData.collections.isEmpty) {
+                                    nextId = 1;
+                                  } else {
+                                    nextId = collectionsData.collections
+                                            .map((collection) => collection.id)
+                                            .reduce((value, element) =>
+                                                value > element ? value : element) +
+                                        1;
+                                  }
 
-                                var collection = Collection(
-                                  id: nextId,
-                                  name: value!,
-                                  dateCreated: DateTime.now().toString(),
-                                );
-                                collectionsData.addCollection(collection);
-                              },
+                                  var collection = Collection(
+                                    id: nextId,
+                                    name: value!,
+                                    dateCreated: DateTime.now().toString(),
+                                  );
+                                  collectionsData.addCollection(collection);
+                                },
+                              ),
                             ),
-                          )
+                    )
                   ],
                 ),
               ),
@@ -219,6 +237,12 @@ class Song extends StatelessWidget {
         );
       },
     );
+  }
+
+  void initializeSongCollections(collectionsData) {
+    if (collectionsData.collections.isNotEmpty) {
+      _songPresentInCollection = List.filled(collectionsData.collections.length, false);
+    }
   }
 
   Future<void> settingsBottomSheet(context) {
