@@ -95,9 +95,18 @@ class Song extends StatelessWidget {
     initializeSongCollections(collectionsData);
 
     return showModalBottomSheet<void>(
+      isScrollControlled: true,
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width < 800
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width * 0.6,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
@@ -159,63 +168,54 @@ class Song extends StatelessWidget {
                     SizedBox(
                       height: 300,
                       child: _isSelectingCollection
-                          ? RawScrollbar(
-                              minThumbLength:
-                                  MediaQuery.of(context).size.width > 600 ? 100 : 40,
-                              thickness:
-                                  MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
-                              radius: const Radius.circular(5.0),
-                              thumbVisibility: true,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: collectionsData.collections.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    children: [
-                                      CheckboxListTile(
-                                        title:
-                                            Text(collectionsData.collections[index].name),
-                                        value: _songPresentInCollection[index],
-                                        onChanged: (bool? value) {
-                                          if (value == true) {
-                                            CollectionSong collectionSong =
-                                                CollectionSong(
-                                              id: getAvailableId(
-                                                  collectionsData.collectionSongs),
-                                              collectionId:
-                                                  collectionsData.collections[index].id,
-                                              title: songTitle,
-                                              key: songKey,
-                                              lyrics: songText,
-                                            );
-                                            collectionsData.addCollectionSong(
-                                              collectionSong,
-                                            );
-                                          } else {
-                                            // get collectionSongId based on title and collectionId
-                                            var collectionSongId = collectionsData
-                                                .collectionSongs
-                                                .firstWhere((collectionSong) =>
-                                                    collectionSong.collectionId ==
-                                                        collectionsData
-                                                            .collections[index].id &&
-                                                    collectionSong.title == songTitle)
-                                                .id;
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: collectionsData.collections.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Column(
+                                  children: [
+                                    CheckboxListTile(
+                                      title:
+                                          Text(collectionsData.collections[index].name),
+                                      value: _songPresentInCollection[index],
+                                      onChanged: (bool? value) {
+                                        if (value == true) {
+                                          CollectionSong collectionSong = CollectionSong(
+                                            id: getAvailableId(
+                                                collectionsData.collectionSongs),
+                                            collectionId:
+                                                collectionsData.collections[index].id,
+                                            title: songTitle,
+                                            key: songKey,
+                                            lyrics: songText,
+                                          );
+                                          collectionsData.addCollectionSong(
+                                            collectionSong,
+                                          );
+                                        } else {
+                                          // get collectionSongId based on title and collectionId
+                                          var collectionSongId = collectionsData
+                                              .collectionSongs
+                                              .firstWhere((collectionSong) =>
+                                                  collectionSong.collectionId ==
+                                                      collectionsData
+                                                          .collections[index].id &&
+                                                  collectionSong.title == songTitle)
+                                              .id;
 
-                                            collectionsData.deleteCollectionSong(
-                                              collectionSongId,
-                                            );
-                                          }
-                                          setLocalState(() {
-                                            _songPresentInCollection[index] = value!;
-                                          });
-                                        },
-                                      ),
-                                      const Divider(),
-                                    ],
-                                  );
-                                },
-                              ),
+                                          collectionsData.deleteCollectionSong(
+                                            collectionSongId,
+                                          );
+                                        }
+                                        setLocalState(() {
+                                          _songPresentInCollection[index] = value!;
+                                        });
+                                      },
+                                    ),
+                                    const Divider(),
+                                  ],
+                                );
+                              },
                             )
                           : Form(
                               key: _formKey,
@@ -299,9 +299,18 @@ class Song extends StatelessWidget {
 
   Future<void> settingsBottomSheet(context) {
     return showModalBottomSheet<void>(
+      isScrollControlled: true,
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width < 800
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width * 0.6,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
       ),
       builder: (BuildContext context) {
         return Padding(

@@ -272,8 +272,17 @@ class _SongsState extends State<Songs> {
   buildBottomSheet() {
     return showModalBottomSheet<void>(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width < 800
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width * 0.6,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
