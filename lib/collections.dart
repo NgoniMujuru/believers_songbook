@@ -4,6 +4,7 @@ import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'collections_songs.dart';
 import 'styles.dart';
 
 class Collections extends StatelessWidget {
@@ -81,13 +82,40 @@ class Collections extends StatelessWidget {
                     trailing: Text('$numSongs $numSongsString'),
                     subtitle: Text('Created: $formattedDate'),
                     onTap: () {
-                      Navigator.pushNamed(context, '/collection',
-                          arguments: sortedCollections[index]);
+                      if (numSongs == 0) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('No songs'),
+                              content: const Text(
+                                  'This collection has no songs. Add songs by opening a song and selecting the collections menu icon on the top right corner.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CollectionSongs(
+                              collectionName: sortedCollections[index].name,
+                              songs: songsByCollection[sortedCollections[index].id]!,
+                            ),
+                          ),
+                        );
+                      }
                     },
                   ),
                   const Divider(
-                    height: 0,
-                    thickness: 1,
+                    height: 0.5,
                   ),
                 ],
               ),
