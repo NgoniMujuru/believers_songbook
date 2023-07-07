@@ -179,6 +179,7 @@ class _SongsState extends State<Songs> {
     String eol = fileName == 'ThirdExodusAssembly_Trinidad' ||
             fileName == 'KenyaLocalBelievers_Nairobi_Kenya' ||
             fileName == 'BibleTabernacle_CapeTown_SA' ||
+            fileName == "TokenTabernacle_Soweto_SA" ||
             fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe'
         ? '\r\n'
         : '\n';
