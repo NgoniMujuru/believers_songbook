@@ -45,13 +45,15 @@ class CollectionSongs extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      String lyrics = songs.elementAt(index).lyrics;
+                      String title = songs.elementAt(index).title;
+                      String key = songs.elementAt(index).key;
+
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Song(
-                                  songText: songs.elementAt(index).lyrics,
-                                  songKey: songs.elementAt(index).key,
-                                  songTitle: songs.elementAt(index).title)));
+                                  songText: lyrics, songKey: key, songTitle: title)));
                     },
                     child: ListTile(
                       title: Text(songs.elementAt(index).title),
