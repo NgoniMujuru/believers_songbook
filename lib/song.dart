@@ -249,6 +249,7 @@ class Song extends StatelessWidget {
                                     dateCreated: DateTime.now().toString(),
                                   );
                                   collectionsData.addCollection(collection);
+                                  initializeSongCollections(collectionsData);
                                 },
                               ),
                             ),

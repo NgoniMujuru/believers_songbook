@@ -22,25 +22,23 @@ class Collections extends StatelessWidget {
           body: SafeArea(
             child: collectionsData.collections.isNotEmpty
                 ? _buildCollectionList(collectionsData, context)
-                : SingleChildScrollView(
-                    child: Center(
-                      child: Padding(
-                        padding: MediaQuery.of(context).size.width > 600
-                            ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
-                            : const EdgeInsets.all(20.0),
-                        child: Consumer<ThemeSettings>(
-                          builder: (context, themeSettings, child) => (Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(
-                                'Create your own song collections. Open a song and select the collections menu icon on the top right corner.',
-                                style: themeSettings.isDarkMode
-                                    ? Styles.aboutHeaderDark
-                                    : Styles.aboutHeader,
-                              ),
-                            ],
-                          )),
-                        ),
+                : Center(
+                    child: Padding(
+                      padding: MediaQuery.of(context).size.width > 600
+                          ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
+                          : const EdgeInsets.all(20.0),
+                      child: Consumer<ThemeSettings>(
+                        builder: (context, themeSettings, child) => (Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              'Create your own song collections. Open a song and select the collections menu icon on the top right corner.',
+                              style: themeSettings.isDarkMode
+                                  ? Styles.aboutHeaderDark
+                                  : Styles.aboutHeader,
+                            ),
+                          ],
+                        )),
                       ),
                     ),
                   ),
@@ -77,43 +75,20 @@ class Collections extends StatelessWidget {
               child: Column(
                 children: [
                   ListTile(
-                    title: Text(collectionsData.collections[index].name),
-                    trailing: Text('$numSongs $numSongsString'),
-                    subtitle: Text('Created: $formattedDate'),
-                    onTap: () {
-                      if (numSongs == 0) {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('No songs'),
-                              content: const Text(
-                                  'This collection has no songs. Add songs by opening a song and selecting the collections menu icon on the top right corner.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else {
+                      title: Text(collectionsData.collections[index].name),
+                      trailing: Text('$numSongs $numSongsString'),
+                      subtitle: Text('Created: $formattedDate'),
+                      onTap: () {
+                        int collectionId = collectionsData.collections[index].id;
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => CollectionSongs(
-                              collectionName: collectionsData.collections[index].name,
-                              songs: songsByCollection[
-                                  collectionsData.collections[index].id]!,
+                              collectionId: collectionId,
                             ),
                           ),
                         );
-                      }
-                    },
-                  ),
+                      }),
                   const Divider(
                     height: 0.5,
                   ),
