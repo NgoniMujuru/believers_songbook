@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'search_bar.dart';
+import 'custom_search_bar.dart';
 import 'styles.dart';
 import 'song.dart';
 import '/models/song_search_result.dart';
@@ -96,7 +96,7 @@ class _SongsState extends State<Songs> {
   Widget _buildSearchBox() {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: SearchBar(
+      child: CustomSearchBar(
         controller: _controller,
         focusNode: _focusNode,
       ),
