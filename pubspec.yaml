@@ -51,6 +51,7 @@ dependencies:
   wakelock: ^0.6.2
   sqflite: ^2.2.8+4
   path: ^1.8.2
+  intl: ^0.18.1
 
 flutter_icons:
   image_path: "assets/icon.png"

@@ -274,7 +274,7 @@ class _SongsState extends State<Songs> {
       context: context,
       isScrollControlled: true,
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width < 800
+        maxWidth: MediaQuery.of(context).size.width < 600
             ? MediaQuery.of(context).size.width
             : MediaQuery.of(context).size.width * 0.6,
       ),

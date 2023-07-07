@@ -87,7 +87,7 @@ class Song extends StatelessWidget {
 
   bool _isSelectingCollection = true;
   final _formKey = GlobalKey<FormState>();
-  List<bool> _songPresentInCollection = [];
+  final List<bool> _songPresentInCollection = [];
 
   Future<void> collectionsBottomSheet(context) {
     var collectionsData = Provider.of<CollectionsData>(context, listen: false);
@@ -98,7 +98,7 @@ class Song extends StatelessWidget {
       isScrollControlled: true,
       context: context,
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width < 800
+        maxWidth: MediaQuery.of(context).size.width < 600
             ? MediaQuery.of(context).size.width
             : MediaQuery.of(context).size.width * 0.6,
       ),
@@ -302,7 +302,7 @@ class Song extends StatelessWidget {
       isScrollControlled: true,
       context: context,
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width < 800
+        maxWidth: MediaQuery.of(context).size.width < 600
             ? MediaQuery.of(context).size.width
             : MediaQuery.of(context).size.width * 0.6,
       ),
