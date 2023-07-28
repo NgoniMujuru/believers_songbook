@@ -1,4 +1,5 @@
 import 'package:believers_songbook/providers/song_book_settings.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -296,7 +297,6 @@ class SongsState extends State<Songs> {
             return Padding(
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Column(
@@ -371,6 +371,32 @@ class SongsState extends State<Songs> {
                                 prefs.setString('sortOrder', SortOrder.alphabetic.name);
                               }),
                         ],
+                      ),
+                      const SizedBox(height: 10),
+                      const Text('Display Song Key:'),
+                      Consumer<SongSettings>(
+                        builder: (context, songSettings, child) => Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ChoiceChip(
+                              label: const Text('       Yes       '),
+                              selected: songSettings.displayKey == true,
+                              onSelected: (bool selected) async {
+                                var songSettings = context.read<SongSettings>();
+                                songSettings.setDisplayKey(true);
+                              },
+                            ),
+                            const SizedBox(width: 20),
+                            ChoiceChip(
+                              label: const Text('       No       '),
+                              selected: songSettings.displayKey == false,
+                              onSelected: (bool selected) async {
+                                var songSettings = context.read<SongSettings>();
+                                songSettings.setDisplayKey(false);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 10),
                       const Text('Search Songs By:'),
@@ -481,16 +507,21 @@ class SongsState extends State<Songs> {
                                           songText:
                                               results!.elementAt(index).elementAt(3),
                                           songKey: results!.elementAt(index).elementAt(2),
-                                          songTitle:
-                                              '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
+                                          songTitle: capitalizeFirstLetters(
+                                              results!.elementAt(index).elementAt(1)))));
                             },
-                            child: ListTile(
-                              title: Text(
-                                results == null
+                            child: Consumer<SongSettings>(
+                                builder: (context, songSettings, child) {
+                              return ListTile(
+                                title: Text(results == null
                                     ? 'Loading'
-                                    : '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}',
-                              ),
-                            ),
+                                    : capitalizeFirstLetters(
+                                        results!.elementAt(index).elementAt(1))),
+                                trailing: songSettings.displayKey
+                                    ? Text(results!.elementAt(index).elementAt(2))
+                                    : null,
+                              );
+                            }),
                           ),
                         ),
                         const Divider(
@@ -530,13 +561,19 @@ class SongsState extends State<Songs> {
                                   songText: results!.elementAt(index).elementAt(3),
                                   songKey: results!.elementAt(index).elementAt(2),
                                   songTitle:
-                                      '${results!.elementAt(index).elementAt(0)}. ${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
+                                      songNumAndTitle(results!.elementAt(index)))));
                     },
-                    child: ListTile(
-                      title: Text(results == null
-                          ? 'Loading'
-                          : '${results!.elementAt(index).elementAt(0)}. ${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}'),
-                    ),
+                    child:
+                        Consumer<SongSettings>(builder: (context, songSettings, child) {
+                      return ListTile(
+                        title: Text(results == null
+                            ? 'Loading'
+                            : songNumAndTitle(results!.elementAt(index))),
+                        trailing: songSettings.displayKey
+                            ? Text(results!.elementAt(index).elementAt(2))
+                            : null,
+                      );
+                    }),
                   ),
                   const Divider(
                     height: 0.5,
@@ -551,7 +588,11 @@ class SongsState extends State<Songs> {
     );
   }
 
-  capitalizeFirstLetters(String s) {
+  String songNumAndTitle(List song) {
+    return '${song.elementAt(0)}. ${capitalizeFirstLetters(song.elementAt(1))}';
+  }
+
+  String capitalizeFirstLetters(String s) {
     return s
         .split(' ')
         .map((str) =>

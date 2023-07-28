@@ -1,4 +1,5 @@
 import 'package:believers_songbook/providers/collections_data.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/song.dart';
 import 'package:believers_songbook/styles.dart';
@@ -118,9 +119,14 @@ class CollectionSongs extends StatelessWidget {
                             builder: (context) =>
                                 Song(songText: lyrics, songKey: key, songTitle: title)));
                   },
-                  child: ListTile(
-                    title: Text(songs.elementAt(index).title),
-                  ),
+                  child: Consumer<SongSettings>(builder: (context, songSettings, child) {
+                    return ListTile(
+                      title: Text(songs.elementAt(index).title),
+                      trailing: songSettings.displayKey
+                          ? Text(songs.elementAt(index).key)
+                          : null,
+                    );
+                  }),
                 ),
                 const Divider(
                   height: 0.5,
