@@ -1,6 +1,5 @@
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
-import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
 // import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';

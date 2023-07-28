@@ -1,5 +1,6 @@
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
@@ -19,12 +20,12 @@ class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
 
   @override
-  _SongsState createState() {
-    return _SongsState();
+  SongsState createState() {
+    return SongsState();
   }
 }
 
-class _SongsState extends State<Songs> {
+class SongsState extends State<Songs> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   String _fileName = '';
@@ -134,7 +135,9 @@ class _SongsState extends State<Songs> {
       _csvData?.addAll(songList);
     }
 
-    print(_csvData?.length ?? 0);
+    if (kDebugMode) {
+      print(_csvData?.length ?? 0);
+    }
 
     _csvData?.sort(
         (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
@@ -158,7 +161,9 @@ class _SongsState extends State<Songs> {
       }
     }
 
-    print(_csvData?.length ?? 0);
+    if (kDebugMode) {
+      print(_csvData?.length ?? 0);
+    }
 
     if (_sortBy == SortOrder.numerical) {
       _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
@@ -231,11 +236,11 @@ class _SongsState extends State<Songs> {
     if (_loadingSongs) {
       _songList = loadingSongbooks();
     } else {
-      _songList = results?.length == 0
+      _songList = results!.isEmpty
           ? noSearchSongsFound()
           : _sortBy == SortOrder.alphabetic
-              ? _buildAlphabeticList(results ?? [])
-              : _buildNumericList(results ?? []);
+              ? _buildAlphabeticList(results)
+              : _buildNumericList(results);
     }
 
     return SelectionArea(
@@ -587,11 +592,11 @@ class _SongsState extends State<Songs> {
   }
 
   Expanded loadingSongbooks() {
-    return Expanded(
+    return const Expanded(
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             //loading icon
             Icon(
               Icons.hourglass_bottom,

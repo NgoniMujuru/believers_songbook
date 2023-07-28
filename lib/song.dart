@@ -1,21 +1,19 @@
-import 'dart:ffi';
-
-import 'package:believers_songbook/models/collection.dart';
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import 'models/collection.dart';
 import 'styles.dart';
 import 'package:provider/provider.dart';
 import 'providers/song_settings.dart';
 
-class Song extends StatelessWidget {
+class Song extends StatefulWidget {
   final String songTitle;
   final String songText;
   final String songKey;
 
-  Song({
+  const Song({
     required this.songText,
     required this.songTitle,
     required this.songKey,
@@ -23,11 +21,18 @@ class Song extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<Song> createState() => _SongState();
+}
+
+class _SongState extends State<Song> {
+  bool _isSelectingCollection = true;
+
+  @override
   Widget build(Object context) {
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
-            title: Text(songTitle),
+            title: Text(widget.songTitle),
             shadowColor: Styles.themeColor,
             scrolledUnderElevation: 4,
             actions: <Widget>[
@@ -63,13 +68,13 @@ class Song extends StatelessWidget {
                         child: Column(
                           children: [
                             if (songSettings.displayKey)
-                              Text(songKey == '' ? '---' : songKey,
+                              Text(widget.songKey == '' ? '---' : widget.songKey,
                                   style: TextStyle(
                                       fontSize: songSettings.fontSize,
                                       fontWeight: FontWeight.bold))
                             else
                               const SizedBox(),
-                            SelectableText(songText,
+                            SelectableText(widget.songText,
                                 style: TextStyle(fontSize: songSettings.fontSize)),
                           ],
                         ),
@@ -85,8 +90,8 @@ class Song extends StatelessWidget {
     );
   }
 
-  bool _isSelectingCollection = true;
   final _formKey = GlobalKey<FormState>();
+
   final List<bool> _songPresentInCollection = [];
 
   Future<void> collectionsBottomSheet(context) {
@@ -185,9 +190,9 @@ class Song extends StatelessWidget {
                                                 collectionsData.collectionSongs),
                                             collectionId:
                                                 collectionsData.collections[index].id,
-                                            title: songTitle,
-                                            key: songKey,
-                                            lyrics: songText,
+                                            title: widget.songTitle,
+                                            key: widget.songKey,
+                                            lyrics: widget.songText,
                                           );
                                           collectionsData.addCollectionSong(
                                             collectionSong,
@@ -200,7 +205,8 @@ class Song extends StatelessWidget {
                                                   collectionSong.collectionId ==
                                                       collectionsData
                                                           .collections[index].id &&
-                                                  collectionSong.title == songTitle)
+                                                  collectionSong.title ==
+                                                      widget.songTitle)
                                               .id;
 
                                           collectionsData.deleteCollectionSong(
@@ -290,7 +296,7 @@ class Song extends StatelessWidget {
     for (var collection in collectionsData.collections) {
       if (collectionSongs.any((collectionSong) =>
           collectionSong.collectionId == collection.id &&
-          collectionSong.title == songTitle)) {
+          collectionSong.title == widget.songTitle)) {
         _songPresentInCollection.add(true);
       } else {
         _songPresentInCollection.add(false);
@@ -377,9 +383,10 @@ class Song extends StatelessWidget {
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          var titleWithoutNumber = songTitle.split('.').last.trim();
-                          Clipboard.setData(
-                                  ClipboardData(text: '$titleWithoutNumber\n\n$songText'))
+                          var titleWithoutNumber =
+                              widget.songTitle.split('.').last.trim();
+                          Clipboard.setData(ClipboardData(
+                                  text: '$titleWithoutNumber\n\n${widget.songText}'))
                               .then((_) {});
                         },
                         child: const Text('Copy Song'),
@@ -394,8 +401,9 @@ class Song extends StatelessWidget {
                         ),
                         onPressed: () {
                           // get text after full stop from song title
-                          var titleWithoutNumber = songTitle.split('.').last.trim();
-                          Share.share('$titleWithoutNumber\n\n$songText');
+                          var titleWithoutNumber =
+                              widget.songTitle.split('.').last.trim();
+                          Share.share('$titleWithoutNumber\n\n${widget.songText}');
                         },
                         child: const Text('Share Song'),
                       ),

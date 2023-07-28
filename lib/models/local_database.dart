@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -18,7 +19,9 @@ class LocalDatabase {
       // path to perform database upgrades and downgrades.
       version: 1,
     );
-    print('Database initialized');
+    if (kDebugMode) {
+      print('Database initialized');
+    }
   }
 
   static Future<void> createDatabase(Database db, int version) async {
