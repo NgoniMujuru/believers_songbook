@@ -8,6 +8,7 @@ import 'collection.dart';
 import 'collection_song.dart';
 
 class LocalDatabase {
+  // ignore: prefer_typing_uninitialized_variables
   static var database;
 
   static initDatabase() async {

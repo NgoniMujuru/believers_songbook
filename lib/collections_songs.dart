@@ -35,9 +35,10 @@ class CollectionSongs extends StatelessWidget {
                               actions: [
                                 TextButton(
                                   onPressed: () async {
+                                    final navigator = Navigator.of(context);
                                     await collectionsData.deleteCollection(collectionId);
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
+                                    navigator.pop();
+                                    navigator.pop();
                                   },
                                   child: const Text(
                                     'Delete',
