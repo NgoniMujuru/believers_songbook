@@ -103,18 +103,18 @@ class _SongState extends State<Song> {
       isScrollControlled: true,
       context: context,
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width < 600
-            ? MediaQuery.of(context).size.width
-            : MediaQuery.of(context).size.width * 0.6,
-      ),
+          maxWidth: MediaQuery.of(context).size.width < 600
+              ? MediaQuery.of(context).size.width
+              : MediaQuery.of(context).size.width * 0.6,
+          maxHeight: MediaQuery.of(context).size.height * 0.5),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15.0),
           topRight: Radius.circular(15.0),
         ),
       ),
-      builder: (BuildContext context) {
-        return StatefulBuilder(
+      builder: (BuildContext context) => Scaffold(
+        body: StatefulBuilder(
           builder: (BuildContext context, StateSetter setLocalState) {
             return Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
@@ -185,6 +185,11 @@ class _SongState extends State<Song> {
                                       value: _songPresentInCollection[index],
                                       onChanged: (bool? value) {
                                         if (value == true) {
+                                          final snackBar = SnackBar(
+                                              content: Text(
+                                                  'Song added to ${collectionsData.collections[index].name}.'));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
                                           CollectionSong collectionSong = CollectionSong(
                                             id: getAvailableId(
                                                 collectionsData.collectionSongs),
@@ -198,6 +203,11 @@ class _SongState extends State<Song> {
                                             collectionSong,
                                           );
                                         } else {
+                                          final snackBar = SnackBar(
+                                              content: Text(
+                                                  'Song removed from ${collectionsData.collections[index].name}.'));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(snackBar);
                                           // get collectionSongId based on title and collectionId
                                           var collectionSongId = collectionsData
                                               .collectionSongs
@@ -265,8 +275,8 @@ class _SongState extends State<Song> {
               ),
             );
           },
-        );
-      },
+        ),
+      ),
     );
   }
 
