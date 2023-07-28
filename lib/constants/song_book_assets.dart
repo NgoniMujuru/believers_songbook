@@ -82,6 +82,14 @@ class SongBookAssets {
       'Languages': ['French', 'Lingala'],
     },
     {
+      'Title': 'Token Tabernacle',
+      'Location': 'Soweto, South Africa',
+      'Songs': '',
+      'FileName': 'TokenTabernacle_Soweto_SA',
+      'Last Updated': '2022-08-01',
+      'Languages': ['English', 'French', 'Shona', 'Tswana', 'Zulu'],
+    },
+    {
       'Title': 'Third Exodus Assembly',
       'Location': 'Longdenville, Trinidad and Tobago',
       'Songs': '',

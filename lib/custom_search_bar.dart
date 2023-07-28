@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'styles.dart';
 import 'package:flutter/material.dart';
 
-class SearchBar extends StatelessWidget {
-  const SearchBar({
+class CustomSearchBar extends StatelessWidget {
+  const CustomSearchBar({
     required this.controller,
     required this.focusNode,
     Key? key,

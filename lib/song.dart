@@ -1,3 +1,8 @@
+import 'dart:ffi';
+
+import 'package:believers_songbook/models/collection.dart';
+import 'package:believers_songbook/models/collection_song.dart';
+import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
@@ -10,7 +15,7 @@ class Song extends StatelessWidget {
   final String songText;
   final String songKey;
 
-  const Song({
+  Song({
     required this.songText,
     required this.songTitle,
     required this.songKey,
@@ -27,9 +32,14 @@ class Song extends StatelessWidget {
             scrolledUnderElevation: 4,
             actions: <Widget>[
               IconButton(
+                  icon: const Icon(Icons.playlist_add),
+                  onPressed: () {
+                    collectionsBottomSheet(context);
+                  }),
+              IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    buildBottomSheet(context);
+                    settingsBottomSheet(context);
                   }),
             ]),
         // backgroundColor: Styles.scaffoldBackground,
@@ -75,11 +85,233 @@ class Song extends StatelessWidget {
     );
   }
 
-  buildBottomSheet(context) {
+  bool _isSelectingCollection = true;
+  final _formKey = GlobalKey<FormState>();
+  final List<bool> _songPresentInCollection = [];
+
+  Future<void> collectionsBottomSheet(context) {
+    var collectionsData = Provider.of<CollectionsData>(context, listen: false);
+
+    initializeSongCollections(collectionsData);
+
     return showModalBottomSheet<void>(
+      isScrollControlled: true,
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width < 600
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width * 0.6,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setLocalState) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
+              child: Consumer<CollectionsData>(
+                builder: (context, collectionsData, child) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _isSelectingCollection
+                            ? IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.close),
+                              )
+                            : IconButton(
+                                onPressed: () {
+                                  setLocalState(() {
+                                    _isSelectingCollection = true;
+                                  });
+                                },
+                                icon: const Icon(Icons.arrow_back),
+                              ),
+                        const Text('Collections', style: TextStyle(fontSize: 25)),
+                        TextButton(
+                          onPressed: () {
+                            if (!_isSelectingCollection) {
+                              if (_formKey.currentState!.validate()) {
+                                //save form
+                                _formKey.currentState!.save();
+
+                                setLocalState(() {
+                                  _isSelectingCollection = true;
+                                });
+                              }
+                            } else {
+                              setLocalState(() {
+                                _isSelectingCollection = false;
+                              });
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Icon(_isSelectingCollection ? Icons.add : Icons.check),
+                              Text(_isSelectingCollection ? 'Create' : ' Save',
+                                  style: const TextStyle(fontSize: 15)),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    const Divider(),
+                    SizedBox(
+                      height: 300,
+                      child: _isSelectingCollection
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: collectionsData.collections.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Column(
+                                  children: [
+                                    CheckboxListTile(
+                                      title:
+                                          Text(collectionsData.collections[index].name),
+                                      value: _songPresentInCollection[index],
+                                      onChanged: (bool? value) {
+                                        if (value == true) {
+                                          CollectionSong collectionSong = CollectionSong(
+                                            id: getAvailableId(
+                                                collectionsData.collectionSongs),
+                                            collectionId:
+                                                collectionsData.collections[index].id,
+                                            title: songTitle,
+                                            key: songKey,
+                                            lyrics: songText,
+                                          );
+                                          collectionsData.addCollectionSong(
+                                            collectionSong,
+                                          );
+                                        } else {
+                                          // get collectionSongId based on title and collectionId
+                                          var collectionSongId = collectionsData
+                                              .collectionSongs
+                                              .firstWhere((collectionSong) =>
+                                                  collectionSong.collectionId ==
+                                                      collectionsData
+                                                          .collections[index].id &&
+                                                  collectionSong.title == songTitle)
+                                              .id;
+
+                                          collectionsData.deleteCollectionSong(
+                                            collectionSongId,
+                                          );
+                                        }
+                                        setLocalState(() {
+                                          _songPresentInCollection[index] = value!;
+                                        });
+                                      },
+                                    ),
+                                    const Divider(),
+                                  ],
+                                );
+                              },
+                            )
+                          : Form(
+                              key: _formKey,
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                  border: UnderlineInputBorder(),
+                                  labelText: 'Collection name',
+                                ),
+                                // The validator receives the text that the user has entered.
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter the collection name.';
+                                  }
+                                  // if value exists in collectionsData.collections.name
+                                  // return 'Collection name already exists.';
+                                  if (collectionsData.collections
+                                      .any((collection) => collection.name == value)) {
+                                    return 'Collection name already exists.';
+                                  }
+
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  _songPresentInCollection.add(false);
+                                  int nextId =
+                                      getAvailableId(collectionsData.collections);
+
+                                  var collection = Collection(
+                                    id: nextId,
+                                    name: value!,
+                                    dateCreated: DateTime.now().toString(),
+                                  );
+                                  collectionsData.addCollection(collection);
+                                  initializeSongCollections(collectionsData);
+                                },
+                              ),
+                            ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  int getAvailableId(list) {
+    int nextId = 0;
+    if (list.isEmpty) {
+      nextId = 1;
+    } else {
+      // iterate through list ids and find the smallest available number
+      var ids = list.map((item) => item.id).toList();
+      ids.sort();
+      for (var i = 0; i < ids.length; i++) {
+        if (ids[i] != i + 1) {
+          nextId = i + 1;
+          break;
+        }
+        nextId = i + 2;
+      }
+    }
+    return nextId;
+  }
+
+  void initializeSongCollections(collectionsData) {
+    _songPresentInCollection.clear();
+    var collectionSongs = collectionsData.collectionSongs;
+    // for each collection, check if any collectionSong has the songTitle and add true or false to _songPresentInCollection
+    for (var collection in collectionsData.collections) {
+      if (collectionSongs.any((collectionSong) =>
+          collectionSong.collectionId == collection.id &&
+          collectionSong.title == songTitle)) {
+        _songPresentInCollection.add(true);
+      } else {
+        _songPresentInCollection.add(false);
+      }
+    }
+  }
+
+  Future<void> settingsBottomSheet(context) {
+    return showModalBottomSheet<void>(
+      isScrollControlled: true,
+      context: context,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width < 600
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width * 0.6,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
       ),
       builder: (BuildContext context) {
         return Padding(

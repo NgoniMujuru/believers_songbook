@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'search_bar.dart';
+import 'custom_search_bar.dart';
 import 'styles.dart';
 import 'song.dart';
 import '/models/song_search_result.dart';
@@ -96,7 +96,7 @@ class _SongsState extends State<Songs> {
   Widget _buildSearchBox() {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: SearchBar(
+      child: CustomSearchBar(
         controller: _controller,
         focusNode: _focusNode,
       ),
@@ -179,6 +179,7 @@ class _SongsState extends State<Songs> {
     String eol = fileName == 'ThirdExodusAssembly_Trinidad' ||
             fileName == 'KenyaLocalBelievers_Nairobi_Kenya' ||
             fileName == 'BibleTabernacle_CapeTown_SA' ||
+            fileName == "TokenTabernacle_Soweto_SA" ||
             fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe'
         ? '\r\n'
         : '\n';
@@ -272,8 +273,17 @@ class _SongsState extends State<Songs> {
   buildBottomSheet() {
     return showModalBottomSheet<void>(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width < 600
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width * 0.6,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(

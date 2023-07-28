@@ -1,3 +1,5 @@
+import 'package:believers_songbook/models/local_database.dart';
+import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +14,12 @@ import 'package:wakelock/wakelock.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SongSettings()),
     ChangeNotifierProvider(create: (context) => MainPageSettings()),
     ChangeNotifierProvider(create: (context) => ThemeSettings()),
+    ChangeNotifierProvider(create: (context) => CollectionsData()),
     ListenableProvider(create: (context) => SongBookSettings())
   ], child: MyApp()));
 }
@@ -28,6 +32,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    initCollections(context);
     Wakelock.enable();
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
@@ -66,4 +71,13 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+void initCollections(BuildContext context) async {
+  final collectionsData = context.read<CollectionsData>();
+  await LocalDatabase.initDatabase();
+  final collections = await LocalDatabase.getCollections();
+  collectionsData.setCollections(collections);
+  final collectionSongs = await LocalDatabase.getCollectionSongs();
+  collectionsData.setCollectionSongs(collectionSongs);
 }
