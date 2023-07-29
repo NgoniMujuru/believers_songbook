@@ -112,7 +112,7 @@ class _SongState extends State<Song> {
                       }
                     }
                     collectionsData.updateCollectionSongs(
-                        collectionSongsIds, _lyrics, widget.songKey);
+                        collectionSongsIds, _lyrics, _key);
                     const Duration duration = Duration(seconds: 2);
                     const snackBar = SnackBar(
                       content: Text('Song updated successfully.'),
