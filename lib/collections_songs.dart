@@ -116,8 +116,11 @@ class CollectionSongs extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                Song(songText: lyrics, songKey: key, songTitle: title)));
+                            builder: (context) => Song(
+                                songText: lyrics,
+                                songKey: key,
+                                songTitle: title,
+                                isCollectionSong: true)));
                   },
                   child: Consumer<SongSettings>(builder: (context, songSettings, child) {
                     return ListTile(

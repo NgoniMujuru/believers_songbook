@@ -10,13 +10,15 @@ import 'providers/song_settings.dart';
 
 class Song extends StatefulWidget {
   final String songTitle;
-  final String songText;
+  late final String songText;
   final String songKey;
+  final bool isCollectionSong;
 
-  const Song({
+  Song({
     required this.songText,
     required this.songTitle,
     required this.songKey,
+    required this.isCollectionSong,
     Key? key,
   }) : super(key: key);
 
@@ -26,6 +28,8 @@ class Song extends StatefulWidget {
 
 class _SongState extends State<Song> {
   bool _isSelectingCollection = true;
+  bool _isEditingSong = false;
+  final _lyricsFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(Object context) {
@@ -74,8 +78,11 @@ class _SongState extends State<Song> {
                                       fontWeight: FontWeight.bold))
                             else
                               const SizedBox(),
-                            SelectableText(widget.songText,
-                                style: TextStyle(fontSize: songSettings.fontSize)),
+                            if (_isEditingSong)
+                              editLyricsForm()
+                            else
+                              SelectableText(widget.songText,
+                                  style: TextStyle(fontSize: songSettings.fontSize)),
                           ],
                         ),
                       );
@@ -90,7 +97,34 @@ class _SongState extends State<Song> {
     );
   }
 
-  final _formKey = GlobalKey<FormState>();
+  Form editLyricsForm() {
+    return Form(
+      key: _lyricsFormKey,
+      child: TextFormField(
+        decoration: const InputDecoration(
+          border: UnderlineInputBorder(),
+          labelText: 'Lyrics',
+        ),
+        initialValue: widget.songText,
+        maxLines: null,
+        // The validator receives the text that the user has entered.
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter the lyrics.';
+          }
+          return null;
+        },
+        onSaved: (value) {
+          widget.songText = value!;
+          setState(() {
+            _isEditingSong = false;
+          });
+        },
+      ),
+    );
+  }
+
+  final _collectionsFormKey = GlobalKey<FormState>();
 
   final List<bool> _songPresentInCollection = [];
 
@@ -153,9 +187,9 @@ class _SongState extends State<Song> {
                     TextButton(
                       onPressed: () {
                         if (!_isSelectingCollection) {
-                          if (_formKey.currentState!.validate()) {
+                          if (_collectionsFormKey.currentState!.validate()) {
                             //save form
-                            _formKey.currentState!.save();
+                            _collectionsFormKey.currentState!.save();
 
                             setLocalState(() {
                               _isSelectingCollection = true;
@@ -235,7 +269,7 @@ class _SongState extends State<Song> {
                           },
                         )
                       : Form(
-                          key: _formKey,
+                          key: _collectionsFormKey,
                           child: TextFormField(
                             decoration: const InputDecoration(
                               border: UnderlineInputBorder(),
@@ -278,15 +312,17 @@ class _SongState extends State<Song> {
     );
   }
 
-  createCollectionSnackBar(String action, collectionName) {
+  void createCollectionSnackBar(String action, collectionName) {
+    const Duration duration = Duration(seconds: 1);
     final snackBar = MediaQuery.of(context).size.width > 600
         ? SnackBar(
             content: Text('Song $action $collectionName.'),
             margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.7),
             behavior: SnackBarBehavior.floating,
-          )
+            duration: duration)
         : SnackBar(
             content: Text('Song $action $collectionName.'),
+            duration: duration,
           );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
@@ -395,6 +431,24 @@ class _SongState extends State<Song> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      widget.isCollectionSong
+                          ? ElevatedButton(
+                              style: ButtonStyle(
+                                foregroundColor: MaterialStateColor.resolveWith(
+                                    (states) => Colors.white),
+                                backgroundColor: MaterialStateColor.resolveWith(
+                                    (states) => Styles.themeColor),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                setState(() {
+                                  _isEditingSong = true;
+                                });
+                              },
+                              child: const Text('Edit'),
+                            )
+                          : const SizedBox(),
+                      const SizedBox(width: 20),
                       ElevatedButton(
                         style: ButtonStyle(
                           foregroundColor:
@@ -410,7 +464,7 @@ class _SongState extends State<Song> {
                                   text: '$titleWithoutNumber\n\n${widget.songText}'))
                               .then((_) {});
                         },
-                        child: const Text('Copy Song'),
+                        child: const Text('Copy'),
                       ),
                       const SizedBox(width: 20),
                       ElevatedButton(
@@ -426,7 +480,7 @@ class _SongState extends State<Song> {
                               widget.songTitle.split('.').last.trim();
                           Share.share('$titleWithoutNumber\n\n${widget.songText}');
                         },
-                        child: const Text('Share Song'),
+                        child: const Text('Share'),
                       ),
                     ],
                   )

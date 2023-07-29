@@ -504,6 +504,7 @@ class SongsState extends State<Songs> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => Song(
+                                          isCollectionSong: false,
                                           songText:
                                               results!.elementAt(index).elementAt(3),
                                           songKey: results!.elementAt(index).elementAt(2),
@@ -558,10 +559,12 @@ class SongsState extends State<Songs> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => Song(
+                                  isCollectionSong: false,
                                   songText: results!.elementAt(index).elementAt(3),
                                   songKey: results!.elementAt(index).elementAt(2),
-                                  songTitle:
-                                      songNumAndTitle(results!.elementAt(index)))));
+                                  songTitle: songNumAndTitle(
+                                    results!.elementAt(index),
+                                  ))));
                     },
                     child:
                         Consumer<SongSettings>(builder: (context, songSettings, child) {
