@@ -83,6 +83,19 @@ class LocalDatabase {
     );
   }
 
+  // update collectionSongs from array
+  static Future<void> updateCollectionSongs(List<CollectionSong> collectionSongs) async {
+    final db = await database;
+    collectionSongs.forEach((collectionSong) async {
+      await db.update(
+        'collectionSongs',
+        collectionSong.toMap(),
+        where: 'id = ?',
+        whereArgs: [collectionSong.id],
+      );
+    });
+  }
+
   static Future<List<Collection>> getCollections() async {
     // Get a reference to the database.
     final db = await database;

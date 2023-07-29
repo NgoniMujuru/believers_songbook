@@ -59,6 +59,33 @@ class CollectionsData extends ChangeNotifier {
     notifyListeners();
     await LocalDatabase.deleteCollectionSong(collectionSongId);
   }
+
+  // update collection song
+  Future<void> updateCollectionSongs(
+      List<int> collectionSongIds, String lyrics, String key) async {
+    List<CollectionSong> updatedCollectionSongs = [];
+
+    for (int id in collectionSongIds) {
+      CollectionSong collectionSong =
+          _collectionSongs.firstWhere((collectionSong) => collectionSong.id == id);
+      _collectionSongs.removeWhere((song) => song.id == collectionSong.id);
+      CollectionSong updatedCollectionSong = CollectionSong(
+        id: collectionSong.id,
+        collectionId: collectionSong.collectionId,
+        lyrics: lyrics,
+        key: key,
+        title: collectionSong.title,
+      );
+      _collectionSongs.add(updatedCollectionSong);
+      _songsByCollection[collectionSong.collectionId]
+          ?.removeWhere((song) => song.id == collectionSong.id);
+      _songsByCollection[collectionSong.collectionId]?.add(updatedCollectionSong);
+      updatedCollectionSongs.add(updatedCollectionSong);
+    }
+    notifyListeners();
+
+    await LocalDatabase.updateCollectionSongs(updatedCollectionSongs);
+  }
 }
 
 Map<int, List<CollectionSong>> createSongsByCollection(collections, collectionSongs) {

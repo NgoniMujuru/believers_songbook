@@ -10,11 +10,11 @@ import 'providers/song_settings.dart';
 
 class Song extends StatefulWidget {
   final String songTitle;
-  late final String songText;
+  final String songText;
   final String songKey;
   final bool isCollectionSong;
 
-  Song({
+  const Song({
     required this.songText,
     required this.songTitle,
     required this.songKey,
@@ -29,10 +29,12 @@ class Song extends StatefulWidget {
 class _SongState extends State<Song> {
   bool _isSelectingCollection = true;
   bool _isEditingSong = false;
-  final _lyricsFormKey = GlobalKey<FormState>();
+  final _editSongFormKey = GlobalKey<FormState>();
+  late String _lyrics = widget.songText;
+  late String _key = widget.songKey;
 
   @override
-  Widget build(Object context) {
+  Widget build(BuildContext context) {
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
@@ -69,22 +71,21 @@ class _SongState extends State<Song> {
                         padding: MediaQuery.of(context).size.width > 600
                             ? const EdgeInsets.fromLTRB(80, 20, 16, 40)
                             : const EdgeInsets.fromLTRB(16, 20, 16, 40),
-                        child: Column(
-                          children: [
-                            if (songSettings.displayKey)
-                              Text(widget.songKey == '' ? '---' : widget.songKey,
-                                  style: TextStyle(
-                                      fontSize: songSettings.fontSize,
-                                      fontWeight: FontWeight.bold))
-                            else
-                              const SizedBox(),
-                            if (_isEditingSong)
-                              editLyricsForm()
-                            else
-                              SelectableText(widget.songText,
-                                  style: TextStyle(fontSize: songSettings.fontSize)),
-                          ],
-                        ),
+                        child: _isEditingSong
+                            ? editSongForm()
+                            : Column(
+                                children: [
+                                  if (songSettings.displayKey)
+                                    Text(_key == '' ? '---' : _key,
+                                        style: TextStyle(
+                                            fontSize: songSettings.fontSize,
+                                            fontWeight: FontWeight.bold))
+                                  else
+                                    const SizedBox(),
+                                  SelectableText(_lyrics,
+                                      style: TextStyle(fontSize: songSettings.fontSize)),
+                                ],
+                              ),
                       );
                     })
                   ],
@@ -93,33 +94,96 @@ class _SongState extends State<Song> {
             ),
           ),
         ),
+        floatingActionButton: _isEditingSong
+            ? FloatingActionButton(
+                onPressed: () {
+                  var collectionsData =
+                      Provider.of<CollectionsData>(context, listen: false);
+
+                  if (_editSongFormKey.currentState!.validate()) {
+                    //save form
+                    _editSongFormKey.currentState!.save();
+                    var collectionSongs = collectionsData.collectionSongs;
+                    List<int> collectionSongsIds = [];
+                    for (int i = 0; i < collectionSongs.length; i++) {
+                      CollectionSong collectionSong = collectionSongs[i];
+                      if (collectionSong.title == widget.songTitle) {
+                        collectionSongsIds.add(collectionSong.id);
+                      }
+                    }
+                    collectionsData.updateCollectionSongs(
+                        collectionSongsIds, _lyrics, widget.songKey);
+                    const Duration duration = Duration(seconds: 2);
+                    const snackBar = SnackBar(
+                      content: Text('Song updated successfully.'),
+                      duration: duration,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    setState(() {
+                      _isEditingSong = false;
+                      _lyrics = _lyrics;
+                      _key = _key;
+                    });
+                  }
+                },
+                child: const Icon(Icons.save),
+              )
+            : null,
       ),
     );
   }
 
-  Form editLyricsForm() {
+  Form editSongForm() {
     return Form(
-      key: _lyricsFormKey,
-      child: TextFormField(
-        decoration: const InputDecoration(
-          border: UnderlineInputBorder(),
-          labelText: 'Lyrics',
-        ),
-        initialValue: widget.songText,
-        maxLines: null,
-        // The validator receives the text that the user has entered.
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter the lyrics.';
-          }
-          return null;
-        },
-        onSaved: (value) {
-          widget.songText = value!;
-          setState(() {
-            _isEditingSong = false;
-          });
-        },
+      key: _editSongFormKey,
+      child: Column(
+        children: [
+          TextFormField(
+            decoration: const InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'Key',
+            ),
+            initialValue: _key,
+            // The validator receives the text that the user has entered.
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return null;
+              }
+
+              // strip value of sql injection characters: minimal
+              value = value.replaceAll(RegExp(r'[;\%*]'), '');
+              if (value.isEmpty) {
+                return 'Please enter valid key.';
+              }
+
+              return null;
+            },
+            onSaved: (value) => _key = value!,
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              border: UnderlineInputBorder(),
+              labelText: 'Lyrics',
+            ),
+            initialValue: _lyrics,
+            maxLines: null,
+            // The validator receives the text that the user has entered.
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the lyrics.';
+              }
+
+              // strip value of sql injection characters: minimal
+              value = value.replaceAll(RegExp(r'[;\%*]'), '');
+              if (value.isEmpty) {
+                return 'Please enter valid lyrics.';
+              }
+
+              return null;
+            },
+            onSaved: (value) => _lyrics = value!,
+          ),
+        ],
       ),
     );
   }
