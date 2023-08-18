@@ -1,5 +1,7 @@
 import 'package:believers_songbook/providers/song_book_settings.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
@@ -19,12 +21,12 @@ class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
 
   @override
-  _SongsState createState() {
-    return _SongsState();
+  SongsState createState() {
+    return SongsState();
   }
 }
 
-class _SongsState extends State<Songs> {
+class SongsState extends State<Songs> {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   String _fileName = '';
@@ -134,7 +136,9 @@ class _SongsState extends State<Songs> {
       _csvData?.addAll(songList);
     }
 
-    print(_csvData?.length ?? 0);
+    if (kDebugMode) {
+      print(_csvData?.length ?? 0);
+    }
 
     _csvData?.sort(
         (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
@@ -158,7 +162,9 @@ class _SongsState extends State<Songs> {
       }
     }
 
-    print(_csvData?.length ?? 0);
+    if (kDebugMode) {
+      print(_csvData?.length ?? 0);
+    }
 
     if (_sortBy == SortOrder.numerical) {
       _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
@@ -231,11 +237,11 @@ class _SongsState extends State<Songs> {
     if (_loadingSongs) {
       _songList = loadingSongbooks();
     } else {
-      _songList = results?.length == 0
+      _songList = results!.isEmpty
           ? noSearchSongsFound()
           : _sortBy == SortOrder.alphabetic
-              ? _buildAlphabeticList(results ?? [])
-              : _buildNumericList(results ?? []);
+              ? _buildAlphabeticList(results)
+              : _buildNumericList(results);
     }
 
     return SelectionArea(
@@ -291,7 +297,6 @@ class _SongsState extends State<Songs> {
             return Padding(
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Column(
@@ -366,6 +371,32 @@ class _SongsState extends State<Songs> {
                                 prefs.setString('sortOrder', SortOrder.alphabetic.name);
                               }),
                         ],
+                      ),
+                      const SizedBox(height: 10),
+                      const Text('Display Song Key:'),
+                      Consumer<SongSettings>(
+                        builder: (context, songSettings, child) => Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ChoiceChip(
+                              label: const Text('       Yes       '),
+                              selected: songSettings.displayKey == true,
+                              onSelected: (bool selected) async {
+                                var songSettings = context.read<SongSettings>();
+                                songSettings.setDisplayKey(true);
+                              },
+                            ),
+                            const SizedBox(width: 20),
+                            ChoiceChip(
+                              label: const Text('       No       '),
+                              selected: songSettings.displayKey == false,
+                              onSelected: (bool selected) async {
+                                var songSettings = context.read<SongSettings>();
+                                songSettings.setDisplayKey(false);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 10),
                       const Text('Search Songs By:'),
@@ -473,19 +504,25 @@ class _SongsState extends State<Songs> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => Song(
+                                          isCollectionSong: false,
                                           songText:
                                               results!.elementAt(index).elementAt(3),
                                           songKey: results!.elementAt(index).elementAt(2),
-                                          songTitle:
-                                              '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
+                                          songTitle: capitalizeFirstLetters(
+                                              results!.elementAt(index).elementAt(1)))));
                             },
-                            child: ListTile(
-                              title: Text(
-                                results == null
+                            child: Consumer<SongSettings>(
+                                builder: (context, songSettings, child) {
+                              return ListTile(
+                                title: Text(results == null
                                     ? 'Loading'
-                                    : '${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}',
-                              ),
-                            ),
+                                    : capitalizeFirstLetters(
+                                        results!.elementAt(index).elementAt(1))),
+                                trailing: songSettings.displayKey
+                                    ? Text(results!.elementAt(index).elementAt(2))
+                                    : null,
+                              );
+                            }),
                           ),
                         ),
                         const Divider(
@@ -522,16 +559,24 @@ class _SongsState extends State<Songs> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => Song(
+                                  isCollectionSong: false,
                                   songText: results!.elementAt(index).elementAt(3),
                                   songKey: results!.elementAt(index).elementAt(2),
-                                  songTitle:
-                                      '${results!.elementAt(index).elementAt(0)}. ${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}')));
+                                  songTitle: songNumAndTitle(
+                                    results!.elementAt(index),
+                                  ))));
                     },
-                    child: ListTile(
-                      title: Text(results == null
-                          ? 'Loading'
-                          : '${results!.elementAt(index).elementAt(0)}. ${capitalizeFirstLetters(results!.elementAt(index).elementAt(1))}'),
-                    ),
+                    child:
+                        Consumer<SongSettings>(builder: (context, songSettings, child) {
+                      return ListTile(
+                        title: Text(results == null
+                            ? 'Loading'
+                            : songNumAndTitle(results!.elementAt(index))),
+                        trailing: songSettings.displayKey
+                            ? Text(results!.elementAt(index).elementAt(2))
+                            : null,
+                      );
+                    }),
                   ),
                   const Divider(
                     height: 0.5,
@@ -546,7 +591,11 @@ class _SongsState extends State<Songs> {
     );
   }
 
-  capitalizeFirstLetters(String s) {
+  String songNumAndTitle(List song) {
+    return '${song.elementAt(0)}. ${capitalizeFirstLetters(song.elementAt(1))}';
+  }
+
+  String capitalizeFirstLetters(String s) {
     return s
         .split(' ')
         .map((str) =>
@@ -587,11 +636,11 @@ class _SongsState extends State<Songs> {
   }
 
   Expanded loadingSongbooks() {
-    return Expanded(
+    return const Expanded(
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             //loading icon
             Icon(
               Icons.hourglass_bottom,

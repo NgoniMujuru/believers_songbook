@@ -1,4 +1,5 @@
 import 'package:believers_songbook/providers/collections_data.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/song.dart';
 import 'package:believers_songbook/styles.dart';
@@ -35,9 +36,10 @@ class CollectionSongs extends StatelessWidget {
                               actions: [
                                 TextButton(
                                   onPressed: () async {
+                                    final navigator = Navigator.of(context);
                                     await collectionsData.deleteCollection(collectionId);
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
+                                    navigator.pop();
+                                    navigator.pop();
                                   },
                                   child: const Text(
                                     'Delete',
@@ -114,12 +116,20 @@ class CollectionSongs extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                Song(songText: lyrics, songKey: key, songTitle: title)));
+                            builder: (context) => Song(
+                                songText: lyrics,
+                                songKey: key,
+                                songTitle: title,
+                                isCollectionSong: true)));
                   },
-                  child: ListTile(
-                    title: Text(songs.elementAt(index).title),
-                  ),
+                  child: Consumer<SongSettings>(builder: (context, songSettings, child) {
+                    return ListTile(
+                      title: Text(songs.elementAt(index).title),
+                      trailing: songSettings.displayKey
+                          ? Text(songs.elementAt(index).key)
+                          : null,
+                    );
+                  }),
                 ),
                 const Divider(
                   height: 0.5,

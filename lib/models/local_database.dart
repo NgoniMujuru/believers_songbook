@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -7,6 +8,7 @@ import 'collection.dart';
 import 'collection_song.dart';
 
 class LocalDatabase {
+  // ignore: prefer_typing_uninitialized_variables
   static var database;
 
   static initDatabase() async {
@@ -18,7 +20,9 @@ class LocalDatabase {
       // path to perform database upgrades and downgrades.
       version: 1,
     );
-    print('Database initialized');
+    if (kDebugMode) {
+      print('Database initialized');
+    }
   }
 
   static Future<void> createDatabase(Database db, int version) async {
@@ -77,6 +81,19 @@ class LocalDatabase {
       where: 'id = ?',
       whereArgs: [collectionSongId],
     );
+  }
+
+  // update collectionSongs from array
+  static Future<void> updateCollectionSongs(List<CollectionSong> collectionSongs) async {
+    final db = await database;
+    collectionSongs.forEach((collectionSong) async {
+      await db.update(
+        'collectionSongs',
+        collectionSong.toMap(),
+        where: 'id = ?',
+        whereArgs: [collectionSong.id],
+      );
+    });
   }
 
   static Future<List<Collection>> getCollections() async {

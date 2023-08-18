@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -47,30 +49,8 @@ class AboutPage extends StatelessWidget {
                       RichText(
                           text: TextSpan(children: <TextSpan>[
                         TextSpan(
-                          text: "This app was made by a ",
-                          style: themeSettings.isDarkMode
-                              ? Styles.appInfoDark
-                              : Styles.appInfo,
-                        ),
-                        TextSpan(
-                          text: 'solo developer',
-                          style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () async {
-                              String url = "https://ngonimujuru.com";
-                              if (await canLaunchUrlString(url)) {
-                                await launchUrlString(url);
-                              } else {
-                                createDialog(
-                                    context,
-                                    'Website Could Not Be Launched Automatically',
-                                    'Visit website by copying the following url into your browser app: $url');
-                              }
-                            },
-                        ),
-                        TextSpan(
                           text:
-                              " with the invaluable support of family and friends. A special thanks goes to the wonderful saints who provided the songbooks and helped with testing. A special thank you also goes out to all the composers of the songs included in this app, whose beautiful and inspiring music has touched the hearts of so many. Please share this app with anyone who will find it helpful. A positive review on the app store will help others discover it too!",
+                              "This app was made for you. A special thanks goes to the wonderful saints who provided the songbooks and helped with testing. A special thank you also goes out to all the composers of the songs included in this app, whose beautiful and inspiring music has touched the hearts of so many. Please share this app with anyone who will find it helpful. A positive review on the app store will help others discover it too!",
                           style: themeSettings.isDarkMode
                               ? Styles.appInfoDark
                               : Styles.appInfo,
@@ -191,7 +171,7 @@ class AboutPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               Share.share(
-                                  'Check out the Songbook for Believers app, available for Android: https://bit.ly/songbook-for-believers-android and iOS: https://apps.apple.com/app/songbook-for-believers/id1667531237');
+                                  'Check out the Songbook for Believers app, available for Android and iOs devices: https://onelink.to/songbook');
                             },
                             child: const Text('Share App'),
                           ),
@@ -207,7 +187,7 @@ class AboutPage extends StatelessWidget {
                           child: Icon(Icons.handshake,
                               color: Styles.themeColor, size: 50.0)),
                       const Text(
-                        'v1.4.0 - 07/23',
+                        'v1.5.0 - 07/23',
                       ),
                     ],
                   )),
