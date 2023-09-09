@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'styles.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io' show Platform;
 
 class AboutPage extends StatelessWidget {
@@ -19,9 +21,15 @@ class AboutPage extends StatelessWidget {
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('About'),
-          scrolledUnderElevation: 4,
-        ),
+            title: Text(AppLocalizations.of(context)!.aboutSectionTitle),
+            scrolledUnderElevation: 4,
+            actions: <Widget>[
+              IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    buildSettingsBottomSheet(context);
+                  }),
+            ]),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Center(
@@ -34,13 +42,13 @@ class AboutPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Text(
-                        'Psalm 98:4',
+                        '${AppLocalizations.of(context)!.aboutBibleBook} 98:4',
                         style: themeSettings.isDarkMode
                             ? Styles.aboutHeaderDark
                             : Styles.aboutHeader,
                       ),
                       Text(
-                        'Make a joyful noise unto the Lord, all the earth: make a loud noise, and rejoice, and sing praise.',
+                        AppLocalizations.of(context)!.aboutBibleVerse,
                         style: themeSettings.isDarkMode
                             ? Styles.aboutHeaderDark
                             : Styles.aboutHeader,
@@ -49,33 +57,30 @@ class AboutPage extends StatelessWidget {
                       RichText(
                           text: TextSpan(children: <TextSpan>[
                         TextSpan(
-                          text:
-                              "This app was made for you. A special thanks goes to the wonderful saints who provided the songbooks and helped with testing. A special thank you also goes out to all the composers of the songs included in this app, whose beautiful and inspiring music has touched the hearts of so many. Please share this app with anyone who will find it helpful. A positive review on the app store will help others discover it too!",
+                          text: AppLocalizations.of(context)!.aboutDescriptionA,
                           style: themeSettings.isDarkMode
                               ? Styles.appInfoDark
                               : Styles.appInfo,
                         ),
                         TextSpan(
-                          text:
-                              "\n\nIf you have any feedback or would like to see your congregation's songbook added, don't hesitate to ",
+                          text: AppLocalizations.of(context)!.aboutDescriptionB,
                           style: themeSettings.isDarkMode
                               ? Styles.appInfoDark
                               : Styles.appInfo,
                         ),
                         TextSpan(
-                          text: 'contact us',
+                          text: AppLocalizations.of(context)!.aboutDescriptionC,
                           style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
                           recognizer: TapGestureRecognizer()..onTap = () async {},
                         ),
                         TextSpan(
-                          text:
-                              ' and let us know. For more resources, visit the Voice of God Recordings ',
+                          text: AppLocalizations.of(context)!.aboutDescriptionD,
                           style: themeSettings.isDarkMode
                               ? Styles.appInfoDark
                               : Styles.appInfo,
                         ),
                         TextSpan(
-                          text: 'website',
+                          text: AppLocalizations.of(context)!.aboutDescriptionE,
                           style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
@@ -85,20 +90,19 @@ class AboutPage extends StatelessWidget {
                               } else {
                                 createDialog(
                                     context,
-                                    'Website Could Not Be Launched Automatically',
-                                    'Visit website by copying the following url into your browser app: $url');
+                                    AppLocalizations.of(context)!.aboutDialogErrorTitle,
+                                    '${AppLocalizations.of(context)!.aboutDialogErrorTitle} $url');
                               }
                             },
                         ),
                         TextSpan(
-                          text:
-                              '. This app does not collect any personal information, as specified in the ',
+                          text: AppLocalizations.of(context)!.aboutDescriptionF,
                           style: themeSettings.isDarkMode
                               ? Styles.appInfoDark
                               : Styles.appInfo,
                         ),
                         TextSpan(
-                            text: 'privacy policy',
+                            text: AppLocalizations.of(context)!.aboutDescriptionG,
                             style:
                                 themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
                             recognizer: TapGestureRecognizer()
@@ -110,8 +114,8 @@ class AboutPage extends StatelessWidget {
                                 } else {
                                   createDialog(
                                       context,
-                                      'Policy Could Not Be Launched Automatically',
-                                      'Visit website by copying the following url into your browser app: $url');
+                                      AppLocalizations.of(context)!.aboutDialogErrorTitle,
+                                      '${AppLocalizations.of(context)!.aboutDialogErrorTitle} $url');
                                 }
                               }),
                         TextSpan(
@@ -135,7 +139,7 @@ class AboutPage extends StatelessWidget {
                             onPressed: () {
                               contactUs(context);
                             },
-                            child: const Text('Contact Us'),
+                            child: Text(AppLocalizations.of(context)!.aboutContactUsBtn),
                           ),
                           ElevatedButton(
                             style: ButtonStyle(
@@ -160,7 +164,7 @@ class AboutPage extends StatelessWidget {
                                 }
                               }
                             },
-                            child: const Text('Rate App'),
+                            child: Text(AppLocalizations.of(context)!.aboutRateAppBtn),
                           ),
                           ElevatedButton(
                             style: ButtonStyle(
@@ -171,14 +175,14 @@ class AboutPage extends StatelessWidget {
                             ),
                             onPressed: () {
                               Share.share(
-                                  'Check out the Songbook for Believers app, available for Android and iOs devices: https://onelink.to/songbook');
+                                  '${AppLocalizations.of(context)!.aboutShareText} https://onelink.to/songbook');
                             },
-                            child: const Text('Share App'),
+                            child: Text(AppLocalizations.of(context)!.aboutShareAppBtn),
                           ),
                         ],
                       ),
                       Text(
-                        'May God richly bless you!',
+                        AppLocalizations.of(context)!.aboutMayGodBless,
                         style: themeSettings.isDarkMode
                             ? Styles.appInfoDark
                             : Styles.appInfo,
@@ -209,7 +213,7 @@ class AboutPage extends StatelessWidget {
             content: Text(content),
             actions: [
               TextButton(
-                child: const Text('OK'),
+                child: Text(AppLocalizations.of(context)!.aboutDialogBtnOk),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -224,8 +228,8 @@ class AboutPage extends StatelessWidget {
     if (await canLaunchUrlString(emailUrl)) {
       await launchUrlString(emailUrl);
     } else {
-      createDialog(context, 'Email App Could Not Be Opened Automatically',
-          'You can use the following email address: songbookforbelievers@gmail.com');
+      createDialog(context, AppLocalizations.of(context)!.aboutDialogEmailErrorTitle,
+          '${AppLocalizations.of(context)!.aboutDialogEmailErrorDescription} songbookforbelievers@gmail.com');
     }
   }
 
@@ -236,8 +240,108 @@ class AboutPage extends StatelessWidget {
     if (await canLaunchUrlString(url)) {
       await launchUrlString(url);
     } else {
-      createDialog(context, 'App Store Could Not Be Launched Automatically',
-          'Visit website by copying the following url into your browser app: $url');
+      createDialog(context, AppLocalizations.of(context)!.aboutDialogReviewErrorTitle,
+          '${AppLocalizations.of(context)!.aboutDialogErrorDescription} $url');
     }
+  }
+
+  buildSettingsBottomSheet(context) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width < 600
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width * 0.6,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setLocalState) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(AppLocalizations.of(context)!.aboutLanguageSetting),
+                      Consumer<MainPageSettings>(
+                          builder: (context, mainPageSettings, child) => (Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ChoiceChip(
+                                      label: Text(AppLocalizations.of(context)!
+                                          .aboutLanguageSettingSwahili),
+                                      selected: mainPageSettings.getLocale == 'sw',
+                                      onSelected: (bool selected) async {
+                                        var settings = context.read<MainPageSettings>();
+                                        settings.setLocale('sw');
+                                      }),
+                                  const SizedBox(width: 20),
+                                  ChoiceChip(
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      label: Text(AppLocalizations.of(context)!
+                                          .aboutLanguageSettingFrench),
+                                      selected: mainPageSettings.getLocale == 'fr',
+                                      onSelected: (bool selected) async {
+                                        var settings = context.read<MainPageSettings>();
+                                        settings.setLocale('fr');
+                                      }),
+                                  const SizedBox(width: 20),
+                                  ChoiceChip(
+                                      label: Text(AppLocalizations.of(context)!
+                                          .aboutLanguageSettingEnglish),
+                                      selected: mainPageSettings.getLocale == 'en',
+                                      onSelected: (bool selected) async {
+                                        var settings = context.read<MainPageSettings>();
+                                        settings.setLocale('en');
+                                      }),
+                                ],
+                              ))),
+                      const SizedBox(height: 10),
+                      Text(AppLocalizations.of(context)!.aboutThemeSetting),
+                      Consumer<ThemeSettings>(
+                          builder: (context, themeSettings, child) => (Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ChoiceChip(
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      label: Text(
+                                          '    ${AppLocalizations.of(context)!.aboutThemeSettingLight}    '),
+                                      selected: !themeSettings.isDarkMode,
+                                      onSelected: (bool selected) async {
+                                        var themeSettings = context.read<ThemeSettings>();
+                                        themeSettings.setIsDarkMode(false);
+                                      }),
+                                  const SizedBox(width: 20),
+                                  ChoiceChip(
+                                      label: Text(
+                                          '      ${AppLocalizations.of(context)!.aboutThemeSettingDark}      '),
+                                      selected: themeSettings.isDarkMode,
+                                      onSelected: (bool selected) async {
+                                        var themeSettings = context.read<ThemeSettings>();
+                                        themeSettings.setIsDarkMode(true);
+                                      }),
+                                ],
+                              ))),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

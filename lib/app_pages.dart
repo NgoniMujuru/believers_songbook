@@ -20,71 +20,75 @@ class AppPages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<MainPageSettings>(builder: (context, settings, child) {
-      return Scaffold(
-          // navigation rail with same content as bottom navigation bar
-          body: Row(children: [
-            if (MediaQuery.of(context).size.width > 600)
-              NavigationRail(
-                onDestinationSelected: (int index) {
-                  settings.setOpenPageIndex(index);
-                },
-                groupAlignment: 0.0,
-                selectedIndex: settings.openPageIndex,
-                backgroundColor: Styles.themeColor.withAlpha(30),
-                indicatorColor: Styles.themeColor.withAlpha(50),
-                minWidth: 100,
-                elevation: 1,
-                labelType: NavigationRailLabelType.all,
-                destinations: const <NavigationRailDestination>[
-                  NavigationRailDestination(
-                      icon: Icon(Icons.lyrics),
-                      label: Text('Songs'),
-                      padding: EdgeInsets.all(10)),
-                  NavigationRailDestination(
-                      icon: Icon(Icons.book),
-                      label: Text('Songbooks'),
-                      padding: EdgeInsets.all(10)),
-                  NavigationRailDestination(
-                      icon: Icon(Icons.library_music),
-                      label: Text('Collections'),
-                      padding: EdgeInsets.all(10)),
-                  NavigationRailDestination(
-                      icon: Icon(Icons.info),
-                      label: Text('About'),
-                      padding: EdgeInsets.all(10)),
-                ],
-              ),
-            // This is the main content.
-            Expanded(
-              child: _widgetOptions.elementAt(settings.openPageIndex),
-            )
-          ]),
-          bottomNavigationBar: MediaQuery.of(context).size.width > 600
-              ? null
-              : NavigationBar(
+      return Localizations.override(
+        context: context,
+        locale: Locale(settings.locale),
+        child: Scaffold(
+            // navigation rail with same content as bottom navigation bar
+            body: Row(children: [
+              if (MediaQuery.of(context).size.width > 600)
+                NavigationRail(
                   onDestinationSelected: (int index) {
                     settings.setOpenPageIndex(index);
                   },
+                  groupAlignment: 0.0,
                   selectedIndex: settings.openPageIndex,
-                  destinations: const <Widget>[
-                    NavigationDestination(
-                      icon: Icon(Icons.lyrics),
-                      label: 'Songs',
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.book),
-                      label: 'Songbooks',
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.library_music),
-                      label: 'Collections',
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.info),
-                      label: 'About',
-                    ),
+                  backgroundColor: Styles.themeColor.withAlpha(30),
+                  indicatorColor: Styles.themeColor.withAlpha(50),
+                  minWidth: 100,
+                  elevation: 1,
+                  labelType: NavigationRailLabelType.all,
+                  destinations: const <NavigationRailDestination>[
+                    NavigationRailDestination(
+                        icon: Icon(Icons.lyrics),
+                        label: Text('Songs'),
+                        padding: EdgeInsets.all(10)),
+                    NavigationRailDestination(
+                        icon: Icon(Icons.book),
+                        label: Text('Songbooks'),
+                        padding: EdgeInsets.all(10)),
+                    NavigationRailDestination(
+                        icon: Icon(Icons.library_music),
+                        label: Text('Collections'),
+                        padding: EdgeInsets.all(10)),
+                    NavigationRailDestination(
+                        icon: Icon(Icons.info),
+                        label: Text('About'),
+                        padding: EdgeInsets.all(10)),
                   ],
-                ));
+                ),
+              // This is the main content.
+              Expanded(
+                child: _widgetOptions.elementAt(settings.openPageIndex),
+              )
+            ]),
+            bottomNavigationBar: MediaQuery.of(context).size.width > 600
+                ? null
+                : NavigationBar(
+                    onDestinationSelected: (int index) {
+                      settings.setOpenPageIndex(index);
+                    },
+                    selectedIndex: settings.openPageIndex,
+                    destinations: const <Widget>[
+                      NavigationDestination(
+                        icon: Icon(Icons.lyrics),
+                        label: 'Songs',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.book),
+                        label: 'Songbooks',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.library_music),
+                        label: 'Collections',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.info),
+                        label: 'About',
+                      ),
+                    ],
+                  )),
+      );
     });
   }
 }

@@ -7,6 +7,7 @@ import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'custom_search_bar.dart';
 import 'styles.dart';
@@ -247,7 +248,7 @@ class SongsState extends State<Songs> {
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text('Songs'),
+            title: Text(AppLocalizations.of(context)!.songsSectionTitle),
             // shadowColor: Styles.themeColor,
             scrolledUnderElevation: 4,
             actions: <Widget>[

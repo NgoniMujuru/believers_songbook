@@ -11,6 +11,8 @@ import 'providers/song_settings.dart';
 import 'providers/song_book_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,8 +36,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     initCollections(context);
     Wakelock.enable();
+    // investigate multiple providers
+    // add language modal here, updates app state
+    // setup internationalization
+    // Zulu, Afrikaans, English, French, Swahili
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          // Locale('af'), // Afrikaans
+          Locale('en'), // English
+          Locale('fr'), // French
+          // Locale('de'), // German
+          // Locale('es'), // Spanish
+          Locale('sw'), // Swahili
+          // Locale('zu'), // Zulu
+        ],
         theme: ThemeData(
           useMaterial3: true,
           colorSchemeSeed: Styles.themeColor,
