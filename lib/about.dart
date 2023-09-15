@@ -246,6 +246,7 @@ class AboutPage extends StatelessWidget {
   }
 
   buildSettingsBottomSheet(context) {
+    // Language settings on labels were not updating without closing and opening widget. Had to add more consumers to refresh the widget
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -263,82 +264,94 @@ class AboutPage extends StatelessWidget {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setLocalState) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(AppLocalizations.of(context)!.aboutLanguageSetting),
-                      Consumer<MainPageSettings>(
-                          builder: (context, mainPageSettings, child) => (Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+            return Consumer<MainPageSettings>(
+                builder: (context, mainPageSettings, child) => (Localizations.override(
+                      context: context,
+                      locale: Locale(mainPageSettings.getLocale),
+                      child: Consumer<MainPageSettings>(
+                        builder: (context, mainPageSettings, child) => (Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ChoiceChip(
-                                      label: Text(AppLocalizations.of(context)!
-                                          .aboutLanguageSettingSwahili),
-                                      selected: mainPageSettings.getLocale == 'sw',
-                                      onSelected: (bool selected) async {
-                                        var settings = context.read<MainPageSettings>();
-                                        settings.setLocale('sw');
-                                      }),
-                                  const SizedBox(width: 20),
-                                  ChoiceChip(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      label: Text(AppLocalizations.of(context)!
-                                          .aboutLanguageSettingFrench),
-                                      selected: mainPageSettings.getLocale == 'fr',
-                                      onSelected: (bool selected) async {
-                                        var settings = context.read<MainPageSettings>();
-                                        settings.setLocale('fr');
-                                      }),
-                                  const SizedBox(width: 20),
-                                  ChoiceChip(
-                                      label: Text(AppLocalizations.of(context)!
-                                          .aboutLanguageSettingEnglish),
-                                      selected: mainPageSettings.getLocale == 'en',
-                                      onSelected: (bool selected) async {
-                                        var settings = context.read<MainPageSettings>();
-                                        settings.setLocale('en');
-                                      }),
+                                  Text(
+                                      AppLocalizations.of(context)!.aboutLanguageSetting),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      ChoiceChip(
+                                          label: Text(AppLocalizations.of(context)!
+                                              .aboutLanguageSettingSwahili),
+                                          selected: mainPageSettings.getLocale == 'sw',
+                                          onSelected: (bool selected) async {
+                                            var settings =
+                                                context.read<MainPageSettings>();
+                                            settings.setLocale('sw');
+                                          }),
+                                      const SizedBox(width: 20),
+                                      ChoiceChip(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          label: Text(AppLocalizations.of(context)!
+                                              .aboutLanguageSettingFrench),
+                                          selected: mainPageSettings.getLocale == 'fr',
+                                          onSelected: (bool selected) async {
+                                            var settings =
+                                                context.read<MainPageSettings>();
+                                            settings.setLocale('fr');
+                                          }),
+                                      const SizedBox(width: 20),
+                                      ChoiceChip(
+                                          label: Text(AppLocalizations.of(context)!
+                                              .aboutLanguageSettingEnglish),
+                                          selected: mainPageSettings.getLocale == 'en',
+                                          onSelected: (bool selected) async {
+                                            var settings =
+                                                context.read<MainPageSettings>();
+                                            settings.setLocale('en');
+                                          }),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(AppLocalizations.of(context)!.aboutThemeSetting),
+                                  Consumer<ThemeSettings>(
+                                      builder: (context, themeSettings, child) => (Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              ChoiceChip(
+                                                  materialTapTargetSize:
+                                                      MaterialTapTargetSize.shrinkWrap,
+                                                  label: Text(
+                                                      '    ${AppLocalizations.of(context)!.aboutThemeSettingLight}    '),
+                                                  selected: !themeSettings.isDarkMode,
+                                                  onSelected: (bool selected) async {
+                                                    var themeSettings =
+                                                        context.read<ThemeSettings>();
+                                                    themeSettings.setIsDarkMode(false);
+                                                  }),
+                                              const SizedBox(width: 20),
+                                              ChoiceChip(
+                                                  label: Text(
+                                                      '      ${AppLocalizations.of(context)!.aboutThemeSettingDark}      '),
+                                                  selected: themeSettings.isDarkMode,
+                                                  onSelected: (bool selected) async {
+                                                    var themeSettings =
+                                                        context.read<ThemeSettings>();
+                                                    themeSettings.setIsDarkMode(true);
+                                                  }),
+                                            ],
+                                          ))),
                                 ],
-                              ))),
-                      const SizedBox(height: 10),
-                      Text(AppLocalizations.of(context)!.aboutThemeSetting),
-                      Consumer<ThemeSettings>(
-                          builder: (context, themeSettings, child) => (Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  ChoiceChip(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      label: Text(
-                                          '    ${AppLocalizations.of(context)!.aboutThemeSettingLight}    '),
-                                      selected: !themeSettings.isDarkMode,
-                                      onSelected: (bool selected) async {
-                                        var themeSettings = context.read<ThemeSettings>();
-                                        themeSettings.setIsDarkMode(false);
-                                      }),
-                                  const SizedBox(width: 20),
-                                  ChoiceChip(
-                                      label: Text(
-                                          '      ${AppLocalizations.of(context)!.aboutThemeSettingDark}      '),
-                                      selected: themeSettings.isDarkMode,
-                                      onSelected: (bool selected) async {
-                                        var themeSettings = context.read<ThemeSettings>();
-                                        themeSettings.setIsDarkMode(true);
-                                      }),
-                                ],
-                              ))),
-                    ],
-                  ),
-                ],
-              ),
-            );
+                              ),
+                            ],
+                          ),
+                        )),
+                      ),
+                    )));
           },
         );
       },
