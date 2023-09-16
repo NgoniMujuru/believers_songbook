@@ -5,6 +5,7 @@ import 'package:believers_songbook/song.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CollectionSongs extends StatelessWidget {
   final int collectionId;
@@ -17,79 +18,82 @@ class CollectionSongs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionsData>(
-        builder: (context, collectionsData, child) => (SelectionArea(
-              child: Scaffold(
-                appBar: AppBar(
-                  title: Text(getCollectionName(collectionsData, collectionId)),
-                  scrolledUnderElevation: 4,
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Are you sure?'),
-                              content: const Text(
-                                  'This will delete this collection. This action cannot be undone.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () async {
-                                    final navigator = Navigator.of(context);
-                                    await collectionsData.deleteCollection(collectionId);
-                                    navigator.pop();
-                                    navigator.pop();
-                                  },
-                                  child: const Text(
-                                    'Delete',
-                                    style: TextStyle(
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Cancel'),
-                                )
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                body: SafeArea(
-                  child: collectionsData.songsByCollection[collectionId] == null ||
-                          collectionsData.songsByCollection[collectionId]!.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: MediaQuery.of(context).size.width > 600
-                                ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
-                                : const EdgeInsets.all(20.0),
-                            child: Consumer<ThemeSettings>(
-                              builder: (context, themeSettings, child) => (Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Text(
-                                    "This collection has no songs. Add songs to this collection by opening a song and selecting the collections menu icon on the top right corner.",
-                                    style: themeSettings.isDarkMode
-                                        ? Styles.aboutHeaderDark
-                                        : Styles.aboutHeader,
-                                  ),
-                                ],
-                              )),
+      builder: (context, collectionsData, child) => (SelectionArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(getCollectionName(collectionsData, collectionId)),
+            scrolledUnderElevation: 4,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(
+                            AppLocalizations.of(context)!.collectionSongsDialogTitle),
+                        content:
+                            Text(AppLocalizations.of(context)!.collectionSongsDialogText),
+                        actions: [
+                          TextButton(
+                            onPressed: () async {
+                              final navigator = Navigator.of(context);
+                              await collectionsData.deleteCollection(collectionId);
+                              navigator.pop();
+                              navigator.pop();
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.collectionSongsDialogDelete,
+                              style: const TextStyle(
+                                color: Colors.red,
+                              ),
                             ),
                           ),
-                        )
-                      : _buildCollectionList(
-                          context, collectionsData.songsByCollection[collectionId]),
-                ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(AppLocalizations.of(context)!
+                                .collectionSongsDialogCancel),
+                          )
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
-            )));
+            ],
+          ),
+          body: SafeArea(
+            child: collectionsData.songsByCollection[collectionId] == null ||
+                    collectionsData.songsByCollection[collectionId]!.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: MediaQuery.of(context).size.width > 600
+                          ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
+                          : const EdgeInsets.all(20.0),
+                      child: Consumer<ThemeSettings>(
+                        builder: (context, themeSettings, child) => (Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!.collectionSongsEmptyStateText,
+                              style: themeSettings.isDarkMode
+                                  ? Styles.aboutHeaderDark
+                                  : Styles.aboutHeader,
+                            ),
+                          ],
+                        )),
+                      ),
+                    ),
+                  )
+                : _buildCollectionList(
+                    context, collectionsData.songsByCollection[collectionId]),
+          ),
+        ),
+      )),
+    );
   }
 
   Widget _buildCollectionList(context, songs) {

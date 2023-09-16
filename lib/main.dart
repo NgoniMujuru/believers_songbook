@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.hasError) {
               return const Text('Loading songbooks failed, please try again later');
             } else if (snapshot.hasData) {
-              return const AppPages();
+              return AppPages();
             } else {
               return const Center(
                 child: CircularProgressIndicator(),

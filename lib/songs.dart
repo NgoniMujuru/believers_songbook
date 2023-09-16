@@ -36,7 +36,7 @@ class SongsState extends State<Songs> {
   SearchBy? _searchBy;
   Expanded _songList = const Expanded(
     child: Center(
-      child: Text('Loading...'),
+      child: Text('...'),
     ),
   );
   List<List<dynamic>>? _csvData = [];
@@ -248,7 +248,7 @@ class SongsState extends State<Songs> {
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.songsSectionTitle),
+            title: Text(AppLocalizations.of(context)!.songsPageTitle),
             // shadowColor: Styles.themeColor,
             scrolledUnderElevation: 4,
             actions: <Widget>[
@@ -304,7 +304,7 @@ class SongsState extends State<Songs> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Theme:'),
+                      Text(AppLocalizations.of(context)!.globalThemeSetting),
                       Consumer<ThemeSettings>(
                           builder: (context, themeSettings, child) => (Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -312,7 +312,8 @@ class SongsState extends State<Songs> {
                                   ChoiceChip(
                                       materialTapTargetSize:
                                           MaterialTapTargetSize.shrinkWrap,
-                                      label: const Text('    Light    '),
+                                      label: Text(AppLocalizations.of(context)!
+                                          .globalThemeSettingLight),
                                       selected: !themeSettings.isDarkMode,
                                       onSelected: (bool selected) async {
                                         var themeSettings = context.read<ThemeSettings>();
@@ -320,7 +321,8 @@ class SongsState extends State<Songs> {
                                       }),
                                   const SizedBox(width: 20),
                                   ChoiceChip(
-                                      label: const Text('      Dark      '),
+                                      label: Text(AppLocalizations.of(context)!
+                                          .globalThemeSettingDark),
                                       selected: themeSettings.isDarkMode,
                                       onSelected: (bool selected) async {
                                         var themeSettings = context.read<ThemeSettings>();
@@ -329,12 +331,13 @@ class SongsState extends State<Songs> {
                                 ],
                               ))),
                       const SizedBox(height: 10),
-                      const Text('Sort Order:'),
+                      Text(AppLocalizations.of(context)!.songsPageSortOrder),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ChoiceChip(
-                            label: const Text('Numerical'),
+                            label: Text(AppLocalizations.of(context)!
+                                .songsPageSortOrderNumerical),
                             selected: _sortBy == SortOrder.numerical,
                             onSelected: (bool selected) async {
                               _csvData?.sort(
@@ -353,7 +356,8 @@ class SongsState extends State<Songs> {
                           ),
                           const SizedBox(width: 20),
                           ChoiceChip(
-                              label: const Text('Alphabetical'),
+                              label: Text(AppLocalizations.of(context)!
+                                  .songsPageSortOrderAlphabetic),
                               selected: _sortBy == SortOrder.alphabetic,
                               onSelected: (bool selected) async {
                                 _csvData?.sort((a, b) => a
@@ -374,13 +378,14 @@ class SongsState extends State<Songs> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      const Text('Display Song Key:'),
+                      Text(AppLocalizations.of(context)!.globalDisplaySongKey),
                       Consumer<SongSettings>(
                         builder: (context, songSettings, child) => Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             ChoiceChip(
-                              label: const Text('       Yes       '),
+                              label: Text(
+                                  AppLocalizations.of(context)!.globalDisplaySongKeyYes),
                               selected: songSettings.displayKey == true,
                               onSelected: (bool selected) async {
                                 var songSettings = context.read<SongSettings>();
@@ -389,7 +394,8 @@ class SongsState extends State<Songs> {
                             ),
                             const SizedBox(width: 20),
                             ChoiceChip(
-                              label: const Text('       No       '),
+                              label: Text(
+                                  AppLocalizations.of(context)!.globalDisplaySongKeyNo),
                               selected: songSettings.displayKey == false,
                               onSelected: (bool selected) async {
                                 var songSettings = context.read<SongSettings>();
@@ -400,12 +406,13 @@ class SongsState extends State<Songs> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Text('Search Songs By:'),
+                      Text(AppLocalizations.of(context)!.songsPageSearchSongsBy),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           ChoiceChip(
-                              label: const Text('Both'),
+                              label: Text(AppLocalizations.of(context)!
+                                  .songsPageSearchSongsByBoth),
                               selected: _searchBy == SearchBy.both,
                               onSelected: (bool selected) async {
                                 setState(() {
@@ -421,7 +428,8 @@ class SongsState extends State<Songs> {
                               }),
                           const SizedBox(width: 20),
                           ChoiceChip(
-                            label: const Text('Title'),
+                            label: Text(AppLocalizations.of(context)!
+                                .songsPageSearchSongsByTitle),
                             selected: _searchBy == SearchBy.title,
                             onSelected: (bool selected) async {
                               setState(() {
@@ -438,7 +446,8 @@ class SongsState extends State<Songs> {
                           ),
                           const SizedBox(width: 20),
                           ChoiceChip(
-                              label: const Text('Lyrics'),
+                              label: Text(AppLocalizations.of(context)!
+                                  .songsPageSearchSongsByLyrics),
                               selected: _searchBy == SearchBy.lyrics,
                               onSelected: (bool selected) async {
                                 setState(() {
@@ -516,7 +525,7 @@ class SongsState extends State<Songs> {
                                 builder: (context, songSettings, child) {
                               return ListTile(
                                 title: Text(results == null
-                                    ? 'Loading'
+                                    ? AppLocalizations.of(context)!.songsPageLoading
                                     : capitalizeFirstLetters(
                                         results!.elementAt(index).elementAt(1))),
                                 trailing: songSettings.displayKey
@@ -571,7 +580,7 @@ class SongsState extends State<Songs> {
                         Consumer<SongSettings>(builder: (context, songSettings, child) {
                       return ListTile(
                         title: Text(results == null
-                            ? 'Loading'
+                            ? AppLocalizations.of(context)!.songsPageLoading
                             : songNumAndTitle(results!.elementAt(index))),
                         trailing: songSettings.displayKey
                             ? Text(results!.elementAt(index).elementAt(2))
@@ -625,7 +634,7 @@ class SongsState extends State<Songs> {
             Padding(
               padding: const EdgeInsets.fromLTRB(40.0, 0, 40.0, 0),
               child: Text(
-                'No songs found with words "$_terms" in $songbook Songbook.',
+                '$songbook ${AppLocalizations.of(context)!.songsPageNoSongsFound} "$_terms"',
                 style: const TextStyle(
                     fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
               ),
@@ -637,26 +646,26 @@ class SongsState extends State<Songs> {
   }
 
   Expanded loadingSongbooks() {
-    return const Expanded(
+    return Expanded(
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             //loading icon
-            Icon(
+            const Icon(
               Icons.hourglass_bottom,
               size: 200,
               color: Colors.grey,
             ),
 
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(40.0, 0, 40.0, 0),
+              padding: const EdgeInsets.fromLTRB(40.0, 0, 40.0, 0),
               child: Text(
-                'Loading songs. Please be patient, this can take a bit of time.',
-                style: TextStyle(
+                AppLocalizations.of(context)!.songsPageLoadingSongbooksText,
+                style: const TextStyle(
                     fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
               ),
             ),

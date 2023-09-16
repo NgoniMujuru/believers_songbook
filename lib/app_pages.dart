@@ -8,7 +8,7 @@ import 'about.dart';
 import 'song_books.dart';
 
 class AppPages extends StatelessWidget {
-  const AppPages({super.key});
+  AppPages({super.key});
 
   static final List<Widget> _widgetOptions = <Widget>[
     const Songs(),
@@ -17,9 +17,39 @@ class AppPages extends StatelessWidget {
     AboutPage(),
   ];
 
+// manual language translations as flutter_localizations was not working for nav elements
+  final Map<String, Map<String, String>> titleMap = {
+    'en': {
+      'aboutPageTitle': 'About',
+      'collectionPageTitle': 'Collections',
+      'songBooksPageTitle': 'Songbooks',
+      'songsPageTitle': 'Songs',
+    },
+    'fr': {
+      'aboutPageTitle': 'À propos',
+      'collectionPageTitle': 'Collections',
+      'songBooksPageTitle': 'Congrégations',
+      'songsPageTitle': 'Chansons',
+    },
+    'sw': {
+      'aboutPageTitle': 'Kuhusu',
+      'collectionPageTitle': 'Makusanyo',
+      'songBooksPageTitle': 'Makutano',
+      'songsPageTitle': 'Nyimbo',
+    },
+  };
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MainPageSettings>(builder: (context, settings, child) {
+      String locale = settings.locale;
+      Map<String, String>? titles = titleMap[locale] ?? titleMap['en'];
+
+      String? aboutPageTitle = titles?['aboutPageTitle'];
+      String? collectionPageTitle = titles?['collectionPageTitle'];
+      String? songBooksPageTitle = titles?['songBooksPageTitle'];
+      String? songsPageTitle = titles?['songsPageTitle'];
+
       return Localizations.override(
         context: context,
         locale: Locale(settings.locale),
@@ -38,23 +68,23 @@ class AppPages extends StatelessWidget {
                   minWidth: 100,
                   elevation: 1,
                   labelType: NavigationRailLabelType.all,
-                  destinations: const <NavigationRailDestination>[
+                  destinations: <NavigationRailDestination>[
                     NavigationRailDestination(
-                        icon: Icon(Icons.lyrics),
-                        label: Text('Songs'),
-                        padding: EdgeInsets.all(10)),
+                        icon: const Icon(Icons.lyrics),
+                        label: Text(songsPageTitle!),
+                        padding: const EdgeInsets.all(10)),
                     NavigationRailDestination(
-                        icon: Icon(Icons.book),
-                        label: Text('Songbooks'),
-                        padding: EdgeInsets.all(10)),
+                        icon: const Icon(Icons.book),
+                        label: Text(songBooksPageTitle!),
+                        padding: const EdgeInsets.all(10)),
                     NavigationRailDestination(
-                        icon: Icon(Icons.library_music),
-                        label: Text('Collections'),
-                        padding: EdgeInsets.all(10)),
+                        icon: const Icon(Icons.library_music),
+                        label: Text(collectionPageTitle!),
+                        padding: const EdgeInsets.all(10)),
                     NavigationRailDestination(
-                        icon: Icon(Icons.info),
-                        label: Text('About'),
-                        padding: EdgeInsets.all(10)),
+                        icon: const Icon(Icons.info),
+                        label: Text(aboutPageTitle!),
+                        padding: const EdgeInsets.all(10)),
                   ],
                 ),
               // This is the main content.
@@ -69,22 +99,22 @@ class AppPages extends StatelessWidget {
                       settings.setOpenPageIndex(index);
                     },
                     selectedIndex: settings.openPageIndex,
-                    destinations: const <Widget>[
+                    destinations: <Widget>[
                       NavigationDestination(
-                        icon: Icon(Icons.lyrics),
-                        label: 'Songs',
+                        icon: const Icon(Icons.lyrics),
+                        label: songsPageTitle!,
                       ),
                       NavigationDestination(
-                        icon: Icon(Icons.book),
-                        label: 'Songbooks',
+                        icon: const Icon(Icons.book),
+                        label: songBooksPageTitle!,
                       ),
                       NavigationDestination(
-                        icon: Icon(Icons.library_music),
-                        label: 'Collections',
+                        icon: const Icon(Icons.library_music),
+                        label: collectionPageTitle!,
                       ),
                       NavigationDestination(
-                        icon: Icon(Icons.info),
-                        label: 'About',
+                        icon: const Icon(Icons.info),
+                        label: aboutPageTitle!,
                       ),
                     ],
                   )),

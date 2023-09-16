@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.aboutSectionTitle),
+            title: Text(AppLocalizations.of(context)!.aboutPageTitle),
             scrolledUnderElevation: 4,
             actions: <Widget>[
               IconButton(
@@ -317,7 +317,7 @@ class AboutPage extends StatelessWidget {
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  Text(AppLocalizations.of(context)!.aboutThemeSetting),
+                                  Text(AppLocalizations.of(context)!.globalThemeSetting),
                                   Consumer<ThemeSettings>(
                                       builder: (context, themeSettings, child) => (Row(
                                             mainAxisAlignment: MainAxisAlignment.end,
@@ -326,7 +326,7 @@ class AboutPage extends StatelessWidget {
                                                   materialTapTargetSize:
                                                       MaterialTapTargetSize.shrinkWrap,
                                                   label: Text(
-                                                      '    ${AppLocalizations.of(context)!.aboutThemeSettingLight}    '),
+                                                      '    ${AppLocalizations.of(context)!.globalThemeSettingLight}    '),
                                                   selected: !themeSettings.isDarkMode,
                                                   onSelected: (bool selected) async {
                                                     var themeSettings =
@@ -336,7 +336,7 @@ class AboutPage extends StatelessWidget {
                                               const SizedBox(width: 20),
                                               ChoiceChip(
                                                   label: Text(
-                                                      '      ${AppLocalizations.of(context)!.aboutThemeSettingDark}      '),
+                                                      '      ${AppLocalizations.of(context)!.globalThemeSettingDark}      '),
                                                   selected: themeSettings.isDarkMode,
                                                   onSelected: (bool selected) async {
                                                     var themeSettings =

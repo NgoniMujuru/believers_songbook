@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'collections_songs.dart';
 import 'styles.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Collections extends StatelessWidget {
   const Collections({super.key});
@@ -16,7 +17,7 @@ class Collections extends StatelessWidget {
       builder: (context, collectionsData, child) => (SelectionArea(
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Collections'),
+            title: Text(AppLocalizations.of(context)!.globalCollections),
             scrolledUnderElevation: 4,
           ),
           body: SafeArea(
@@ -32,7 +33,7 @@ class Collections extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
-                              'Create your own song collections. Open a song and select the collections menu icon on the top right corner.',
+                              AppLocalizations.of(context)!.collectionsEmptyStateText,
                               style: themeSettings.isDarkMode
                                   ? Styles.aboutHeaderDark
                                   : Styles.aboutHeader,
@@ -63,7 +64,9 @@ class Collections extends StatelessWidget {
           itemBuilder: (context, index) {
             int? numSongs =
                 songsByCollection[collectionsData.collections[index].id]?.length;
-            String numSongsString = numSongs == 1 ? 'song' : 'songs';
+            String numSongsString = numSongs == 1
+                ? AppLocalizations.of(context)!.globalSong
+                : AppLocalizations.of(context)!.collectionsSongs;
             DateTime dateTime =
                 DateTime.parse(collectionsData.collections[index].dateCreated);
             String formattedDate = DateFormat('dd MMMM yyyy').format(dateTime);
@@ -77,7 +80,8 @@ class Collections extends StatelessWidget {
                   ListTile(
                       title: Text(collectionsData.collections[index].name),
                       trailing: Text('$numSongs $numSongsString'),
-                      subtitle: Text('Created: $formattedDate'),
+                      subtitle: Text(
+                          '${AppLocalizations.of(context)!.collectionsCreated}: $formattedDate'),
                       onTap: () {
                         int collectionId = collectionsData.collections[index].id;
                         Navigator.push(
