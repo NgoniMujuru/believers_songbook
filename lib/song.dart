@@ -492,7 +492,7 @@ class _SongState extends State<Song> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(AppLocalizations.of(context)!.globalSong),
+                                  Text(AppLocalizations.of(context)!.songPageFontSize),
                                   Consumer<SongSettings>(
                                     builder: (context, songSettings, child) => Slider(
                                       value: songSettings.fontSize,
