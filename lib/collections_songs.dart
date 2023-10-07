@@ -1,6 +1,7 @@
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/song.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
@@ -30,35 +31,44 @@ class CollectionSongs extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        title: Text(
-                            AppLocalizations.of(context)!.collectionSongsDialogTitle),
-                        content:
-                            Text(AppLocalizations.of(context)!.collectionSongsDialogText),
-                        actions: [
-                          TextButton(
-                            onPressed: () async {
-                              final navigator = Navigator.of(context);
-                              await collectionsData.deleteCollection(collectionId);
-                              navigator.pop();
-                              navigator.pop();
-                            },
-                            child: Text(
-                              AppLocalizations.of(context)!.collectionSongsDialogDelete,
-                              style: const TextStyle(
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(AppLocalizations.of(context)!
-                                .collectionSongsDialogCancel),
-                          )
-                        ],
-                      );
+                      return Consumer<MainPageSettings>(
+                          builder: (context, mainPageSettings, child) =>
+                              (Localizations.override(
+                                  context: context,
+                                  locale: Locale(mainPageSettings.getLocale),
+                                  child: Consumer<MainPageSettings>(
+                                      builder: (context, mainPageSettings, child) =>
+                                          (AlertDialog(
+                                            title: Text(AppLocalizations.of(context)!
+                                                .collectionSongsDialogTitle),
+                                            content: Text(AppLocalizations.of(context)!
+                                                .collectionSongsDialogText),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () async {
+                                                  final navigator = Navigator.of(context);
+                                                  await collectionsData
+                                                      .deleteCollection(collectionId);
+                                                  navigator.pop();
+                                                  navigator.pop();
+                                                },
+                                                child: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .collectionSongsDialogDelete,
+                                                  style: const TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(AppLocalizations.of(context)!
+                                                    .collectionSongsDialogCancel),
+                                              )
+                                            ],
+                                          ))))));
                     },
                   );
                 },

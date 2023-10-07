@@ -71,7 +71,10 @@ class AboutPage extends StatelessWidget {
                         TextSpan(
                           text: AppLocalizations.of(context)!.aboutDescriptionC,
                           style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
-                          recognizer: TapGestureRecognizer()..onTap = () async {},
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              contactUs(context);
+                            },
                         ),
                         TextSpan(
                           text: AppLocalizations.of(context)!.aboutDescriptionD,
