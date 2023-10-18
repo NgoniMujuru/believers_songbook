@@ -8,11 +8,13 @@ class SongBookAssets {
       'Last Updated': '2023-01-15',
       'Languages': [
         'Afrikaans',
+        'Bemba',
         'English',
         'French',
         'German',
         'Lingala',
         'Ndebele',
+        'Nyanja',
         'Shona',
         'Swahili'
       ]
@@ -42,6 +44,14 @@ class SongBookAssets {
       'Languages': ['English', 'Ndebele', 'Shona'],
     },
     {
+      'Title': 'Hebron Tabernacle',
+      'Location': 'Lusaka, Zambia',
+      'Songs': '',
+      'FileName': 'HebronTabernacle_Lusaka_Zambia',
+      'Last Updated': '2023-10-17',
+      'Languages': ['Bemba', 'English', 'Nyanja'],
+    },
+    {
       'Title': 'Kenya Local Believers',
       'Location': 'Nairobi, Kenya',
       'Songs': '',
@@ -55,7 +65,7 @@ class SongBookAssets {
       'Songs': '2078',
       'FileName': 'KilsythBelieversChristianFellowship_Kilsyth_Scotland',
       'Last Updated': '2023-01-15',
-      'Languages': ['German', 'English']
+      'Languages': ['English', 'German']
     },
     {
       'Title': 'Nyimbo za Injili',
