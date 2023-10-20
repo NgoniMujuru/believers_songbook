@@ -1,5 +1,6 @@
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
+import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
@@ -7,6 +8,7 @@ import 'models/collection.dart';
 import 'styles.dart';
 import 'package:provider/provider.dart';
 import 'providers/song_settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Song extends StatefulWidget {
   final String songTitle;
@@ -114,8 +116,9 @@ class _SongState extends State<Song> {
                     collectionsData.updateCollectionSongs(
                         collectionSongsIds, _lyrics, _key);
                     const Duration duration = Duration(seconds: 2);
-                    const snackBar = SnackBar(
-                      content: Text('Song updated successfully.'),
+                    var snackBar = SnackBar(
+                      content: Text(AppLocalizations.of(context)!
+                          .songPageSongSuccessfulUpdateSnackbar),
                       duration: duration,
                     );
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -139,9 +142,9 @@ class _SongState extends State<Song> {
       child: Column(
         children: [
           TextFormField(
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: 'Key',
+            decoration: InputDecoration(
+              border: const UnderlineInputBorder(),
+              labelText: AppLocalizations.of(context)!.songPageEditKeyLabel,
             ),
             initialValue: _key,
             // The validator receives the text that the user has entered.
@@ -153,7 +156,7 @@ class _SongState extends State<Song> {
               // strip value of sql injection characters: minimal
               value = value.replaceAll(RegExp(r'[;\%*]'), '');
               if (value.isEmpty) {
-                return 'Please enter valid key.';
+                return AppLocalizations.of(context)!.songPageEditKeyError;
               }
 
               return null;
@@ -161,22 +164,22 @@ class _SongState extends State<Song> {
             onSaved: (value) => _key = value!,
           ),
           TextFormField(
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: 'Lyrics',
+            decoration: InputDecoration(
+              border: const UnderlineInputBorder(),
+              labelText: AppLocalizations.of(context)!.songPageEditLyricsLabel,
             ),
             initialValue: _lyrics,
             maxLines: null,
             // The validator receives the text that the user has entered.
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter the lyrics.';
+                return AppLocalizations.of(context)!.songPageEditLyricsInstruction;
               }
 
               // strip value of sql injection characters: minimal
               value = value.replaceAll(RegExp(r'[;\%*]'), '');
               if (value.isEmpty) {
-                return 'Please enter valid lyrics.';
+                return AppLocalizations.of(context)!.songPageEditLyricsError;
               }
 
               return null;
@@ -222,156 +225,188 @@ class _SongState extends State<Song> {
   StatefulBuilder collectionsModalContent(context) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setLocalState) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
-          child: Consumer<CollectionsData>(
-            builder: (context, collectionsData, child) => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _isSelectingCollection
-                        ? IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.close),
-                          )
-                        : IconButton(
-                            onPressed: () {
-                              setLocalState(() {
-                                _isSelectingCollection = true;
-                              });
-                            },
-                            icon: const Icon(Icons.arrow_back),
-                          ),
-                    const Text('Collections', style: TextStyle(fontSize: 25)),
-                    TextButton(
-                      onPressed: () {
-                        if (!_isSelectingCollection) {
-                          if (_collectionsFormKey.currentState!.validate()) {
-                            //save form
-                            _collectionsFormKey.currentState!.save();
+        return Consumer<MainPageSettings>(
+            builder: (context, mainPageSettings, child) => (Localizations.override(
+                context: context,
+                locale: Locale(mainPageSettings.getLocale),
+                child: Consumer<MainPageSettings>(
+                    builder: (context, mainPageSettings, child) => (Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
+                          child: Consumer<CollectionsData>(
+                            builder: (context, collectionsData, child) => Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    _isSelectingCollection
+                                        ? IconButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            icon: const Icon(Icons.close),
+                                          )
+                                        : IconButton(
+                                            onPressed: () {
+                                              setLocalState(() {
+                                                _isSelectingCollection = true;
+                                              });
+                                            },
+                                            icon: const Icon(Icons.arrow_back),
+                                          ),
+                                    Text(AppLocalizations.of(context)!.globalCollections,
+                                        style: TextStyle(fontSize: 25)),
+                                    TextButton(
+                                      onPressed: () {
+                                        if (!_isSelectingCollection) {
+                                          if (_collectionsFormKey.currentState!
+                                              .validate()) {
+                                            //save form
+                                            _collectionsFormKey.currentState!.save();
 
-                            setLocalState(() {
-                              _isSelectingCollection = true;
-                            });
-                          }
-                        } else {
-                          setLocalState(() {
-                            _isSelectingCollection = false;
-                          });
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Icon(_isSelectingCollection ? Icons.add : Icons.check),
-                          Text(_isSelectingCollection ? 'Create' : ' Save',
-                              style: const TextStyle(fontSize: 15)),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                const Divider(),
-                SizedBox(
-                  height: 300,
-                  child: _isSelectingCollection
-                      ? ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: collectionsData.collections.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Column(
-                              children: [
-                                CheckboxListTile(
-                                  title: Text(collectionsData.collections[index].name),
-                                  value: _songPresentInCollection[index],
-                                  onChanged: (bool? value) {
-                                    String collectionName =
-                                        collectionsData.collections[index].name;
-                                    if (value == true) {
-                                      createCollectionSnackBar(
-                                          'added to', collectionName);
-                                      CollectionSong collectionSong = CollectionSong(
-                                        id: getAvailableId(
-                                            collectionsData.collectionSongs),
-                                        collectionId:
-                                            collectionsData.collections[index].id,
-                                        title: widget.songTitle,
-                                        key: widget.songKey,
-                                        lyrics: widget.songText,
-                                      );
-                                      collectionsData.addCollectionSong(
-                                        collectionSong,
-                                      );
-                                    } else {
-                                      createCollectionSnackBar(
-                                          'removed from', collectionName);
-                                      // get collectionSongId based on title and collectionId
-                                      var collectionSongId = collectionsData
-                                          .collectionSongs
-                                          .firstWhere((collectionSong) =>
-                                              collectionSong.collectionId ==
-                                                  collectionsData.collections[index].id &&
-                                              collectionSong.title == widget.songTitle)
-                                          .id;
-
-                                      collectionsData.deleteCollectionSong(
-                                        collectionSongId,
-                                      );
-                                    }
-                                    setLocalState(() {
-                                      _songPresentInCollection[index] = value!;
-                                    });
-                                  },
+                                            setLocalState(() {
+                                              _isSelectingCollection = true;
+                                            });
+                                          }
+                                        } else {
+                                          setLocalState(() {
+                                            _isSelectingCollection = false;
+                                          });
+                                        }
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Icon(_isSelectingCollection
+                                              ? Icons.add
+                                              : Icons.check),
+                                          Text(
+                                              _isSelectingCollection
+                                                  ? AppLocalizations.of(context)!
+                                                      .songPageCreate
+                                                  : AppLocalizations.of(context)!
+                                                      .songPageSave,
+                                              style: const TextStyle(fontSize: 15)),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
                                 const Divider(),
+                                SizedBox(
+                                  height: 300,
+                                  child: _isSelectingCollection
+                                      ? ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: collectionsData.collections.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Column(
+                                              children: [
+                                                CheckboxListTile(
+                                                  title: Text(collectionsData
+                                                      .collections[index].name),
+                                                  value: _songPresentInCollection[index],
+                                                  onChanged: (bool? value) {
+                                                    String collectionName =
+                                                        collectionsData
+                                                            .collections[index].name;
+                                                    if (value == true) {
+                                                      createCollectionSnackBar(
+                                                          AppLocalizations.of(context)!
+                                                              .songPageAddedToSnackbar,
+                                                          collectionName);
+                                                      CollectionSong collectionSong =
+                                                          CollectionSong(
+                                                        id: getAvailableId(collectionsData
+                                                            .collectionSongs),
+                                                        collectionId: collectionsData
+                                                            .collections[index].id,
+                                                        title: widget.songTitle,
+                                                        key: widget.songKey,
+                                                        lyrics: widget.songText,
+                                                      );
+                                                      collectionsData.addCollectionSong(
+                                                        collectionSong,
+                                                      );
+                                                    } else {
+                                                      createCollectionSnackBar(
+                                                          AppLocalizations.of(context)!
+                                                              .songPageRemovedFromSnackbar,
+                                                          collectionName);
+                                                      // get collectionSongId based on title and collectionId
+                                                      var collectionSongId = collectionsData
+                                                          .collectionSongs
+                                                          .firstWhere((collectionSong) =>
+                                                              collectionSong
+                                                                      .collectionId ==
+                                                                  collectionsData
+                                                                      .collections[index]
+                                                                      .id &&
+                                                              collectionSong.title ==
+                                                                  widget.songTitle)
+                                                          .id;
+
+                                                      collectionsData
+                                                          .deleteCollectionSong(
+                                                        collectionSongId,
+                                                      );
+                                                    }
+                                                    setLocalState(() {
+                                                      _songPresentInCollection[index] =
+                                                          value!;
+                                                    });
+                                                  },
+                                                ),
+                                                const Divider(),
+                                              ],
+                                            );
+                                          },
+                                        )
+                                      : Form(
+                                          key: _collectionsFormKey,
+                                          child: TextFormField(
+                                            decoration: InputDecoration(
+                                              border: const UnderlineInputBorder(),
+                                              labelText: AppLocalizations.of(context)!
+                                                  .songPageCollectionNameLabel,
+                                            ),
+                                            // The validator receives the text that the user has entered.
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return AppLocalizations.of(context)!
+                                                    .songPageCollectionNameInstruction;
+                                              }
+                                              // if value exists in collectionsData.collections.name
+                                              // return 'Collection name already exists.';
+                                              if (collectionsData.collections.any(
+                                                  (collection) =>
+                                                      collection.name == value)) {
+                                                return AppLocalizations.of(context)!
+                                                    .songPageCollectionNameError;
+                                              }
+
+                                              return null;
+                                            },
+                                            onSaved: (value) {
+                                              _songPresentInCollection.add(false);
+                                              int nextId = getAvailableId(
+                                                  collectionsData.collections);
+
+                                              var collection = Collection(
+                                                id: nextId,
+                                                name: value!,
+                                                dateCreated: DateTime.now().toString(),
+                                              );
+                                              collectionsData.addCollection(collection);
+                                              initializeSongCollections(collectionsData);
+                                            },
+                                          ),
+                                        ),
+                                )
                               ],
-                            );
-                          },
-                        )
-                      : Form(
-                          key: _collectionsFormKey,
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              border: UnderlineInputBorder(),
-                              labelText: 'Collection name',
                             ),
-                            // The validator receives the text that the user has entered.
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter the collection name.';
-                              }
-                              // if value exists in collectionsData.collections.name
-                              // return 'Collection name already exists.';
-                              if (collectionsData.collections
-                                  .any((collection) => collection.name == value)) {
-                                return 'Collection name already exists.';
-                              }
-
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _songPresentInCollection.add(false);
-                              int nextId = getAvailableId(collectionsData.collections);
-
-                              var collection = Collection(
-                                id: nextId,
-                                name: value!,
-                                dateCreated: DateTime.now().toString(),
-                              );
-                              collectionsData.addCollection(collection);
-                              initializeSongCollections(collectionsData);
-                            },
                           ),
-                        ),
-                )
-              ],
-            ),
-          ),
-        );
+                        ))))));
       },
     );
   }
@@ -380,12 +415,14 @@ class _SongState extends State<Song> {
     const Duration duration = Duration(seconds: 1);
     final snackBar = MediaQuery.of(context).size.width > 600
         ? SnackBar(
-            content: Text('Song $action $collectionName.'),
+            content: Text(
+                '${AppLocalizations.of(context)!.globalSong} $action $collectionName.'),
             margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.7),
             behavior: SnackBarBehavior.floating,
             duration: duration)
         : SnackBar(
-            content: Text('Song $action $collectionName.'),
+            content: Text(
+                '${AppLocalizations.of(context)!.globalSong} $action $collectionName.'),
             duration: duration,
           );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -441,118 +478,135 @@ class _SongState extends State<Song> {
         ),
       ),
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Font Size:'),
-                  Consumer<SongSettings>(
-                    builder: (context, songSettings, child) => Slider(
-                      value: songSettings.fontSize,
-                      min: 14,
-                      max: 38,
-                      divisions: 6,
-                      label: songSettings.fontSize.round().toString(),
-                      onChanged: (double value) {
-                        var songSettings = context.read<SongSettings>();
-                        songSettings.setFontSize(value);
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text('Display Song Key:'),
-                  Consumer<SongSettings>(
-                    builder: (context, songSettings, child) => Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ChoiceChip(
-                          label: const Text('     Yes     '),
-                          selected: songSettings.displayKey == true,
-                          onSelected: (bool selected) async {
-                            var songSettings = context.read<SongSettings>();
-                            songSettings.setDisplayKey(true);
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        ChoiceChip(
-                          label: const Text('     No     '),
-                          selected: songSettings.displayKey == false,
-                          onSelected: (bool selected) async {
-                            var songSettings = context.read<SongSettings>();
-                            songSettings.setDisplayKey(false);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text('Options:'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      widget.isCollectionSong
-                          ? ElevatedButton(
-                              style: ButtonStyle(
-                                foregroundColor: MaterialStateColor.resolveWith(
-                                    (states) => Colors.white),
-                                backgroundColor: MaterialStateColor.resolveWith(
-                                    (states) => Styles.themeColor),
+        return Consumer<MainPageSettings>(
+            builder: (context, mainPageSettings, child) => (Localizations.override(
+                context: context,
+                locale: Locale(mainPageSettings.getLocale),
+                child: Consumer<MainPageSettings>(
+                    builder: (context, mainPageSettings, child) => (Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(AppLocalizations.of(context)!.songPageFontSize),
+                                  Consumer<SongSettings>(
+                                    builder: (context, songSettings, child) => Slider(
+                                      value: songSettings.fontSize,
+                                      min: 14,
+                                      max: 38,
+                                      divisions: 6,
+                                      label: songSettings.fontSize.round().toString(),
+                                      onChanged: (double value) {
+                                        var songSettings = context.read<SongSettings>();
+                                        songSettings.setFontSize(value);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                      AppLocalizations.of(context)!.globalDisplaySongKey),
+                                  Consumer<SongSettings>(
+                                    builder: (context, songSettings, child) => Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        ChoiceChip(
+                                          label: Text(AppLocalizations.of(context)!
+                                              .globalDisplaySongKeyYes),
+                                          selected: songSettings.displayKey == true,
+                                          onSelected: (bool selected) async {
+                                            var songSettings =
+                                                context.read<SongSettings>();
+                                            songSettings.setDisplayKey(true);
+                                          },
+                                        ),
+                                        const SizedBox(width: 20),
+                                        ChoiceChip(
+                                          label: Text(AppLocalizations.of(context)!
+                                              .globalDisplaySongKeyNo),
+                                          selected: songSettings.displayKey == false,
+                                          onSelected: (bool selected) async {
+                                            var songSettings =
+                                                context.read<SongSettings>();
+                                            songSettings.setDisplayKey(false);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(AppLocalizations.of(context)!.songPageOptions),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      widget.isCollectionSong
+                                          ? ElevatedButton(
+                                              style: ButtonStyle(
+                                                foregroundColor:
+                                                    MaterialStateColor.resolveWith(
+                                                        (states) => Colors.white),
+                                                backgroundColor:
+                                                    MaterialStateColor.resolveWith(
+                                                        (states) => Styles.themeColor),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                setState(() {
+                                                  _isEditingSong = true;
+                                                });
+                                              },
+                                              child: Text(AppLocalizations.of(context)!
+                                                  .songPageOptionsEdit),
+                                            )
+                                          : const SizedBox(),
+                                      const SizedBox(width: 20),
+                                      ElevatedButton(
+                                        style: ButtonStyle(
+                                          foregroundColor: MaterialStateColor.resolveWith(
+                                              (states) => Colors.white),
+                                          backgroundColor: MaterialStateColor.resolveWith(
+                                              (states) => Styles.themeColor),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          var titleWithoutNumber =
+                                              widget.songTitle.split('.').last.trim();
+                                          Clipboard.setData(ClipboardData(
+                                                  text:
+                                                      '$titleWithoutNumber\n\n${widget.songText}'))
+                                              .then((_) {});
+                                        },
+                                        child: Text(AppLocalizations.of(context)!
+                                            .songPageOptionsCopy),
+                                      ),
+                                      const SizedBox(width: 20),
+                                      ElevatedButton(
+                                        style: ButtonStyle(
+                                          foregroundColor: MaterialStateColor.resolveWith(
+                                              (states) => Colors.white),
+                                          backgroundColor: MaterialStateColor.resolveWith(
+                                              (states) => Styles.themeColor),
+                                        ),
+                                        onPressed: () {
+                                          // get text after full stop from song title
+                                          var titleWithoutNumber =
+                                              widget.songTitle.split('.').last.trim();
+                                          Share.share(
+                                              '$titleWithoutNumber\n\n${widget.songText}');
+                                        },
+                                        child: Text(AppLocalizations.of(context)!
+                                            .songPageOptionsShare),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                setState(() {
-                                  _isEditingSong = true;
-                                });
-                              },
-                              child: const Text('Edit'),
-                            )
-                          : const SizedBox(),
-                      const SizedBox(width: 20),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateColor.resolveWith((states) => Colors.white),
-                          backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => Styles.themeColor),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                          var titleWithoutNumber =
-                              widget.songTitle.split('.').last.trim();
-                          Clipboard.setData(ClipboardData(
-                                  text: '$titleWithoutNumber\n\n${widget.songText}'))
-                              .then((_) {});
-                        },
-                        child: const Text('Copy'),
-                      ),
-                      const SizedBox(width: 20),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateColor.resolveWith((states) => Colors.white),
-                          backgroundColor: MaterialStateColor.resolveWith(
-                              (states) => Styles.themeColor),
-                        ),
-                        onPressed: () {
-                          // get text after full stop from song title
-                          var titleWithoutNumber =
-                              widget.songTitle.split('.').last.trim();
-                          Share.share('$titleWithoutNumber\n\n${widget.songText}');
-                        },
-                        child: const Text('Share'),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ],
-          ),
-        );
+                            ],
+                          ),
+                        ))))));
       },
     );
   }

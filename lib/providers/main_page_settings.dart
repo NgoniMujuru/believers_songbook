@@ -9,4 +9,13 @@ class MainPageSettings extends ChangeNotifier {
     _openPageIndex = openPageIndex;
     notifyListeners();
   }
+
+  String locale = 'en';
+
+  void setLocale(String locale) {
+    this.locale = locale;
+    notifyListeners();
+  }
+
+  String get getLocale => locale;
 }

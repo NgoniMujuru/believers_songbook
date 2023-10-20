@@ -11,6 +11,8 @@ import 'providers/song_settings.dart';
 import 'providers/song_book_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +38,21 @@ class MyApp extends StatelessWidget {
     Wakelock.enable();
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          // Locale('af'), // Afrikaans
+          Locale('en'), // English
+          Locale('fr'), // French
+          // Locale('de'), // German
+          // Locale('es'), // Spanish
+          Locale('sw'), // Swahili
+          // Locale('zu'), // Zulu
+        ],
         theme: ThemeData(
           useMaterial3: true,
           colorSchemeSeed: Styles.themeColor,
@@ -60,7 +77,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.hasError) {
               return const Text('Loading songbooks failed, please try again later');
             } else if (snapshot.hasData) {
-              return const AppPages();
+              return AppPages();
             } else {
               return const Center(
                 child: CircularProgressIndicator(),

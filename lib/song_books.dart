@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/song_book_settings.dart';
 import 'constants/song_book_assets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SongBooks extends StatelessWidget {
   const SongBooks({super.key});
@@ -14,7 +15,7 @@ class SongBooks extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Songbooks'),
+        title: Text(AppLocalizations.of(context)!.songBooksPageTitle),
       ),
       body: SafeArea(
         child: Padding(
@@ -46,7 +47,7 @@ class SongBooks extends StatelessWidget {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      'Songbook changed to ${SongBookAssets.songList[index]['Title']}',
+                                      '${AppLocalizations.of(context)!.songBooksChangeSnackBarText} ${SongBookAssets.songList[index]['Title']}',
                                       style: const TextStyle(color: Colors.white),
                                     ),
                                     backgroundColor: themeSettings.isDarkMode
