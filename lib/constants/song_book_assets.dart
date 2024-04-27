@@ -28,6 +28,18 @@ class SongBookAssets {
       'Languages': ['Afrikaans', 'English']
     },
     {
+      'Title': 'Eastlea Tabernacle',
+      'Location': 'Harare, Zimbabwe',
+      'Songs': '2698',
+      'FileName': 'songs',
+      'Last Updated': '2024-04-27',
+      'Languages': [
+        'English',
+        'Ndebele',
+        'Shona',
+      ]
+    },
+    {
       'Title': 'Emmanuel Gospel Centre',
       'Location': 'Johannesburg, South Africa',
       'Songs': '20',
