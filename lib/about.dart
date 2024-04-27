@@ -70,7 +70,9 @@ class AboutPage extends StatelessWidget {
                         ),
                         TextSpan(
                           text: AppLocalizations.of(context)!.aboutDescriptionC,
-                          style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
+                          style: themeSettings.isDarkMode
+                              ? Styles.linkDark
+                              : Styles.link,
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
                               contactUs(context);
@@ -84,7 +86,9 @@ class AboutPage extends StatelessWidget {
                         ),
                         TextSpan(
                           text: AppLocalizations.of(context)!.aboutDescriptionE,
-                          style: themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
+                          style: themeSettings.isDarkMode
+                              ? Styles.linkDark
+                              : Styles.link,
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
                               String url = "https://branham.org/en/apps";
@@ -93,7 +97,8 @@ class AboutPage extends StatelessWidget {
                               } else {
                                 createDialog(
                                     context,
-                                    AppLocalizations.of(context)!.aboutDialogErrorTitle,
+                                    AppLocalizations.of(context)!
+                                        .aboutDialogErrorTitle,
                                     '${AppLocalizations.of(context)!.aboutDialogErrorTitle} $url');
                               }
                             },
@@ -105,9 +110,11 @@ class AboutPage extends StatelessWidget {
                               : Styles.appInfo,
                         ),
                         TextSpan(
-                            text: AppLocalizations.of(context)!.aboutDescriptionG,
-                            style:
-                                themeSettings.isDarkMode ? Styles.linkDark : Styles.link,
+                            text:
+                                AppLocalizations.of(context)!.aboutDescriptionG,
+                            style: themeSettings.isDarkMode
+                                ? Styles.linkDark
+                                : Styles.link,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () async {
                                 String url =
@@ -117,7 +124,8 @@ class AboutPage extends StatelessWidget {
                                 } else {
                                   createDialog(
                                       context,
-                                      AppLocalizations.of(context)!.aboutDialogErrorTitle,
+                                      AppLocalizations.of(context)!
+                                          .aboutDialogErrorTitle,
                                       '${AppLocalizations.of(context)!.aboutDialogErrorTitle} $url');
                                 }
                               }),
@@ -142,7 +150,8 @@ class AboutPage extends StatelessWidget {
                             onPressed: () {
                               contactUs(context);
                             },
-                            child: Text(AppLocalizations.of(context)!.aboutContactUsBtn),
+                            child: Text(AppLocalizations.of(context)!
+                                .aboutContactUsBtn),
                           ),
                           ElevatedButton(
                             style: ButtonStyle(
@@ -167,7 +176,8 @@ class AboutPage extends StatelessWidget {
                                 }
                               }
                             },
-                            child: Text(AppLocalizations.of(context)!.aboutRateAppBtn),
+                            child: Text(
+                                AppLocalizations.of(context)!.aboutRateAppBtn),
                           ),
                           ElevatedButton(
                             style: ButtonStyle(
@@ -180,7 +190,8 @@ class AboutPage extends StatelessWidget {
                               Share.share(
                                   '${AppLocalizations.of(context)!.aboutShareText} https://onelink.to/songbook');
                             },
-                            child: Text(AppLocalizations.of(context)!.aboutShareAppBtn),
+                            child: Text(
+                                AppLocalizations.of(context)!.aboutShareAppBtn),
                           ),
                         ],
                       ),
@@ -194,7 +205,7 @@ class AboutPage extends StatelessWidget {
                           child: Icon(Icons.handshake,
                               color: Styles.themeColor, size: 50.0)),
                       const Text(
-                        'v1.6.0 - 10/23',
+                        'v1.7.2 - 04/24',
                       ),
                     ],
                   )),
@@ -231,7 +242,9 @@ class AboutPage extends StatelessWidget {
     if (await canLaunchUrlString(emailUrl)) {
       await launchUrlString(emailUrl);
     } else {
-      createDialog(context, AppLocalizations.of(context)!.aboutDialogEmailErrorTitle,
+      createDialog(
+          context,
+          AppLocalizations.of(context)!.aboutDialogEmailErrorTitle,
           '${AppLocalizations.of(context)!.aboutDialogEmailErrorDescription} songbookforbelievers@gmail.com');
     }
   }
@@ -243,7 +256,9 @@ class AboutPage extends StatelessWidget {
     if (await canLaunchUrlString(url)) {
       await launchUrlString(url);
     } else {
-      createDialog(context, AppLocalizations.of(context)!.aboutDialogReviewErrorTitle,
+      createDialog(
+          context,
+          AppLocalizations.of(context)!.aboutDialogReviewErrorTitle,
           '${AppLocalizations.of(context)!.aboutDialogErrorDescription} $url');
     }
   }
@@ -268,7 +283,8 @@ class AboutPage extends StatelessWidget {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setLocalState) {
             return Consumer<MainPageSettings>(
-                builder: (context, mainPageSettings, child) => (Localizations.override(
+                builder: (context, mainPageSettings, child) =>
+                    (Localizations.override(
                       context: context,
                       locale: Locale(mainPageSettings.getLocale),
                       child: Consumer<MainPageSettings>(
@@ -281,70 +297,90 @@ class AboutPage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      AppLocalizations.of(context)!.aboutLanguageSetting),
+                                  Text(AppLocalizations.of(context)!
+                                      .aboutLanguageSetting),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       ChoiceChip(
-                                          label: Text(AppLocalizations.of(context)!
-                                              .aboutLanguageSettingSwahili),
-                                          selected: mainPageSettings.getLocale == 'sw',
+                                          label: Text(
+                                              AppLocalizations.of(context)!
+                                                  .aboutLanguageSettingSwahili),
+                                          selected:
+                                              mainPageSettings.getLocale ==
+                                                  'sw',
                                           onSelected: (bool selected) async {
-                                            var settings =
-                                                context.read<MainPageSettings>();
+                                            var settings = context
+                                                .read<MainPageSettings>();
                                             settings.setLocale('sw');
                                           }),
                                       const SizedBox(width: 20),
                                       ChoiceChip(
                                           materialTapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
-                                          label: Text(AppLocalizations.of(context)!
-                                              .aboutLanguageSettingFrench),
-                                          selected: mainPageSettings.getLocale == 'fr',
+                                          label: Text(
+                                              AppLocalizations.of(context)!
+                                                  .aboutLanguageSettingFrench),
+                                          selected:
+                                              mainPageSettings.getLocale ==
+                                                  'fr',
                                           onSelected: (bool selected) async {
-                                            var settings =
-                                                context.read<MainPageSettings>();
+                                            var settings = context
+                                                .read<MainPageSettings>();
                                             settings.setLocale('fr');
                                           }),
                                       const SizedBox(width: 20),
                                       ChoiceChip(
-                                          label: Text(AppLocalizations.of(context)!
-                                              .aboutLanguageSettingEnglish),
-                                          selected: mainPageSettings.getLocale == 'en',
+                                          label: Text(
+                                              AppLocalizations.of(context)!
+                                                  .aboutLanguageSettingEnglish),
+                                          selected:
+                                              mainPageSettings.getLocale ==
+                                                  'en',
                                           onSelected: (bool selected) async {
-                                            var settings =
-                                                context.read<MainPageSettings>();
+                                            var settings = context
+                                                .read<MainPageSettings>();
                                             settings.setLocale('en');
                                           }),
                                     ],
                                   ),
                                   const SizedBox(height: 10),
-                                  Text(AppLocalizations.of(context)!.globalThemeSetting),
+                                  Text(AppLocalizations.of(context)!
+                                      .globalThemeSetting),
                                   Consumer<ThemeSettings>(
-                                      builder: (context, themeSettings, child) => (Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                      builder: (context, themeSettings,
+                                              child) =>
+                                          (Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
                                             children: [
                                               ChoiceChip(
                                                   materialTapTargetSize:
-                                                      MaterialTapTargetSize.shrinkWrap,
+                                                      MaterialTapTargetSize
+                                                          .shrinkWrap,
                                                   label: Text(
                                                       '    ${AppLocalizations.of(context)!.globalThemeSettingLight}    '),
-                                                  selected: !themeSettings.isDarkMode,
-                                                  onSelected: (bool selected) async {
-                                                    var themeSettings =
-                                                        context.read<ThemeSettings>();
-                                                    themeSettings.setIsDarkMode(false);
+                                                  selected:
+                                                      !themeSettings.isDarkMode,
+                                                  onSelected:
+                                                      (bool selected) async {
+                                                    var themeSettings = context
+                                                        .read<ThemeSettings>();
+                                                    themeSettings
+                                                        .setIsDarkMode(false);
                                                   }),
                                               const SizedBox(width: 20),
                                               ChoiceChip(
                                                   label: Text(
                                                       '      ${AppLocalizations.of(context)!.globalThemeSettingDark}      '),
-                                                  selected: themeSettings.isDarkMode,
-                                                  onSelected: (bool selected) async {
-                                                    var themeSettings =
-                                                        context.read<ThemeSettings>();
-                                                    themeSettings.setIsDarkMode(true);
+                                                  selected:
+                                                      themeSettings.isDarkMode,
+                                                  onSelected:
+                                                      (bool selected) async {
+                                                    var themeSettings = context
+                                                        .read<ThemeSettings>();
+                                                    themeSettings
+                                                        .setIsDarkMode(true);
                                                   }),
                                             ],
                                           ))),
