@@ -30,8 +30,8 @@ class SongBookAssets {
     {
       'Title': 'Eastlea Tabernacle',
       'Location': 'Harare, Zimbabwe',
-      'Songs': '2698',
-      'FileName': 'songs',
+      'Songs': '2683',
+      'FileName': 'EastleaTabernacle_Harare_Zimbabwe',
       'Last Updated': '2024-04-27',
       'Languages': [
         'English',

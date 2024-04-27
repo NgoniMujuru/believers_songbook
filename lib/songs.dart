@@ -50,7 +50,8 @@ class SongsState extends State<Songs> {
     _focusNode = FocusNode();
     SharedPreferences.getInstance().then((prefs) {
       final songBookSettings = context.read<SongBookSettings>();
-      songBookSettings.setSongBookFile(prefs.getString('songBookFile') ?? 'All');
+      songBookSettings
+          .setSongBookFile(prefs.getString('songBookFile') ?? 'All');
 
       if (prefs.getString('sortOrder') == 'alphabetic') {
         _sortBy = SortOrder.alphabetic;
@@ -62,8 +63,10 @@ class SongsState extends State<Songs> {
         _searchBy = SearchBy.title;
       } else if (prefs.getString('searchBy') == 'lyrics') {
         _searchBy = SearchBy.lyrics;
+      } else if (prefs.getString('searchBy') == 'key') {
+        _searchBy = SearchBy.key;
       } else {
-        _searchBy = SearchBy.both;
+        _searchBy = SearchBy.titleAndLyrics;
       }
 
       _fileName = context.read<SongBookSettings>().songBookFile;
@@ -72,6 +75,7 @@ class SongsState extends State<Songs> {
       });
       processSongBook();
 
+      // TODO: runs script for Eastlea songbook for next update
       // Use the following code anytime a new songbook is added.
       // if (_fileName == 'All') {
       //   processAllSongBooks();
@@ -115,8 +119,8 @@ class SongsState extends State<Songs> {
 
     var songList = createSongList(_fileName, fileData);
     if (_sortBy == SortOrder.alphabetic) {
-      songList.sort(
-          (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
+      songList.sort((a, b) =>
+          a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
     } else {
       songList.sort((a, b) => a.elementAt(0) - b.elementAt(0));
     }
@@ -142,8 +146,8 @@ class SongsState extends State<Songs> {
       print(_csvData?.length ?? 0);
     }
 
-    _csvData?.sort(
-        (a, b) => a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
+    _csvData?.sort((a, b) =>
+        a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
 
     double searchScore = 0;
     double maxSimilarityScore = 90;
@@ -152,12 +156,16 @@ class SongsState extends State<Songs> {
       var currentSong = _csvData?.elementAt(i);
       var nextSong = _csvData?.elementAt(i + 1);
 
-      String processedSongTitle = currentSong!.elementAt(1).toString().toLowerCase();
-      processedSongTitle = processedSongTitle.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-      String processedNextSongTitle = nextSong!.elementAt(1).toString().toLowerCase();
+      String processedSongTitle =
+          currentSong!.elementAt(1).toString().toLowerCase();
+      processedSongTitle =
+          processedSongTitle.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+      String processedNextSongTitle =
+          nextSong!.elementAt(1).toString().toLowerCase();
       processedNextSongTitle =
           processedNextSongTitle.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-      searchScore = ratio(processedSongTitle, processedNextSongTitle).toDouble();
+      searchScore =
+          ratio(processedSongTitle, processedNextSongTitle).toDouble();
       if (searchScore > maxSimilarityScore) {
         _csvData?.removeAt(i);
         i--;
@@ -171,8 +179,8 @@ class SongsState extends State<Songs> {
     if (_sortBy == SortOrder.numerical) {
       _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
     }
-    String csv =
-        const ListToCsvConverter(fieldDelimiter: ';', eol: '\n').convert(_csvData!);
+    String csv = const ListToCsvConverter(fieldDelimiter: ';', eol: '\n')
+        .convert(_csvData!);
     // Adds csv data to clipboard: copy and paste it over the contents of 'All.csv'
     Clipboard.setData(ClipboardData(text: csv)).then((_) {});
 
@@ -192,7 +200,8 @@ class SongsState extends State<Songs> {
             fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe'
         ? '\r\n'
         : '\n';
-    return const CsvToListConverter().convert(fileData, fieldDelimiter: ';', eol: eol);
+    return const CsvToListConverter()
+        .convert(fileData, fieldDelimiter: ';', eol: eol);
   }
 
   final int _songSearchThreshold = 70;
@@ -203,9 +212,21 @@ class SongsState extends State<Songs> {
       return _csvData;
     }
 
+    List<dynamic> results = [];
+
+    if (_searchBy == SearchBy.key) {
+      for (var song in _csvData!) {
+        if (song.elementAt(2).toString().toLowerCase().contains(_terms)) {
+          results.add(song);
+        }
+      }
+      return results;
+    }
+
     List<SongSearchResult> songSearchResults = searchSongs(_searchBy);
-    if (_searchBy == SearchBy.both) {
-      List<SongSearchResult> potentialLyricsSearchResults = searchSongs(SearchBy.lyrics);
+    if (_searchBy == SearchBy.titleAndLyrics) {
+      List<SongSearchResult> potentialLyricsSearchResults =
+          searchSongs(SearchBy.lyrics);
       if (potentialLyricsSearchResults.isNotEmpty) {
         for (var element in potentialLyricsSearchResults) {
           if (songDoesNotExist(element, songSearchResults)) {
@@ -216,10 +237,12 @@ class SongsState extends State<Songs> {
     }
     songSearchResults.sort((a, b) => b.score.compareTo(a.score));
 
-    List<dynamic> results = [];
-    for (var i = 0; i < songSearchResults.length && i < _maxSearchResults; i++) {
+    for (var i = 0;
+        i < songSearchResults.length && i < _maxSearchResults;
+        i++) {
       results.add(songSearchResults[i].song);
     }
+
     return results;
   }
 
@@ -298,190 +321,275 @@ class SongsState extends State<Songs> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setLocalState) {
             return Consumer<MainPageSettings>(
-                builder: (context, mainPageSettings, child) => (Localizations.override(
-                    context: context,
-                    locale: Locale(mainPageSettings.getLocale),
-                    child: Consumer<MainPageSettings>(
-                      builder: (context, mainPageSettings, child) => (Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(AppLocalizations.of(context)!.globalThemeSetting),
-                                Consumer<ThemeSettings>(
-                                    builder: (context, themeSettings, child) => (Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            ChoiceChip(
-                                                materialTapTargetSize:
-                                                    MaterialTapTargetSize.shrinkWrap,
-                                                label: Text(AppLocalizations.of(context)!
-                                                    .globalThemeSettingLight),
-                                                selected: !themeSettings.isDarkMode,
-                                                onSelected: (bool selected) async {
-                                                  var themeSettings =
-                                                      context.read<ThemeSettings>();
-                                                  themeSettings.setIsDarkMode(false);
-                                                }),
-                                            const SizedBox(width: 20),
-                                            ChoiceChip(
-                                                label: Text(AppLocalizations.of(context)!
-                                                    .globalThemeSettingDark),
-                                                selected: themeSettings.isDarkMode,
-                                                onSelected: (bool selected) async {
-                                                  var themeSettings =
-                                                      context.read<ThemeSettings>();
-                                                  themeSettings.setIsDarkMode(true);
-                                                }),
-                                          ],
-                                        ))),
-                                const SizedBox(height: 10),
-                                Text(AppLocalizations.of(context)!.songsPageSortOrder),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                builder: (context, mainPageSettings, child) =>
+                    (Localizations.override(
+                        context: context,
+                        locale: Locale(mainPageSettings.getLocale),
+                        child: Consumer<MainPageSettings>(
+                          builder: (context, mainPageSettings, child) =>
+                              (Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    ChoiceChip(
-                                      label: Text(AppLocalizations.of(context)!
-                                          .songsPageSortOrderNumerical),
-                                      selected: _sortBy == SortOrder.numerical,
-                                      onSelected: (bool selected) async {
-                                        _csvData?.sort((a, b) =>
-                                            a.elementAt(0).compareTo(b.elementAt(0)));
-                                        setState(() {
-                                          _sortBy = SortOrder.numerical;
-                                        });
-                                        setLocalState(() {
-                                          _sortBy = SortOrder.numerical;
-                                        });
-                                        final Future<SharedPreferences> prefsRef =
-                                            SharedPreferences.getInstance();
-                                        final SharedPreferences prefs = await prefsRef;
-                                        prefs.setString(
-                                            'sortOrder', SortOrder.numerical.name);
-                                      },
+                                    Text(AppLocalizations.of(context)!
+                                        .globalThemeSetting),
+                                    Consumer<ThemeSettings>(
+                                        builder: (context, themeSettings,
+                                                child) =>
+                                            (Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                ChoiceChip(
+                                                    materialTapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                    label: Text(AppLocalizations
+                                                            .of(context)!
+                                                        .globalThemeSettingLight),
+                                                    selected: !themeSettings
+                                                        .isDarkMode,
+                                                    onSelected:
+                                                        (bool selected) async {
+                                                      var themeSettings =
+                                                          context.read<
+                                                              ThemeSettings>();
+                                                      themeSettings
+                                                          .setIsDarkMode(false);
+                                                    }),
+                                                const SizedBox(width: 20),
+                                                ChoiceChip(
+                                                    label: Text(AppLocalizations
+                                                            .of(context)!
+                                                        .globalThemeSettingDark),
+                                                    selected: themeSettings
+                                                        .isDarkMode,
+                                                    onSelected:
+                                                        (bool selected) async {
+                                                      var themeSettings =
+                                                          context.read<
+                                                              ThemeSettings>();
+                                                      themeSettings
+                                                          .setIsDarkMode(true);
+                                                    }),
+                                              ],
+                                            ))),
+                                    const SizedBox(height: 10),
+                                    Text(AppLocalizations.of(context)!
+                                        .songsPageSortOrder),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        ChoiceChip(
+                                          label: Text(
+                                              AppLocalizations.of(context)!
+                                                  .songsPageSortOrderNumerical),
+                                          selected:
+                                              _sortBy == SortOrder.numerical,
+                                          onSelected: (bool selected) async {
+                                            _csvData?.sort((a, b) => a
+                                                .elementAt(0)
+                                                .compareTo(b.elementAt(0)));
+                                            setState(() {
+                                              _sortBy = SortOrder.numerical;
+                                            });
+                                            setLocalState(() {
+                                              _sortBy = SortOrder.numerical;
+                                            });
+                                            final Future<SharedPreferences>
+                                                prefsRef =
+                                                SharedPreferences.getInstance();
+                                            final SharedPreferences prefs =
+                                                await prefsRef;
+                                            prefs.setString('sortOrder',
+                                                SortOrder.numerical.name);
+                                          },
+                                        ),
+                                        const SizedBox(width: 20),
+                                        ChoiceChip(
+                                            label: Text(AppLocalizations.of(
+                                                    context)!
+                                                .songsPageSortOrderAlphabetic),
+                                            selected:
+                                                _sortBy == SortOrder.alphabetic,
+                                            onSelected: (bool selected) async {
+                                              _csvData?.sort((a, b) => a
+                                                  .elementAt(1)
+                                                  .toLowerCase()
+                                                  .compareTo(b
+                                                      .elementAt(1)
+                                                      .toLowerCase()));
+                                              setState(() {
+                                                _sortBy = SortOrder.alphabetic;
+                                              });
+                                              setLocalState(() {
+                                                _sortBy = SortOrder.alphabetic;
+                                              });
+                                              final Future<SharedPreferences>
+                                                  prefsRef = SharedPreferences
+                                                      .getInstance();
+                                              final SharedPreferences prefs =
+                                                  await prefsRef;
+                                              prefs.setString('sortOrder',
+                                                  SortOrder.alphabetic.name);
+                                            }),
+                                      ],
                                     ),
-                                    const SizedBox(width: 20),
-                                    ChoiceChip(
-                                        label: Text(AppLocalizations.of(context)!
-                                            .songsPageSortOrderAlphabetic),
-                                        selected: _sortBy == SortOrder.alphabetic,
-                                        onSelected: (bool selected) async {
-                                          _csvData?.sort((a, b) => a
-                                              .elementAt(1)
-                                              .toLowerCase()
-                                              .compareTo(b.elementAt(1).toLowerCase()));
-                                          setState(() {
-                                            _sortBy = SortOrder.alphabetic;
-                                          });
-                                          setLocalState(() {
-                                            _sortBy = SortOrder.alphabetic;
-                                          });
-                                          final Future<SharedPreferences> prefsRef =
-                                              SharedPreferences.getInstance();
-                                          final SharedPreferences prefs = await prefsRef;
-                                          prefs.setString(
-                                              'sortOrder', SortOrder.alphabetic.name);
-                                        }),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Text(AppLocalizations.of(context)!.globalDisplaySongKey),
-                                Consumer<SongSettings>(
-                                  builder: (context, songSettings, child) => Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      ChoiceChip(
-                                        label: Text(AppLocalizations.of(context)!
-                                            .globalDisplaySongKeyYes),
-                                        selected: songSettings.displayKey == true,
-                                        onSelected: (bool selected) async {
-                                          var songSettings = context.read<SongSettings>();
-                                          songSettings.setDisplayKey(true);
-                                        },
+                                    const SizedBox(height: 10),
+                                    Text(AppLocalizations.of(context)!
+                                        .globalDisplaySongKey),
+                                    Consumer<SongSettings>(
+                                      builder: (context, songSettings, child) =>
+                                          Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ChoiceChip(
+                                            label: Text(
+                                                AppLocalizations.of(context)!
+                                                    .globalDisplaySongKeyYes),
+                                            selected:
+                                                songSettings.displayKey == true,
+                                            onSelected: (bool selected) async {
+                                              var songSettings =
+                                                  context.read<SongSettings>();
+                                              songSettings.setDisplayKey(true);
+                                            },
+                                          ),
+                                          const SizedBox(width: 20),
+                                          ChoiceChip(
+                                            label: Text(
+                                                AppLocalizations.of(context)!
+                                                    .globalDisplaySongKeyNo),
+                                            selected: songSettings.displayKey ==
+                                                false,
+                                            onSelected: (bool selected) async {
+                                              var songSettings =
+                                                  context.read<SongSettings>();
+                                              songSettings.setDisplayKey(false);
+                                            },
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(width: 20),
-                                      ChoiceChip(
-                                        label: Text(AppLocalizations.of(context)!
-                                            .globalDisplaySongKeyNo),
-                                        selected: songSettings.displayKey == false,
-                                        onSelected: (bool selected) async {
-                                          var songSettings = context.read<SongSettings>();
-                                          songSettings.setDisplayKey(false);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                    AppLocalizations.of(context)!.songsPageSearchSongsBy),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    ChoiceChip(
-                                        label: Text(AppLocalizations.of(context)!
-                                            .songsPageSearchSongsByBoth),
-                                        selected: _searchBy == SearchBy.both,
-                                        onSelected: (bool selected) async {
-                                          setState(() {
-                                            _searchBy = SearchBy.both;
-                                          });
-                                          setLocalState(() {
-                                            _searchBy = SearchBy.both;
-                                          });
-                                          final Future<SharedPreferences> prefsRef =
-                                              SharedPreferences.getInstance();
-                                          final SharedPreferences prefs = await prefsRef;
-                                          prefs.setString('searchBy', SearchBy.both.name);
-                                        }),
-                                    const SizedBox(width: 20),
-                                    ChoiceChip(
-                                      label: Text(AppLocalizations.of(context)!
-                                          .songsPageSearchSongsByTitle),
-                                      selected: _searchBy == SearchBy.title,
-                                      onSelected: (bool selected) async {
-                                        setState(() {
-                                          _searchBy = SearchBy.title;
-                                        });
-                                        setLocalState(() {
-                                          _searchBy = SearchBy.title;
-                                        });
-                                        final Future<SharedPreferences> prefsRef =
-                                            SharedPreferences.getInstance();
-                                        final SharedPreferences prefs = await prefsRef;
-                                        prefs.setString('searchBy', SearchBy.title.name);
-                                      },
                                     ),
-                                    const SizedBox(width: 20),
-                                    ChoiceChip(
-                                        label: Text(AppLocalizations.of(context)!
-                                            .songsPageSearchSongsByLyrics),
-                                        selected: _searchBy == SearchBy.lyrics,
-                                        onSelected: (bool selected) async {
-                                          setState(() {
-                                            _searchBy = SearchBy.lyrics;
-                                          });
-                                          setLocalState(() {
-                                            _searchBy = SearchBy.lyrics;
-                                          });
-                                          final Future<SharedPreferences> prefsRef =
-                                              SharedPreferences.getInstance();
-                                          final SharedPreferences prefs = await prefsRef;
-                                          prefs.setString(
-                                              'searchBy', SearchBy.lyrics.name);
-                                        }),
+                                    const SizedBox(height: 10),
+                                    Text(AppLocalizations.of(context)!
+                                        .songsPageSearchSongsBy),
+                                    SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ChoiceChip(
+                                              label: Text(AppLocalizations.of(
+                                                      context)!
+                                                  .songsPageSearchSongsByKey),
+                                              selected:
+                                                  _searchBy == SearchBy.key,
+                                              onSelected:
+                                                  (bool selected) async {
+                                                setState(() {
+                                                  _searchBy = SearchBy.key;
+                                                });
+                                                setLocalState(() {
+                                                  _searchBy = SearchBy.key;
+                                                });
+                                                final Future<SharedPreferences>
+                                                    prefsRef = SharedPreferences
+                                                        .getInstance();
+                                                final SharedPreferences prefs =
+                                                    await prefsRef;
+                                                prefs.setString('searchBy',
+                                                    SearchBy.key.name);
+                                              }),
+                                          const SizedBox(width: 20),
+                                          ChoiceChip(
+                                              label: Text(AppLocalizations.of(
+                                                      context)!
+                                                  .songsPageSearchSongsByTitleAndLyrics),
+                                              selected: _searchBy ==
+                                                  SearchBy.titleAndLyrics,
+                                              onSelected:
+                                                  (bool selected) async {
+                                                setState(() {
+                                                  _searchBy =
+                                                      SearchBy.titleAndLyrics;
+                                                });
+                                                setLocalState(() {
+                                                  _searchBy =
+                                                      SearchBy.titleAndLyrics;
+                                                });
+                                                final Future<SharedPreferences>
+                                                    prefsRef = SharedPreferences
+                                                        .getInstance();
+                                                final SharedPreferences prefs =
+                                                    await prefsRef;
+                                                prefs.setString(
+                                                    'searchBy',
+                                                    SearchBy
+                                                        .titleAndLyrics.name);
+                                              }),
+                                          const SizedBox(width: 20),
+                                          ChoiceChip(
+                                            label: Text(AppLocalizations.of(
+                                                    context)!
+                                                .songsPageSearchSongsByTitle),
+                                            selected:
+                                                _searchBy == SearchBy.title,
+                                            onSelected: (bool selected) async {
+                                              setState(() {
+                                                _searchBy = SearchBy.title;
+                                              });
+                                              setLocalState(() {
+                                                _searchBy = SearchBy.title;
+                                              });
+                                              final Future<SharedPreferences>
+                                                  prefsRef = SharedPreferences
+                                                      .getInstance();
+                                              final SharedPreferences prefs =
+                                                  await prefsRef;
+                                              prefs.setString('searchBy',
+                                                  SearchBy.title.name);
+                                            },
+                                          ),
+                                          const SizedBox(width: 20),
+                                          ChoiceChip(
+                                              label: Text(AppLocalizations.of(
+                                                      context)!
+                                                  .songsPageSearchSongsByLyrics),
+                                              selected:
+                                                  _searchBy == SearchBy.lyrics,
+                                              onSelected:
+                                                  (bool selected) async {
+                                                setState(() {
+                                                  _searchBy = SearchBy.lyrics;
+                                                });
+                                                setLocalState(() {
+                                                  _searchBy = SearchBy.lyrics;
+                                                });
+                                                final Future<SharedPreferences>
+                                                    prefsRef = SharedPreferences
+                                                        .getInstance();
+                                                final SharedPreferences prefs =
+                                                    await prefsRef;
+                                                prefs.setString('searchBy',
+                                                    SearchBy.lyrics.name);
+                                              }),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      )),
-                    ))));
+                          )),
+                        ))));
           },
         );
       },
@@ -492,15 +600,20 @@ class SongsState extends State<Songs> {
     return Expanded(
       child: Consumer<ThemeSettings>(
           builder: (context, themeSettings, child) => ((AlphabetScrollView(
-                list: results.map<AlphaModel>((e) => AlphaModel(e.elementAt(1))).toList(),
+                list: results
+                    .map<AlphaModel>((e) => AlphaModel(e.elementAt(1)))
+                    .toList(),
                 alignment: LetterAlignment.right,
                 itemExtent: 60,
                 unselectedTextStyle: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: themeSettings.isDarkMode ? Colors.white : Colors.black),
+                    color:
+                        themeSettings.isDarkMode ? Colors.white : Colors.black),
                 selectedTextStyle: const TextStyle(
-                    fontSize: 16, fontWeight: FontWeight.w800, color: Styles.themeColor),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Styles.themeColor),
                 overlayWidget: (value) => Container(
                   height: 100,
                   width: 100,
@@ -512,7 +625,9 @@ class SongsState extends State<Songs> {
                   child: Text(
                     value.toUpperCase(),
                     style: const TextStyle(
-                        fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
                 itemBuilder: (context, index, id) {
@@ -529,21 +644,29 @@ class SongsState extends State<Songs> {
                                   MaterialPageRoute(
                                       builder: (context) => Song(
                                           isCollectionSong: false,
-                                          songText:
-                                              results!.elementAt(index).elementAt(3),
-                                          songKey: results!.elementAt(index).elementAt(2),
+                                          songText: results!
+                                              .elementAt(index)
+                                              .elementAt(3),
+                                          songKey: results!
+                                              .elementAt(index)
+                                              .elementAt(2),
                                           songTitle: capitalizeFirstLetters(
-                                              results!.elementAt(index).elementAt(1)))));
+                                              results!
+                                                  .elementAt(index)
+                                                  .elementAt(1)))));
                             },
                             child: Consumer<SongSettings>(
                                 builder: (context, songSettings, child) {
                               return ListTile(
                                 title: Text(results == null
-                                    ? AppLocalizations.of(context)!.songsPageLoading
-                                    : capitalizeFirstLetters(
-                                        results!.elementAt(index).elementAt(1))),
+                                    ? AppLocalizations.of(context)!
+                                        .songsPageLoading
+                                    : capitalizeFirstLetters(results!
+                                        .elementAt(index)
+                                        .elementAt(1))),
                                 trailing: songSettings.displayKey
-                                    ? Text(results!.elementAt(index).elementAt(2))
+                                    ? Text(
+                                        results!.elementAt(index).elementAt(2))
                                     : null,
                               );
                             }),
@@ -584,14 +707,16 @@ class SongsState extends State<Songs> {
                           MaterialPageRoute(
                               builder: (context) => Song(
                                   isCollectionSong: false,
-                                  songText: results!.elementAt(index).elementAt(3),
-                                  songKey: results!.elementAt(index).elementAt(2),
+                                  songText:
+                                      results!.elementAt(index).elementAt(3),
+                                  songKey:
+                                      results!.elementAt(index).elementAt(2),
                                   songTitle: songNumAndTitle(
                                     results!.elementAt(index),
                                   ))));
                     },
-                    child:
-                        Consumer<SongSettings>(builder: (context, songSettings, child) {
+                    child: Consumer<SongSettings>(
+                        builder: (context, songSettings, child) {
                       return ListTile(
                         title: Text(results == null
                             ? AppLocalizations.of(context)!.songsPageLoading
@@ -622,8 +747,9 @@ class SongsState extends State<Songs> {
   String capitalizeFirstLetters(String s) {
     return s
         .split(' ')
-        .map((str) =>
-            str.isEmpty ? str : str[0].toUpperCase() + str.substring(1).toLowerCase())
+        .map((str) => str.isEmpty
+            ? str
+            : str[0].toUpperCase() + str.substring(1).toLowerCase())
         .join(' ');
   }
 
@@ -631,6 +757,10 @@ class SongsState extends State<Songs> {
     String songbook = _fileName.split('_').first;
     songbook = songbook.replaceAllMapped(
         RegExp(r'([a-z])([A-Z])'), (Match m) => '${m[1]} ${m[2]}');
+
+    String termNotFound = _searchBy == SearchBy.key
+        ? AppLocalizations.of(context)!.songsPageNoSongsFoundKey
+        : AppLocalizations.of(context)!.songsPageNoSongsFoundWord;
 
     return Expanded(
       child: Center(
@@ -648,9 +778,11 @@ class SongsState extends State<Songs> {
             Padding(
               padding: const EdgeInsets.fromLTRB(40.0, 0, 40.0, 0),
               child: Text(
-                '$songbook ${AppLocalizations.of(context)!.songsPageNoSongsFound} "$_terms"',
+                '$songbook $termNotFound "$_terms"',
                 style: const TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey),
               ),
             ),
           ],
@@ -680,7 +812,9 @@ class SongsState extends State<Songs> {
               child: Text(
                 AppLocalizations.of(context)!.songsPageLoadingSongbooksText,
                 style: const TextStyle(
-                    fontSize: 20, fontWeight: FontWeight.w500, color: Colors.grey),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey),
               ),
             ),
           ],
@@ -707,7 +841,8 @@ class SongsState extends State<Songs> {
       processedSongTitle = _sortBy == SortOrder.alphabetic
           ? element.elementAt(elementPos).toLowerCase()
           : '${element.elementAt(0)} ${element.elementAt(elementPos).toLowerCase()}';
-      searchScore = partialRatio(processedSongTitle, processedSearchTerm).toDouble();
+      searchScore =
+          partialRatio(processedSongTitle, processedSearchTerm).toDouble();
       if (searchScore > _songSearchThreshold) {
         songSearchResults.add(SongSearchResult(element, searchScore));
       }

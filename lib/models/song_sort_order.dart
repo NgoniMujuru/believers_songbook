@@ -1,3 +1,3 @@
 enum SortOrder { alphabetic, numerical }
 
-enum SearchBy { both, lyrics, title }
+enum SearchBy { titleAndLyrics, lyrics, title, key }
