@@ -34,6 +34,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SharedPreferences.getInstance().then((prefs) {
+      final songSettings = context.read<SongSettings>();
+      songSettings.setFontSize(prefs.getDouble('fontSize') ?? 30);
+      final themeSettings = context.read<ThemeSettings>();
+      themeSettings.setIsDarkMode(prefs.getBool('isDarkMode') ?? false);
+    });
     initCollections(context);
     Wakelock.enable();
     return Consumer<ThemeSettings>(
@@ -68,14 +74,9 @@ class MyApp extends StatelessWidget {
         home: FutureBuilder(
           future: _fbApp,
           builder: (context, snapshot) {
-            SharedPreferences.getInstance().then((prefs) {
-              final songSettings = context.read<SongSettings>();
-              songSettings.setFontSize(prefs.getDouble('fontSize') ?? 30);
-              final themeSettings = context.read<ThemeSettings>();
-              themeSettings.setIsDarkMode(prefs.getBool('isDarkMode') ?? false);
-            });
             if (snapshot.hasError) {
-              return const Text('Loading songbooks failed, please try again later');
+              return const Text(
+                  'Loading songbooks failed, please try again later');
             } else if (snapshot.hasData) {
               return AppPages();
             } else {
