@@ -112,6 +112,10 @@ class SongsState extends State<Songs> {
   }
 
   void _onTextChanged() {
+    // TODO:
+    // 1. backspace slowdowns on lower end devices: investigate why. Consider not updating text if backspace.
+    // 2. Implement a more efficient search algorithm!!!
+
     if (_debounce?.isActive ?? false) {
       _debounce?.cancel();
       if (_debounceTime == _longDebounceTime) {
