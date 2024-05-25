@@ -83,7 +83,6 @@ class SongsState extends State<Songs> {
       });
       processSongBook();
 
-      // TODO: runs script for Eastlea songbook for next update
       // Use the following code anytime a new songbook is added.
       // if (_fileName == 'All') {
       //   processAllSongBooks();
@@ -168,8 +167,7 @@ class SongsState extends State<Songs> {
 
     var songList = createSongList(_fileName, fileData);
     if (_sortBy == SortOrder.alphabetic) {
-      songList.sort((a, b) =>
-          a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
+      songList.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
     } else {
       songList.sort((a, b) => a.elementAt(0) - b.elementAt(0));
     }
@@ -195,8 +193,7 @@ class SongsState extends State<Songs> {
       print(_csvData?.length ?? 0);
     }
 
-    _csvData?.sort((a, b) =>
-        a.elementAt(1).toLowerCase().compareTo(b.elementAt(1).toLowerCase()));
+    _csvData?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
 
     double searchScore = 0;
     double maxSimilarityScore = 90;
@@ -225,9 +222,11 @@ class SongsState extends State<Songs> {
       print(_csvData?.length ?? 0);
     }
 
-    if (_sortBy == SortOrder.numerical) {
-      _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
+    // for each element in _csvData, add a number to it
+    for (int i = 0; i < (_csvData?.length ?? 0); i++) {
+      _csvData?[i][0] = i + 1;
     }
+
     String csv = const ListToCsvConverter(fieldDelimiter: ';', eol: '\n')
         .convert(_csvData!);
     // Adds csv data to clipboard: copy and paste it over the contents of 'All.csv'
@@ -237,6 +236,26 @@ class SongsState extends State<Songs> {
       _csvData;
       _loadingSongs = false;
     });
+  }
+
+  // Custom comparator that sorts strings by putting alphabets and numbers first, then special characters.
+  int customComparator(String a, String b) {
+    // Regular expression to match only alphabets and numbers
+    RegExp alphaNum = RegExp(r'^[a-zA-Z0-9]');
+
+    // Check if the first characters of a and b are alphanumeric
+    bool isFirstAlphaNum = alphaNum.hasMatch(a);
+    bool isSecondAlphaNum = alphaNum.hasMatch(b);
+
+    // Prioritize strings starting with alphabetic or numeric characters
+    if (isFirstAlphaNum && !isSecondAlphaNum) {
+      return -1; // a comes before b
+    } else if (!isFirstAlphaNum && isSecondAlphaNum) {
+      return 1; // b comes before a
+    }
+
+    // If both are same type, compare normally
+    return a.toLowerCase().compareTo(b.toLowerCase());
   }
 
   List<List> createSongList(String fileName, String fileData) {
@@ -467,12 +486,10 @@ class SongsState extends State<Songs> {
                                             selected:
                                                 _sortBy == SortOrder.alphabetic,
                                             onSelected: (bool selected) async {
-                                              _csvData?.sort((a, b) => a
-                                                  .elementAt(1)
-                                                  .toLowerCase()
-                                                  .compareTo(b
-                                                      .elementAt(1)
-                                                      .toLowerCase()));
+                                              _csvData?.sort((a, b) =>
+                                                  customComparator(
+                                                      a.elementAt(1),
+                                                      b.elementAt(1)));
                                               setState(() {
                                                 _sortBy = SortOrder.alphabetic;
                                               });
