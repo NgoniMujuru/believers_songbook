@@ -51,6 +51,7 @@ dependencies:
   firebase_core: ^2.14.0
   flutter_localizations:
     sdk: flutter
+  device_info_plus: ^8.2.2
 
 flutter_icons:
   image_path: "assets/icon.png"

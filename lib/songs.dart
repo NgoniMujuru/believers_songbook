@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
@@ -9,15 +10,17 @@ import 'package:flutter/services.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
+import 'package:provider/provider.dart';
 
 import 'custom_search_bar.dart';
 import 'styles.dart';
 import 'song.dart';
 import '/models/song_search_result.dart';
-import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import '/models/song_sort_order.dart';
-import 'package:provider/provider.dart';
 import 'constants/song_book_assets.dart';
+import 'dart:async';
 
 class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
@@ -30,6 +33,7 @@ class Songs extends StatefulWidget {
 
 class SongsState extends State<Songs> {
   late final TextEditingController _controller;
+  Timer? _debounce;
   late final FocusNode _focusNode;
   String _fileName = '';
   String _terms = '';
@@ -42,10 +46,14 @@ class SongsState extends State<Songs> {
   );
   List<List<dynamic>>? _csvData = [];
   bool _loadingSongs = true;
+  final int _shortDebounceTime = 200;
+  final int _longDebounceTime = 600;
+  late int _debounceTime;
 
   @override
   void initState() {
     super.initState();
+    adjustDebounceTime();
     _controller = TextEditingController()..addListener(_onTextChanged);
     _focusNode = FocusNode();
     SharedPreferences.getInstance().then((prefs) {
@@ -90,15 +98,52 @@ class SongsState extends State<Songs> {
 
   @override
   void dispose() {
+    _controller.removeListener(_onTextChanged);
     _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
 
+  void adjustDebounceTime() async {
+    bool isHighEnd = await isDeviceHighEnd();
+    _debounceTime = isHighEnd
+        ? _shortDebounceTime
+        : _longDebounceTime; // Shorter for high-end, longer for low-end
+  }
+
   void _onTextChanged() {
-    setState(() {
-      _terms = _controller.text;
+    if (_debounce?.isActive ?? false) {
+      _debounce?.cancel();
+      if (_debounceTime == _longDebounceTime) {
+        setState(() {
+          _loadingSongs = true;
+        });
+      }
+    }
+    _debounce = Timer(Duration(milliseconds: _debounceTime), () {
+      setState(() {
+        _terms = _controller.text;
+        _loadingSongs = false;
+      });
     });
+  }
+
+  Future<bool> isDeviceHighEnd() async {
+    var deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      int? sdkInt = androidInfo.version.sdkInt;
+      // Assume newer Android devices are faster.
+      // You could refine this by checking specific models in a predefined list.
+      return sdkInt >= 31; // Android 12 or higher
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      String? model = iosInfo.utsname.machine;
+      // Check if the model is relatively new or considered high-end.
+      return model != null &&
+          (model.contains("iPhone11,") || model.compareTo("iPhone11,") > 0);
+    }
+    return false;
   }
 
   Widget _buildSearchBox() {
