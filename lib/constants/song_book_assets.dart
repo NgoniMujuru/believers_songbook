@@ -9,14 +9,17 @@ class SongBookAssets {
       'Languages': [
         'Afrikaans',
         'Bemba',
+        'Changana',
         'English',
         'French',
         'German',
         'Lingala',
         'Ndebele',
         'Nyanja',
+        'Português',
         'Shona',
-        'Swahili'
+        'Swahili',
+        'Xitchewa',
       ]
     },
     {
