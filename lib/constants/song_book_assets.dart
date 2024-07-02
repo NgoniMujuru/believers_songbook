@@ -104,6 +104,14 @@ class SongBookAssets {
       'Languages': ['French', 'Lingala'],
     },
     {
+      'Title': 'Tabernáculo de Maputo Interdenominacional',
+      'Location': 'Maputo, Moçambizue',
+      'Songs': '411',
+      'FileName': 'InterdenominationalTabernacleOfMaputo',
+      'Last Updated': '2024-06-30',
+      'Languages': ['Changana', 'Português', 'Shona', 'Xitchewa']
+    },
+    {
       'Title': 'Token Tabernacle',
       'Location': 'Soweto, South Africa',
       'Songs': '',
