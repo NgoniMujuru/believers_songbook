@@ -31,6 +31,14 @@ class SongBookAssets {
       'Languages': ['Afrikaans', 'English']
     },
     {
+      'Title': 'City Tabernacle Bulawayo',
+      'Location': 'Bulawayo, Zimbabwe',
+      'Songs': '1327',
+      'FileName': 'CityTabernacleBulawayo_Bulawayo_Zimbabwe',
+      'Last Updated': '2024-07-20',
+      'Languages': ['English, Ndebele, Shona'],
+    },
+    {
       'Title': 'Eastlea Tabernacle',
       'Location': 'Harare, Zimbabwe',
       'Songs': '2683',
