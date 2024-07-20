@@ -58,8 +58,8 @@ class SongsState extends State<Songs> {
     _focusNode = FocusNode();
     SharedPreferences.getInstance().then((prefs) {
       final songBookSettings = context.read<SongBookSettings>();
-      songBookSettings
-          .setSongBookFile(prefs.getString('songBookFile') ?? 'All');
+      songBookSettings.setSongBookFile(prefs.getString('songBookFile') ??
+          'CityTabernacleBulawayo_Bulawayo_Zimbabwe');
 
       if (prefs.getString('sortOrder') == 'alphabetic') {
         _sortBy = SortOrder.alphabetic;
