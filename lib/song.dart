@@ -384,9 +384,17 @@ class _SongState extends State<Song> {
 
   Form createNewCollection(
       BuildContext context, CollectionsData collectionsData) {
+        final FocusNode focusNode = FocusNode();
+
+    // Request focus after the widget tree has been built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      focusNode.requestFocus();
+    });
+
     return Form(
       key: _collectionsFormKey,
       child: TextFormField(
+        focusNode: focusNode,
         decoration: InputDecoration(
             border: const UnderlineInputBorder(), labelText: AppLocalizations.of(context)!.songPageCollectionNameLabel,
             ),
