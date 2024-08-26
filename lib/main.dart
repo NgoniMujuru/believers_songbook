@@ -4,13 +4,13 @@ import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'app_pages.dart';
 import 'styles.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'providers/song_settings.dart';
 import 'providers/song_book_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wakelock/wakelock.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
       themeSettings.setIsDarkMode(prefs.getBool('isDarkMode') ?? false);
     });
     initCollections(context);
-    Wakelock.enable();
+    WakelockPlus.enable();
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
         localizationsDelegates: const [
