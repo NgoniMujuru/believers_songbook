@@ -22,10 +22,27 @@ Future<void> main() async {
     ChangeNotifierProvider(create: (context) => MainPageSettings()),
     ChangeNotifierProvider(create: (context) => ThemeSettings()),
     ChangeNotifierProvider(create: (context) => CollectionsData()),
-    ListenableProvider(create: (context) => SongBookSettings())
-  ], child: MyApp()));
+    ListenableProvider(create: (context) => SongBookSettings()),
+    
+  ], child: ScreenSizeProvider(child: MyApp())));
 }
 
+class ScreenSizeProvider extends StatelessWidget {
+  final Widget child;
+
+  const ScreenSizeProvider({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Provider<ScreenSize>(
+      create: (_) => ScreenSize(screenWidth, screenHeight),
+      child: child,
+    );
+  }
+}
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
@@ -74,11 +91,18 @@ class MyApp extends StatelessWidget {
         home: FutureBuilder(
           future: _fbApp,
           builder: (context, snapshot) {
+
+            double screenWidth = MediaQuery.of(context).size.width;
+            double screenHeight = MediaQuery.of(context).size.height;
+
             if (snapshot.hasError) {
               return const Text(
                   'Loading songbooks failed, please try again later');
             } else if (snapshot.hasData) {
-              return AppPages();
+              return Provider<ScreenSize>(
+                create: (_) => ScreenSize(screenWidth, screenHeight),
+                child: AppPages(),
+              );
             } else {
               return const Center(
                 child: CircularProgressIndicator(),
@@ -98,4 +122,11 @@ void initCollections(BuildContext context) async {
   collectionsData.setCollections(collections);
   final collectionSongs = await LocalDatabase.getCollectionSongs();
   collectionsData.setCollectionSongs(collectionSongs);
+}
+
+class ScreenSize {
+  final double screenWidth;
+  final double screenHeight;
+
+  ScreenSize(this.screenWidth, this.screenHeight);
 }

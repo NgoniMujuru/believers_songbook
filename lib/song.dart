@@ -1,3 +1,4 @@
+import 'package:believers_songbook/main.dart';
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
@@ -37,6 +38,7 @@ class _SongState extends State<Song> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = Provider.of<ScreenSize>(context);
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
@@ -47,12 +49,12 @@ class _SongState extends State<Song> {
               IconButton(
                   icon: const Icon(Icons.playlist_add),
                   onPressed: () {
-                    collectionsBottomSheet(context);
+                    collectionsBottomSheet(context, screenSize);
                   }),
               IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    settingsBottomSheet(context);
+                    settingsBottomSheet(context,screenSize);
                   }),
             ]),
         // backgroundColor: Styles.scaffoldBackground,
@@ -71,7 +73,7 @@ class _SongState extends State<Song> {
                     Consumer<SongSettings>(
                         builder: (context, songSettings, child) {
                       return Padding(
-                        padding: MediaQuery.of(context).size.width > 600
+                        padding: screenSize.screenWidth > 600
                             ? const EdgeInsets.fromLTRB(80, 20, 16, 40)
                             : const EdgeInsets.fromLTRB(16, 20, 16, 40),
                         child: _isEditingSong
@@ -198,7 +200,7 @@ class _SongState extends State<Song> {
 
   final List<bool> _songPresentInCollection = [];
 
-  Future<void> collectionsBottomSheet(context) {
+  Future<void> collectionsBottomSheet(context, screenSize) {
     var collectionsData = Provider.of<CollectionsData>(context, listen: false);
 
     initializeSongCollections(collectionsData);
@@ -207,25 +209,25 @@ class _SongState extends State<Song> {
       isScrollControlled: true,
       context: context,
       constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width < 600
-              ? MediaQuery.of(context).size.width
-              : MediaQuery.of(context).size.width * 0.6,
-          maxHeight: MediaQuery.of(context).size.height * 0.7),
+          maxWidth: screenSize.screenWidth < 600
+              ? screenSize.screenWidth
+              : screenSize.screenWidth * 0.6,
+          maxHeight: screenSize.screenHeight * 0.7),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15.0),
           topRight: Radius.circular(15.0),
         ),
       ),
-      builder: MediaQuery.of(context).size.width < 600
+      builder: screenSize.screenWidth < 600
           ? (BuildContext context) => Scaffold(
-                body: collectionsModalContent(context),
+                body: collectionsModalContent(context,screenSize),
               )
-          : (BuildContext context) => collectionsModalContent(context),
+          : (BuildContext context) => collectionsModalContent(context, screenSize),
     );
   }
 
-  StatefulBuilder collectionsModalContent(context) {
+  StatefulBuilder collectionsModalContent(context,screenSize) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setLocalState) {
         return Consumer<MainPageSettings>(
@@ -313,7 +315,7 @@ class _SongState extends State<Song> {
                                     const Divider(),
                                     Expanded(
                                       child: _isSelectingCollection
-                                          ? listCollections(collectionsData, setLocalState, context)
+                                          ? listCollections(collectionsData, setLocalState, context,screenSize)
                                           : createNewCollection(context, collectionsData),
                                     ),
                                   ],
@@ -325,7 +327,7 @@ class _SongState extends State<Song> {
   }
 
   Scrollbar listCollections(CollectionsData collectionsData,
-      StateSetter setLocalState, BuildContext context) {
+      StateSetter setLocalState, BuildContext context,screenSize) {
     return Scrollbar(
       thumbVisibility: true,
       child: ListView.builder(
@@ -342,7 +344,7 @@ class _SongState extends State<Song> {
                   if (value == true) {
                     createCollectionSnackBar(
                         AppLocalizations.of(context)!.songPageAddedToSnackbar,
-                        collectionName);
+                        collectionName,screenSize);
                     CollectionSong collectionSong = CollectionSong(
                       id: getAvailableId(collectionsData.collectionSongs),
                       collectionId: collectionsData.collections[index].id,
@@ -356,7 +358,8 @@ class _SongState extends State<Song> {
                   } else {
                     createCollectionSnackBar(
                         AppLocalizations.of(context)!.songPageRemovedFromSnackbar,
-                        collectionName);
+                        collectionName,
+                        screenSize);
                     // get collectionSongId based on title and collectionId
                     var collectionSongId = collectionsData.collectionSongs
                         .firstWhere((collectionSong) =>
@@ -429,9 +432,9 @@ class _SongState extends State<Song> {
     );
   }
 
-  void createCollectionSnackBar(String action, collectionName) {
+  void createCollectionSnackBar(String action, collectionName,screenSize) {
     const Duration duration = Duration(seconds: 1);
-    final snackBar = MediaQuery.of(context).size.width > 600
+    final snackBar = screenSize.screenWidth > 600
         ? SnackBar(
             content: Text(
                 '${AppLocalizations.of(context)!.globalSong} $action $collectionName.'),
@@ -481,14 +484,14 @@ class _SongState extends State<Song> {
     }
   }
 
-  Future<void> settingsBottomSheet(context) {
+  Future<void> settingsBottomSheet(context,screenSize) {
     return showModalBottomSheet<void>(
       isScrollControlled: true,
       context: context,
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width < 600
-            ? MediaQuery.of(context).size.width
-            : MediaQuery.of(context).size.width * 0.6,
+        maxWidth: screenSize.screenWidth < 600
+            ? screenSize.screenWidth
+            : screenSize.screenWidth * 0.6,
       ),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
