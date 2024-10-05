@@ -139,9 +139,19 @@ class CollectionSongs extends StatelessWidget {
                   child: Consumer<SongSettings>(builder: (context, songSettings, child) {
                     return ListTile(
                       title: Text(songs.elementAt(index).title),
-                      trailing: songSettings.displayKey
-                          ? Text(songs.elementAt(index).key)
-                          : null,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (songSettings.displayKey)
+                            Text(songs.elementAt(index).key),
+                            const Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
+                            
+                          const Align(
+                            alignment: Alignment.centerRight,
+                            child: Icon(Icons.menu),
+                          ),
+                        ]
+                      )
                     );
                   }),
                 ),
