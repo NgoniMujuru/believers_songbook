@@ -351,6 +351,7 @@ class _SongState extends State<Song> {
                       title: widget.songTitle,
                       key: widget.songKey,
                       lyrics: widget.songText,
+                      songPosition: collectionsData.collectionSongs.length,
                     );
                     collectionsData.addCollectionSong(
                       collectionSong,

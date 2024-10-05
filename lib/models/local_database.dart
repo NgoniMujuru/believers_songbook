@@ -124,6 +124,7 @@ class LocalDatabase {
         title: collectionSongMaps[i]['title'],
         key: collectionSongMaps[i]['key'],
         lyrics: collectionSongMaps[i]['lyrics'],
+        songPosition: collectionSongMaps[i]['songPosition'],
       );
     });
   }

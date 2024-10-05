@@ -75,6 +75,7 @@ class CollectionsData extends ChangeNotifier {
         lyrics: lyrics,
         key: key,
         title: collectionSong.title,
+        songPosition: collectionSong.songPosition,
       );
       _collectionSongs.add(updatedCollectionSong);
       _songsByCollection[collectionSong.collectionId]

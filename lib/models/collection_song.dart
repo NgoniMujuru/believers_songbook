@@ -4,6 +4,7 @@ class CollectionSong {
   final String title;
   final String key;
   final String lyrics;
+  int songPosition;
 
   CollectionSong({
     required this.collectionId,
@@ -11,6 +12,7 @@ class CollectionSong {
     required this.key,
     required this.lyrics,
     required this.id,
+    required this.songPosition,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class CollectionSong {
       'title': title,
       'key': key,
       'lyrics': lyrics,
+      'songPosition': songPosition,
     };
   }
 
