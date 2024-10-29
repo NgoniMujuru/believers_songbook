@@ -28,6 +28,8 @@ class CollectionSong {
 
   @override
   String toString() {
-    return 'CollectionSong{id: $id, collectionId: $collectionId, title: $title';
+    return 'CollectionSong{id: $id, collectionId: $collectionId, title: $title, songPosition: $songPosition} ';
   }
+
+  
 }

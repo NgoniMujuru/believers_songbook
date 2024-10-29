@@ -93,14 +93,20 @@ Map<int, List<CollectionSong>> createSongsByCollection(collections, collectionSo
   Map<int, List<CollectionSong>> songsByCollection = <int, List<CollectionSong>>{};
 
   for (var collection in collections) {
-    if (!songsByCollection.containsKey(collection.id)) {
+    if (!songsByCollection.containsKey(collection.id)) { //if collection does not exist create an empty list
       songsByCollection[collection.id] = [];
     }
     for (var collectionSong in collectionSongs) {
       if (collectionSong.collectionId == collection.id) {
-        songsByCollection[collection.id]?.add(collectionSong);
+        songsByCollection[collection.id]?.add(collectionSong); // if collection exists add the song to the collection
       }
     }
   }
   return songsByCollection;
 }
+
+void updateSongPositions(List<CollectionSong> collectionSongs) {
+    for (int i = 0; i < collectionSongs.length; i++) {
+      collectionSongs[i].songPosition = i + 1;
+    }
+  }
