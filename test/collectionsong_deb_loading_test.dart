@@ -1,13 +1,9 @@
 import 'dart:async';
-
-import 'package:believers_songbook/models/local_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
+import 'package:believers_songbook/models/local_database.dart';
 import 'package:believers_songbook/models/collection.dart';
-import 'package:believers_songbook/models/collection_song.dart';
 
 
 void main() {
@@ -52,7 +48,6 @@ void main() {
         'title': 'Song 1',
         'key': 'C',
         'lyrics': 'lyrics 1',
-        // songPosition intentionally omitted
       },
       {
         'id': 2,
@@ -60,7 +55,6 @@ void main() {
         'title': 'Song 2',
         'key': 'D',
         'lyrics': 'lyrics 2',
-        // songPosition intentionally omitted
       },
       {
         'id': 3,
@@ -68,7 +62,6 @@ void main() {
         'title': 'Song 3',
         'key': 'E',
         'lyrics': 'lyrics 3',
-        // songPosition intentionally omitted
       },
     ];
 
