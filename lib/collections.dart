@@ -59,6 +59,9 @@ class Collections extends StatelessWidget {
         thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
         radius: const Radius.circular(5.0),
         thumbVisibility: true,
+        trackVisibility: true,
+        thumbColor: Colors.grey.withOpacity(0.5),
+        trackColor: Colors.grey.withOpacity(0.1),
         child: ListView.builder(
           itemCount: collectionsData.collections.length,
           itemBuilder: (context, index) {

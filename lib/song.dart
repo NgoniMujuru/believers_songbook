@@ -238,7 +238,7 @@ class _SongState extends State<Song> {
                     child: Consumer<MainPageSettings>(
                         builder: (context, mainPageSettings, child) => (Padding(
                               padding:
-                                  const EdgeInsets.fromLTRB(20, 10, 20, 30),
+                                  const EdgeInsets.fromLTRB(10, 10, 10, 0),
                               child: Consumer<CollectionsData>(
                                 builder: (context, collectionsData, child) =>
                                     Column(
@@ -326,17 +326,26 @@ class _SongState extends State<Song> {
     );
   }
 
-  Scrollbar listCollections(CollectionsData collectionsData,
+  RawScrollbar listCollections(CollectionsData collectionsData,
       StateSetter setLocalState, BuildContext context,screenSize) {
-    return Scrollbar(
+    return RawScrollbar(
+      minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
+      thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
+      radius: const Radius.circular(5.0),
       thumbVisibility: true,
+      trackVisibility: true,
+      thumbColor: Colors.grey.withOpacity(0.5),
+      trackColor: Colors.grey.withOpacity(0.1),
+       
       child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
         shrinkWrap: true,
         itemCount: collectionsData.collections.length,
         itemBuilder: (BuildContext context, int index) {
           return Column(
             children: [
               CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
                 title: Text(collectionsData.collections[index].name),
                 value: _songPresentInCollection[index],
                 onChanged: (bool? value) {

@@ -122,17 +122,20 @@ class CollectionSongs extends StatelessWidget {
   Widget _buildCollectionList(context, songs) {
      final scrollController = ScrollController();
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-      child: RawScrollbar(
+    // return Container(
+      // padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+      return RawScrollbar(
         minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
         thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
         radius: const Radius.circular(5.0),
         thumbVisibility: true,
+        trackVisibility: true,
+        thumbColor: Colors.grey.withOpacity(0.5),
+        trackColor: Colors.grey.withOpacity(0.1),
         controller: scrollController,
         child: ReorderableSongList(songs, scrollController: scrollController),
-      ),
-    );
+      );
+    // );
   }
 
   String getCollectionName(collectionsData, collectionId) {
