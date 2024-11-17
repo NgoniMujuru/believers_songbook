@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
@@ -109,32 +107,33 @@ class CollectionSongs extends StatelessWidget {
                     ),
                   )
                 : _buildCollectionList(
-                    context, collectionsData.songsByCollection[collectionId]?..sort((a, b) => a.songPosition.compareTo(b.songPosition)),
-                    ),
+                    context,
+                    collectionsData.songsByCollection[collectionId]
+                      ?..sort(
+                          (a, b) => a.songPosition.compareTo(b.songPosition)),
+                  ),
           ),
         ),
       )),
     );
   }
 
-  
-
   Widget _buildCollectionList(context, songs) {
-     final scrollController = ScrollController();
+    final scrollController = ScrollController();
 
     // return Container(
-      // padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-      return RawScrollbar(
-        minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
-        thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
-        radius: const Radius.circular(5.0),
-        thumbVisibility: true,
-        trackVisibility: true,
-        thumbColor: Colors.grey.withOpacity(0.5),
-        trackColor: Colors.grey.withOpacity(0.1),
-        controller: scrollController,
-        child: ReorderableSongList(songs, scrollController: scrollController),
-      );
+    // padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+    return RawScrollbar(
+      minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
+      thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
+      radius: const Radius.circular(5.0),
+      thumbVisibility: true,
+      trackVisibility: true,
+      thumbColor: Colors.grey.withOpacity(0.5),
+      trackColor: Colors.grey.withOpacity(0.1),
+      controller: scrollController,
+      child: ReorderableSongList(songs, scrollController: scrollController),
+    );
     // );
   }
 
@@ -152,7 +151,8 @@ class CollectionSongs extends StatelessWidget {
 class ReorderableSongList extends StatefulWidget {
   final List<CollectionSong> songs;
   final ScrollController scrollController;
-  const ReorderableSongList(this.songs, {required this.scrollController, super.key});
+  const ReorderableSongList(this.songs,
+      {required this.scrollController, super.key});
 
   @override
   State<ReorderableSongList> createState() => _ReorderableSongListState();
@@ -164,7 +164,8 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
   @override
   void initState() {
     super.initState();
-    _songs = List.from(widget.songs); // Initialize _songs with the provided list
+    _songs =
+        List.from(widget.songs); // Initialize _songs with the provided list
   }
 
   @override
@@ -174,7 +175,7 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
       buildDefaultDragHandles: false, // Custom drag handles
       children: List.generate(_songs.length, (index) {
         return Container(
-          key: ValueKey(_songs[index].id), 
+          key: ValueKey(_songs[index].id),
           child: Column(
             children: [
               GestureDetector(
@@ -194,7 +195,7 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
                       ),
                     ),
                   );
-                }, 
+                },
                 child: Consumer<SongSettings>(
                   builder: (context, songSettings, child) {
                     return ListTile(
@@ -203,7 +204,8 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (songSettings.displayKey) Text(_songs[index].key),
-                          const Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
+                          const Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
                           // Custom drag handle for reordering
                           ReorderableDragStartListener(
                             index: index,
