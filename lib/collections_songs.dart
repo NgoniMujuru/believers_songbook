@@ -11,8 +11,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CollectionSongs extends StatelessWidget {
   final int collectionId;
+  final ScrollController _scrollController = ScrollController();
 
-  const CollectionSongs({
+  CollectionSongs({
     required this.collectionId,
     Key? key,
   }) : super(key: key);
@@ -20,7 +21,7 @@ class CollectionSongs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionsData>(
-      builder: (context, collectionsData, child) => (SelectionArea(
+      builder: (context, collectionsData, child) => SelectionArea(
         child: Scaffold(
           appBar: AppBar(
             title: Text(getCollectionName(collectionsData, collectionId)),
@@ -33,49 +34,43 @@ class CollectionSongs extends StatelessWidget {
                     context: context,
                     builder: (context) {
                       return Consumer<MainPageSettings>(
-                          builder: (context, mainPageSettings, child) =>
-                              (Localizations.override(
-                                  context: context,
-                                  locale: Locale(mainPageSettings.getLocale),
-                                  child: Consumer<MainPageSettings>(
-                                      builder: (context, mainPageSettings,
-                                              child) =>
-                                          (AlertDialog(
-                                            title: Text(AppLocalizations.of(
-                                                    context)!
-                                                .collectionSongsDialogTitle),
-                                            content: Text(
-                                                AppLocalizations.of(context)!
-                                                    .collectionSongsDialogText),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () async {
-                                                  final navigator =
-                                                      Navigator.of(context);
-                                                  await collectionsData
-                                                      .deleteCollection(
-                                                          collectionId);
-                                                  navigator.pop();
-                                                  navigator.pop();
-                                                },
-                                                child: Text(
-                                                  AppLocalizations.of(context)!
-                                                      .collectionSongsDialogDelete,
-                                                  style: const TextStyle(
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text(AppLocalizations.of(
-                                                        context)!
-                                                    .collectionSongsDialogCancel),
-                                              )
-                                            ],
-                                          ))))));
+                        builder: (context, mainPageSettings, child) =>
+                            Localizations.override(
+                          context: context,
+                          locale: Locale(mainPageSettings.getLocale),
+                          child: AlertDialog(
+                            title: Text(AppLocalizations.of(context)!
+                                .collectionSongsDialogTitle),
+                            content: Text(AppLocalizations.of(context)!
+                                .collectionSongsDialogText),
+                            actions: [
+                              TextButton(
+                                onPressed: () async {
+                                  final navigator = Navigator.of(context);
+                                  await collectionsData
+                                      .deleteCollection(collectionId);
+                                  navigator.pop();
+                                  navigator.pop();
+                                },
+                                child: Text(
+                                  AppLocalizations.of(context)!
+                                      .collectionSongsDialogDelete,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(AppLocalizations.of(context)!
+                                    .collectionSongsDialogCancel),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     },
                   );
                 },
@@ -91,7 +86,7 @@ class CollectionSongs extends StatelessWidget {
                           ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
                           : const EdgeInsets.all(20.0),
                       child: Consumer<ThemeSettings>(
-                        builder: (context, themeSettings, child) => (Column(
+                        builder: (context, themeSettings, child) => Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
@@ -102,27 +97,23 @@ class CollectionSongs extends StatelessWidget {
                                   : Styles.aboutHeader,
                             ),
                           ],
-                        )),
+                        ),
                       ),
                     ),
                   )
                 : _buildCollectionList(
                     context,
-                    collectionsData.songsByCollection[collectionId]
-                      ?..sort(
+                    collectionsData.songsByCollection[collectionId]!
+                      ..sort(
                           (a, b) => a.songPosition.compareTo(b.songPosition)),
                   ),
           ),
         ),
-      )),
+      ),
     );
   }
 
   Widget _buildCollectionList(context, songs) {
-    final scrollController = ScrollController();
-
-    // return Container(
-    // padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
     return RawScrollbar(
       minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
       thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
@@ -131,19 +122,21 @@ class CollectionSongs extends StatelessWidget {
       trackVisibility: true,
       thumbColor: Colors.grey.withOpacity(0.5),
       trackColor: Colors.grey.withOpacity(0.1),
-      controller: scrollController,
-      child: ReorderableSongList(songs, scrollController: scrollController),
+      controller: _scrollController, // Use the class-level _scrollController
+      child: ReorderableSongList(
+        songs,
+        scrollController: _scrollController, // Pass the same controller
+      ),
     );
-    // );
   }
 
   String getCollectionName(collectionsData, collectionId) {
     String name = '';
-    collectionsData.collections.forEach((collection) {
+    for (var collection in collectionsData.collections) {
       if (collection.id == collectionId) {
         name = collection.name;
       }
-    });
+    }
     return name;
   }
 }
@@ -171,6 +164,7 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
   @override
   Widget build(BuildContext context) {
     return ReorderableListView(
+      // controller: widget.scrollController, // Use the passed controller
       padding: const EdgeInsets.symmetric(horizontal: 5),
       buildDefaultDragHandles: false, // Custom drag handles
       children: List.generate(_songs.length, (index) {
@@ -212,14 +206,14 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
                             child: const Icon(Icons.menu),
                           ),
                         ],
-                      ), // trailing Row
+                      ),
                     );
-                  }, // builder
-                ), // Consumer
-              ), // GestureDetector
+                  },
+                ),
+              ),
               const Divider(height: 0.5),
-            ], // Column children
-          ), // Column
+            ],
+          ),
         );
       }),
       onReorder: (int oldIndex, int newIndex) {
