@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
@@ -37,18 +40,23 @@ class CollectionSongs extends StatelessWidget {
                                   context: context,
                                   locale: Locale(mainPageSettings.getLocale),
                                   child: Consumer<MainPageSettings>(
-                                      builder: (context, mainPageSettings, child) =>
+                                      builder: (context, mainPageSettings,
+                                              child) =>
                                           (AlertDialog(
-                                            title: Text(AppLocalizations.of(context)!
+                                            title: Text(AppLocalizations.of(
+                                                    context)!
                                                 .collectionSongsDialogTitle),
-                                            content: Text(AppLocalizations.of(context)!
-                                                .collectionSongsDialogText),
+                                            content: Text(
+                                                AppLocalizations.of(context)!
+                                                    .collectionSongsDialogText),
                                             actions: [
                                               TextButton(
                                                 onPressed: () async {
-                                                  final navigator = Navigator.of(context);
+                                                  final navigator =
+                                                      Navigator.of(context);
                                                   await collectionsData
-                                                      .deleteCollection(collectionId);
+                                                      .deleteCollection(
+                                                          collectionId);
                                                   navigator.pop();
                                                   navigator.pop();
                                                 },
@@ -64,7 +72,8 @@ class CollectionSongs extends StatelessWidget {
                                                 onPressed: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: Text(AppLocalizations.of(context)!
+                                                child: Text(AppLocalizations.of(
+                                                        context)!
                                                     .collectionSongsDialogCancel),
                                               )
                                             ],
@@ -88,7 +97,8 @@ class CollectionSongs extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
-                              AppLocalizations.of(context)!.collectionSongsEmptyStateText,
+                              AppLocalizations.of(context)!
+                                  .collectionSongsEmptyStateText,
                               style: themeSettings.isDarkMode
                                   ? Styles.aboutHeaderDark
                                   : Styles.aboutHeader,
@@ -99,62 +109,33 @@ class CollectionSongs extends StatelessWidget {
                     ),
                   )
                 : _buildCollectionList(
-                    context, collectionsData.songsByCollection[collectionId]),
+                    context, collectionsData.songsByCollection[collectionId]?..sort((a, b) => a.songPosition.compareTo(b.songPosition)),
+                    ),
           ),
         ),
       )),
     );
   }
 
+  
+
   Widget _buildCollectionList(context, songs) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-      child: RawScrollbar(
+     final scrollController = ScrollController();
+
+    // return Container(
+      // padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+      return RawScrollbar(
         minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
         thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
         radius: const Radius.circular(5.0),
         thumbVisibility: true,
-        child: ListView.builder(
-          itemBuilder: (context, index) => Padding(
-            padding: MediaQuery.of(context).size.width > 600
-                ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
-                : const EdgeInsets.fromLTRB(0, 0, 15, 0),
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    String lyrics = songs.elementAt(index).lyrics;
-                    String title = songs.elementAt(index).title;
-                    String key = songs.elementAt(index).key;
-
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Song(
-                                songText: lyrics,
-                                songKey: key,
-                                songTitle: title,
-                                isCollectionSong: true)));
-                  },
-                  child: Consumer<SongSettings>(builder: (context, songSettings, child) {
-                    return ListTile(
-                      title: Text(songs.elementAt(index).title),
-                      trailing: songSettings.displayKey
-                          ? Text(songs.elementAt(index).key)
-                          : null,
-                    );
-                  }),
-                ),
-                const Divider(
-                  height: 0.5,
-                ),
-              ],
-            ),
-          ),
-          itemCount: songs.length,
-        ),
-      ),
-    );
+        trackVisibility: true,
+        thumbColor: Colors.grey.withOpacity(0.5),
+        trackColor: Colors.grey.withOpacity(0.1),
+        controller: scrollController,
+        child: ReorderableSongList(songs, scrollController: scrollController),
+      );
+    // );
   }
 
   String getCollectionName(collectionsData, collectionId) {
@@ -165,5 +146,94 @@ class CollectionSongs extends StatelessWidget {
       }
     });
     return name;
+  }
+}
+
+class ReorderableSongList extends StatefulWidget {
+  final List<CollectionSong> songs;
+  final ScrollController scrollController;
+  const ReorderableSongList(this.songs, {required this.scrollController, super.key});
+
+  @override
+  State<ReorderableSongList> createState() => _ReorderableSongListState();
+}
+
+class _ReorderableSongListState extends State<ReorderableSongList> {
+  late List<CollectionSong> _songs;
+
+  @override
+  void initState() {
+    super.initState();
+    _songs = List.from(widget.songs); // Initialize _songs with the provided list
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ReorderableListView(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      buildDefaultDragHandles: false, // Custom drag handles
+      children: List.generate(_songs.length, (index) {
+        return Container(
+          key: ValueKey(_songs[index].id), 
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  String lyrics = _songs[index].lyrics;
+                  String title = _songs[index].title;
+                  String key = _songs[index].key;
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Song(
+                        songText: lyrics,
+                        songKey: key,
+                        songTitle: title,
+                        isCollectionSong: true,
+                      ),
+                    ),
+                  );
+                }, 
+                child: Consumer<SongSettings>(
+                  builder: (context, songSettings, child) {
+                    return ListTile(
+                      title: Text(_songs[index].title),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (songSettings.displayKey) Text(_songs[index].key),
+                          const Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
+                          // Custom drag handle for reordering
+                          ReorderableDragStartListener(
+                            index: index,
+                            child: const Icon(Icons.menu),
+                          ),
+                        ],
+                      ), // trailing Row
+                    );
+                  }, // builder
+                ), // Consumer
+              ), // GestureDetector
+              const Divider(height: 0.5),
+            ], // Column children
+          ), // Column
+        );
+      }),
+      onReorder: (int oldIndex, int newIndex) {
+        setState(() {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final CollectionSong song = _songs.removeAt(oldIndex);
+          _songs.insert(newIndex, song);
+
+          // Update song positions after reordering
+          for (int i = 0; i < _songs.length; i++) {
+            _songs[i].songPosition = i;
+          }
+        });
+      },
+    );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:believers_songbook/main.dart';
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
@@ -37,6 +38,7 @@ class _SongState extends State<Song> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = Provider.of<ScreenSize>(context);
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
@@ -47,12 +49,12 @@ class _SongState extends State<Song> {
               IconButton(
                   icon: const Icon(Icons.playlist_add),
                   onPressed: () {
-                    collectionsBottomSheet(context);
+                    collectionsBottomSheet(context, screenSize);
                   }),
               IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    settingsBottomSheet(context);
+                    settingsBottomSheet(context,screenSize);
                   }),
             ]),
         // backgroundColor: Styles.scaffoldBackground,
@@ -68,9 +70,10 @@ class _SongState extends State<Song> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Consumer<SongSettings>(builder: (context, songSettings, child) {
+                    Consumer<SongSettings>(
+                        builder: (context, songSettings, child) {
                       return Padding(
-                        padding: MediaQuery.of(context).size.width > 600
+                        padding: screenSize.screenWidth > 600
                             ? const EdgeInsets.fromLTRB(80, 20, 16, 40)
                             : const EdgeInsets.fromLTRB(16, 20, 16, 40),
                         child: _isEditingSong
@@ -85,7 +88,8 @@ class _SongState extends State<Song> {
                                   else
                                     const SizedBox(),
                                   SelectableText(_lyrics,
-                                      style: TextStyle(fontSize: songSettings.fontSize)),
+                                      style: TextStyle(
+                                          fontSize: songSettings.fontSize)),
                                 ],
                               ),
                       );
@@ -173,7 +177,8 @@ class _SongState extends State<Song> {
             // The validator receives the text that the user has entered.
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return AppLocalizations.of(context)!.songPageEditLyricsInstruction;
+                return AppLocalizations.of(context)!
+                    .songPageEditLyricsInstruction;
               }
 
               // strip value of sql injection characters: minimal
@@ -195,7 +200,7 @@ class _SongState extends State<Song> {
 
   final List<bool> _songPresentInCollection = [];
 
-  Future<void> collectionsBottomSheet(context) {
+  Future<void> collectionsBottomSheet(context, screenSize) {
     var collectionsData = Provider.of<CollectionsData>(context, listen: false);
 
     initializeSongCollections(collectionsData);
@@ -204,220 +209,247 @@ class _SongState extends State<Song> {
       isScrollControlled: true,
       context: context,
       constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width < 600
-              ? MediaQuery.of(context).size.width
-              : MediaQuery.of(context).size.width * 0.6,
-          maxHeight: MediaQuery.of(context).size.height * 0.6),
+          maxWidth: screenSize.screenWidth < 600
+              ? screenSize.screenWidth
+              : screenSize.screenWidth * 0.6,
+          maxHeight: screenSize.screenHeight * 0.7),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15.0),
           topRight: Radius.circular(15.0),
         ),
       ),
-      builder: MediaQuery.of(context).size.width < 600
+      builder: screenSize.screenWidth < 600
           ? (BuildContext context) => Scaffold(
-                body: collectionsModalContent(context),
+                body: collectionsModalContent(context,screenSize),
               )
-          : (BuildContext context) => collectionsModalContent(context),
+          : (BuildContext context) => collectionsModalContent(context, screenSize),
     );
   }
 
-  StatefulBuilder collectionsModalContent(context) {
+  StatefulBuilder collectionsModalContent(context,screenSize) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setLocalState) {
         return Consumer<MainPageSettings>(
-            builder: (context, mainPageSettings, child) => (Localizations.override(
-                context: context,
-                locale: Locale(mainPageSettings.getLocale),
-                child: Consumer<MainPageSettings>(
-                    builder: (context, mainPageSettings, child) => (Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 50),
-                          child: Consumer<CollectionsData>(
-                            builder: (context, collectionsData, child) => Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    _isSelectingCollection
-                                        ? IconButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            icon: const Icon(Icons.close),
-                                          )
-                                        : IconButton(
-                                            onPressed: () {
-                                              setLocalState(() {
-                                                _isSelectingCollection = true;
-                                              });
-                                            },
-                                            icon: const Icon(Icons.arrow_back),
-                                          ),
-                                    Text(AppLocalizations.of(context)!.globalCollections,
-                                        style: TextStyle(fontSize: 25)),
-                                    TextButton(
-                                      onPressed: () {
-                                        if (!_isSelectingCollection) {
-                                          if (_collectionsFormKey.currentState!
-                                              .validate()) {
-                                            //save form
-                                            _collectionsFormKey.currentState!.save();
+            builder: (context, mainPageSettings, child) =>
+                (Localizations.override(
+                    context: context,
+                    locale: Locale(mainPageSettings.getLocale),
+                    child: Consumer<MainPageSettings>(
+                        builder: (context, mainPageSettings, child) => (Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              child: Consumer<CollectionsData>(
+                                builder: (context, collectionsData, child) =>
+                                    Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        _isSelectingCollection
+                                            ? IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                icon: const Icon(Icons.close),
+                                              )
+                                            : IconButton(
+                                                onPressed: () {
+                                                  setLocalState(() {
+                                                    _isSelectingCollection =
+                                                        true;
+                                                  });
+                                                },
+                                                icon: const Icon(
+                                                    Icons.arrow_back),
+                                              ),
+                                        Text(
+                                            AppLocalizations.of(context)!
+                                                .globalCollections,
+                                            style: TextStyle(fontSize: 25)),
+                                        TextButton(
+                                          onPressed: () {
+                                            if (!_isSelectingCollection) {
+                                              if (_collectionsFormKey
+                                                  .currentState!
+                                                  .validate()) {
+                                                //save form
+                                                _collectionsFormKey
+                                                    .currentState!
+                                                    .save();
 
-                                            setLocalState(() {
-                                              _isSelectingCollection = true;
-                                            });
-                                          }
-                                        } else {
-                                          setLocalState(() {
-                                            _isSelectingCollection = false;
-                                          });
-                                        }
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Icon(_isSelectingCollection
-                                              ? Icons.add
-                                              : Icons.check),
-                                          Text(
-                                              _isSelectingCollection
-                                                  ? AppLocalizations.of(context)!
-                                                      .songPageCreate
-                                                  : AppLocalizations.of(context)!
-                                                      .songPageSave,
-                                              style: const TextStyle(fontSize: 15)),
-                                        ],
-                                      ),
-                                    )
+                                                setLocalState(() {
+                                                  _isSelectingCollection = true;
+                                                });
+                                              }
+                                            } else {
+                                              setLocalState(() {
+                                                _isSelectingCollection = false;
+                                              });
+                                            }
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Icon(_isSelectingCollection
+                                                  ? Icons.add
+                                                  : Icons.check),
+                                              Text(
+                                                  _isSelectingCollection
+                                                      ? AppLocalizations.of(
+                                                              context)!
+                                                          .songPageCreate
+                                                      : AppLocalizations.of(
+                                                              context)!
+                                                          .songPageSave,
+                                                  style: const TextStyle(
+                                                      fontSize: 15)),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    const Divider(),
+                                    Expanded(
+                                      child: _isSelectingCollection
+                                          ? listCollections(collectionsData, setLocalState, context,screenSize)
+                                          : createNewCollection(context, collectionsData),
+                                    ),
                                   ],
                                 ),
-                                const Divider(),
-                                SizedBox(
-                                  height: 300,
-                                  child: _isSelectingCollection
-                                      ? ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: collectionsData.collections.length,
-                                          itemBuilder: (BuildContext context, int index) {
-                                            return Column(
-                                              children: [
-                                                CheckboxListTile(
-                                                  title: Text(collectionsData
-                                                      .collections[index].name),
-                                                  value: _songPresentInCollection[index],
-                                                  onChanged: (bool? value) {
-                                                    String collectionName =
-                                                        collectionsData
-                                                            .collections[index].name;
-                                                    if (value == true) {
-                                                      createCollectionSnackBar(
-                                                          AppLocalizations.of(context)!
-                                                              .songPageAddedToSnackbar,
-                                                          collectionName);
-                                                      CollectionSong collectionSong =
-                                                          CollectionSong(
-                                                        id: getAvailableId(collectionsData
-                                                            .collectionSongs),
-                                                        collectionId: collectionsData
-                                                            .collections[index].id,
-                                                        title: widget.songTitle,
-                                                        key: widget.songKey,
-                                                        lyrics: widget.songText,
-                                                      );
-                                                      collectionsData.addCollectionSong(
-                                                        collectionSong,
-                                                      );
-                                                    } else {
-                                                      createCollectionSnackBar(
-                                                          AppLocalizations.of(context)!
-                                                              .songPageRemovedFromSnackbar,
-                                                          collectionName);
-                                                      // get collectionSongId based on title and collectionId
-                                                      var collectionSongId = collectionsData
-                                                          .collectionSongs
-                                                          .firstWhere((collectionSong) =>
-                                                              collectionSong
-                                                                      .collectionId ==
-                                                                  collectionsData
-                                                                      .collections[index]
-                                                                      .id &&
-                                                              collectionSong.title ==
-                                                                  widget.songTitle)
-                                                          .id;
-
-                                                      collectionsData
-                                                          .deleteCollectionSong(
-                                                        collectionSongId,
-                                                      );
-                                                    }
-                                                    setLocalState(() {
-                                                      _songPresentInCollection[index] =
-                                                          value!;
-                                                    });
-                                                  },
-                                                ),
-                                                const Divider(),
-                                              ],
-                                            );
-                                          },
-                                        )
-                                      : Form(
-                                          key: _collectionsFormKey,
-                                          child: TextFormField(
-                                            decoration: InputDecoration(
-                                              border: const UnderlineInputBorder(),
-                                              labelText: AppLocalizations.of(context)!
-                                                  .songPageCollectionNameLabel,
-                                            ),
-                                            // The validator receives the text that the user has entered.
-                                            validator: (value) {
-                                              if (value == null || value.isEmpty) {
-                                                return AppLocalizations.of(context)!
-                                                    .songPageCollectionNameInstruction;
-                                              }
-                                              // if value exists in collectionsData.collections.name
-                                              // return 'Collection name already exists.';
-                                              if (collectionsData.collections.any(
-                                                  (collection) =>
-                                                      collection.name == value)) {
-                                                return AppLocalizations.of(context)!
-                                                    .songPageCollectionNameError;
-                                              }
-
-                                              return null;
-                                            },
-                                            onSaved: (value) {
-                                              _songPresentInCollection.add(false);
-                                              int nextId = getAvailableId(
-                                                  collectionsData.collections);
-
-                                              var collection = Collection(
-                                                id: nextId,
-                                                name: value!,
-                                                dateCreated: DateTime.now().toString(),
-                                              );
-                                              collectionsData.addCollection(collection);
-                                              initializeSongCollections(collectionsData);
-                                            },
-                                          ),
-                                        ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ))))));
+                              ),
+                            ))))));
       },
     );
   }
 
-  void createCollectionSnackBar(String action, collectionName) {
+  RawScrollbar listCollections(CollectionsData collectionsData,
+      StateSetter setLocalState, BuildContext context,screenSize) {
+    return RawScrollbar(
+      minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
+      thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
+      radius: const Radius.circular(5.0),
+      thumbVisibility: true,
+      trackVisibility: true,
+      thumbColor: Colors.grey.withOpacity(0.5),
+      trackColor: Colors.grey.withOpacity(0.1),
+       
+      child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+        shrinkWrap: true,
+        itemCount: collectionsData.collections.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Column(
+            children: [
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(collectionsData.collections[index].name),
+                value: _songPresentInCollection[index],
+                onChanged: (bool? value) {
+                  String collectionName = collectionsData.collections[index].name;
+                  if (value == true) {
+                    createCollectionSnackBar(
+                        AppLocalizations.of(context)!.songPageAddedToSnackbar,
+                        collectionName,screenSize);
+                    CollectionSong collectionSong = CollectionSong(
+                      id: getAvailableId(collectionsData.collectionSongs),
+                      collectionId: collectionsData.collections[index].id,
+                      title: widget.songTitle,
+                      key: widget.songKey,
+                      lyrics: widget.songText,
+                      songPosition: collectionsData.collectionSongs.length,
+                    );
+                    collectionsData.addCollectionSong(
+                      collectionSong,
+                    );
+                  } else {
+                    createCollectionSnackBar(
+                        AppLocalizations.of(context)!.songPageRemovedFromSnackbar,
+                        collectionName,
+                        screenSize);
+                    // get collectionSongId based on title and collectionId
+                    var collectionSongId = collectionsData.collectionSongs
+                        .firstWhere((collectionSong) =>
+                            collectionSong.collectionId ==
+                                collectionsData.collections[index].id &&
+                            collectionSong.title == widget.songTitle)
+                        .id;
+      
+                    collectionsData.deleteCollectionSong(
+                      collectionSongId,
+                    );
+                  }
+                  setLocalState(() {
+                    _songPresentInCollection[index] = value!;
+                  });
+                },
+              ),
+              const Divider(),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Form createNewCollection(
+      BuildContext context, CollectionsData collectionsData) {
+        final FocusNode focusNode = FocusNode();
+
+    // Request focus after the widget tree has been built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      focusNode.requestFocus();
+    });
+
+    return Form(
+      key: _collectionsFormKey,
+      child: TextFormField(
+        focusNode: focusNode,
+        decoration: InputDecoration(
+            border: const UnderlineInputBorder(), labelText: AppLocalizations.of(context)!.songPageCollectionNameLabel,
+            ),
+        // The validator receives the text that the user has entered.
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return AppLocalizations.of(context)!
+                .songPageCollectionNameInstruction;
+          }
+          // if value exists in collectionsData.collections.name
+          // return 'Collection name already exists.';
+          if (collectionsData.collections
+              .any((collection) => collection.name == value)) {
+            return AppLocalizations.of(context)!.songPageCollectionNameError;
+          }
+
+          return null;
+        },
+        onSaved: (value) {
+          _songPresentInCollection.add(false);
+          int nextId = getAvailableId(collectionsData.collections);
+
+          var collection = Collection(
+            id: nextId,
+            name: value!,
+            dateCreated: DateTime.now().toString(),
+          );
+          collectionsData.addCollection(collection);
+          initializeSongCollections(collectionsData);
+        },
+      ),
+    );
+  }
+
+  void createCollectionSnackBar(String action, collectionName,screenSize) {
     const Duration duration = Duration(seconds: 1);
-    final snackBar = MediaQuery.of(context).size.width > 600
+    final snackBar = screenSize.screenWidth > 600
         ? SnackBar(
             content: Text(
                 '${AppLocalizations.of(context)!.globalSong} $action $collectionName.'),
-            margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.7),
+            margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.7),
             behavior: SnackBarBehavior.floating,
             duration: duration)
         : SnackBar(
@@ -462,14 +494,14 @@ class _SongState extends State<Song> {
     }
   }
 
-  Future<void> settingsBottomSheet(context) {
+  Future<void> settingsBottomSheet(context,screenSize) {
     return showModalBottomSheet<void>(
       isScrollControlled: true,
       context: context,
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width < 600
-            ? MediaQuery.of(context).size.width
-            : MediaQuery.of(context).size.width * 0.6,
+        maxWidth: screenSize.screenWidth < 600
+            ? screenSize.screenWidth
+            : screenSize.screenWidth * 0.6,
       ),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -479,134 +511,181 @@ class _SongState extends State<Song> {
       ),
       builder: (BuildContext context) {
         return Consumer<MainPageSettings>(
-            builder: (context, mainPageSettings, child) => (Localizations.override(
-                context: context,
-                locale: Locale(mainPageSettings.getLocale),
-                child: Consumer<MainPageSettings>(
-                    builder: (context, mainPageSettings, child) => (Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(AppLocalizations.of(context)!.songPageFontSize),
-                                  Consumer<SongSettings>(
-                                    builder: (context, songSettings, child) => Slider(
-                                      value: songSettings.fontSize,
-                                      min: 14,
-                                      max: 38,
-                                      divisions: 6,
-                                      label: songSettings.fontSize.round().toString(),
-                                      onChanged: (double value) {
-                                        var songSettings = context.read<SongSettings>();
-                                        songSettings.setFontSize(value);
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                      AppLocalizations.of(context)!.globalDisplaySongKey),
-                                  Consumer<SongSettings>(
-                                    builder: (context, songSettings, child) => Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        ChoiceChip(
-                                          label: Text(AppLocalizations.of(context)!
-                                              .globalDisplaySongKeyYes),
-                                          selected: songSettings.displayKey == true,
-                                          onSelected: (bool selected) async {
-                                            var songSettings =
-                                                context.read<SongSettings>();
-                                            songSettings.setDisplayKey(true);
-                                          },
-                                        ),
-                                        const SizedBox(width: 20),
-                                        ChoiceChip(
-                                          label: Text(AppLocalizations.of(context)!
-                                              .globalDisplaySongKeyNo),
-                                          selected: songSettings.displayKey == false,
-                                          onSelected: (bool selected) async {
-                                            var songSettings =
-                                                context.read<SongSettings>();
-                                            songSettings.setDisplayKey(false);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(AppLocalizations.of(context)!.songPageOptions),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
+            builder: (context, mainPageSettings, child) =>
+                (Localizations.override(
+                    context: context,
+                    locale: Locale(mainPageSettings.getLocale),
+                    child: Consumer<MainPageSettings>(
+                        builder: (context, mainPageSettings, child) => (Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(20, 30, 20, 50),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      widget.isCollectionSong
-                                          ? ElevatedButton(
-                                              style: ButtonStyle(
-                                                foregroundColor:
-                                                    MaterialStateColor.resolveWith(
-                                                        (states) => Colors.white),
-                                                backgroundColor:
-                                                    MaterialStateColor.resolveWith(
-                                                        (states) => Styles.themeColor),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                setState(() {
-                                                  _isEditingSong = true;
-                                                });
+                                      Text(AppLocalizations.of(context)!
+                                          .songPageFontSize),
+                                      Consumer<SongSettings>(
+                                        builder:
+                                            (context, songSettings, child) =>
+                                                Slider(
+                                          value: songSettings.fontSize,
+                                          min: 14,
+                                          max: 38,
+                                          divisions: 6,
+                                          label: songSettings.fontSize
+                                              .round()
+                                              .toString(),
+                                          onChanged: (double value) {
+                                            var songSettings =
+                                                context.read<SongSettings>();
+                                            songSettings.setFontSize(value);
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(AppLocalizations.of(context)!
+                                          .globalDisplaySongKey),
+                                      Consumer<SongSettings>(
+                                        builder:
+                                            (context, songSettings, child) =>
+                                                Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            ChoiceChip(
+                                              label: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .globalDisplaySongKeyYes),
+                                              selected:
+                                                  songSettings.displayKey ==
+                                                      true,
+                                              onSelected:
+                                                  (bool selected) async {
+                                                var songSettings = context
+                                                    .read<SongSettings>();
+                                                songSettings
+                                                    .setDisplayKey(true);
                                               },
-                                              child: Text(AppLocalizations.of(context)!
-                                                  .songPageOptionsEdit),
-                                            )
-                                          : const SizedBox(),
-                                      const SizedBox(width: 20),
-                                      ElevatedButton(
-                                        style: ButtonStyle(
-                                          foregroundColor: MaterialStateColor.resolveWith(
-                                              (states) => Colors.white),
-                                          backgroundColor: MaterialStateColor.resolveWith(
-                                              (states) => Styles.themeColor),
+                                            ),
+                                            const SizedBox(width: 20),
+                                            ChoiceChip(
+                                              label: Text(
+                                                  AppLocalizations.of(context)!
+                                                      .globalDisplaySongKeyNo),
+                                              selected:
+                                                  songSettings.displayKey ==
+                                                      false,
+                                              onSelected:
+                                                  (bool selected) async {
+                                                var songSettings = context
+                                                    .read<SongSettings>();
+                                                songSettings
+                                                    .setDisplayKey(false);
+                                              },
+                                            ),
+                                          ],
                                         ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          var titleWithoutNumber =
-                                              widget.songTitle.split('.').last.trim();
-                                          Clipboard.setData(ClipboardData(
-                                                  text:
-                                                      '$titleWithoutNumber\n\n${widget.songText}'))
-                                              .then((_) {});
-                                        },
-                                        child: Text(AppLocalizations.of(context)!
-                                            .songPageOptionsCopy),
                                       ),
-                                      const SizedBox(width: 20),
-                                      ElevatedButton(
-                                        style: ButtonStyle(
-                                          foregroundColor: MaterialStateColor.resolveWith(
-                                              (states) => Colors.white),
-                                          backgroundColor: MaterialStateColor.resolveWith(
-                                              (states) => Styles.themeColor),
-                                        ),
-                                        onPressed: () {
-                                          // get text after full stop from song title
-                                          var titleWithoutNumber =
-                                              widget.songTitle.split('.').last.trim();
-                                          Share.share(
-                                              '$titleWithoutNumber\n\n${widget.songText}');
-                                        },
-                                        child: Text(AppLocalizations.of(context)!
-                                            .songPageOptionsShare),
-                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(AppLocalizations.of(context)!
+                                          .songPageOptions),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          widget.isCollectionSong
+                                              ? ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    foregroundColor:
+                                                        MaterialStateColor
+                                                            .resolveWith(
+                                                                (states) =>
+                                                                    Colors
+                                                                        .white),
+                                                    backgroundColor:
+                                                        MaterialStateColor
+                                                            .resolveWith(
+                                                                (states) => Styles
+                                                                    .themeColor),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                    setState(() {
+                                                      _isEditingSong = true;
+                                                    });
+                                                  },
+                                                  child: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .songPageOptionsEdit),
+                                                )
+                                              : const SizedBox(),
+                                          const SizedBox(width: 20),
+                                          ElevatedButton(
+                                            style: ButtonStyle(
+                                              foregroundColor:
+                                                  MaterialStateColor
+                                                      .resolveWith((states) =>
+                                                          Colors.white),
+                                              backgroundColor:
+                                                  MaterialStateColor
+                                                      .resolveWith((states) =>
+                                                          Styles.themeColor),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              var titleWithoutNumber = widget
+                                                  .songTitle
+                                                  .split('.')
+                                                  .last
+                                                  .trim();
+                                              Clipboard.setData(ClipboardData(
+                                                      text:
+                                                          '$titleWithoutNumber\n\n${widget.songText}'))
+                                                  .then((_) {});
+                                            },
+                                            child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .songPageOptionsCopy),
+                                          ),
+                                          const SizedBox(width: 20),
+                                          ElevatedButton(
+                                            style: ButtonStyle(
+                                              foregroundColor:
+                                                  MaterialStateColor
+                                                      .resolveWith((states) =>
+                                                          Colors.white),
+                                              backgroundColor:
+                                                  MaterialStateColor
+                                                      .resolveWith((states) =>
+                                                          Styles.themeColor),
+                                            ),
+                                            onPressed: () {
+                                              // get text after full stop from song title
+                                              var titleWithoutNumber = widget
+                                                  .songTitle
+                                                  .split('.')
+                                                  .last
+                                                  .trim();
+                                              Share.share(
+                                                  '$titleWithoutNumber\n\n${widget.songText}');
+                                            },
+                                            child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .songPageOptionsShare),
+                                          ),
+                                        ],
+                                      )
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ))))));
+                            ))))));
       },
     );
   }

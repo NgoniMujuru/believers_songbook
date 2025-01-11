@@ -39,19 +39,20 @@ dependencies:
   firebase_database: ^10.0.9
   firebase_analytics: ^10.1.0
   provider: ^6.0.5
-  shared_preferences: ^2.0.16
+  shared_preferences: ^2.3.2
   url_launcher: ^6.1.7
   flutter_launcher_icons: ^0.11.0
   in_app_review: ^2.0.6
-  share_plus: ^6.3.1
-  wakelock: ^0.6.2
+  share_plus: 10.0.2
+  wakelock_plus: ^1.2.8
   sqflite: ^2.2.8+4
   path: ^1.8.2
   intl: any
   firebase_core: ^2.14.0
   flutter_localizations:
     sdk: flutter
-  device_info_plus: ^8.2.2
+  device_info_plus: ^10.1.2
+  win32: ^5.5.3
 
 flutter_icons:
   image_path: "assets/icon.png"
@@ -68,6 +69,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  sqflite_common_ffi: ^2.3.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -16,9 +16,10 @@ class LocalDatabase {
       join(await getDatabasesPath(), 'local_database.db'),
       // When the database is first created, create a table to store collections.
       onCreate: createDatabase,
+      onUpgrade: onUpgrade,
       // Set the version. This executes the onCreate function and provides a
       // path to perform database upgrades and downgrades.
-      version: 1,
+      version: 2,
     );
     if (kDebugMode) {
       print('Database initialized');
@@ -30,7 +31,7 @@ class LocalDatabase {
       'CREATE TABLE collections(id INTEGER PRIMARY KEY, name TEXT UNIQUE, description TEXT, dateCreated TEXT)',
     );
     await db.execute(
-      'CREATE TABLE collectionSongs(id INTEGER PRIMARY KEY, collectionId INTEGER, title TEXT, key TEXT, lyrics TEXT, FOREIGN KEY(collectionId) REFERENCES collections(id))',
+      'CREATE TABLE collectionSongs(id INTEGER PRIMARY KEY, collectionId INTEGER, title TEXT, key TEXT, lyrics TEXT, songPosition INTEGER, FOREIGN KEY(collectionId) REFERENCES collections(id))',
     );
     // Additional SQL statements or table creations can be executed here
   }
@@ -117,20 +118,78 @@ class LocalDatabase {
     final db = await database;
     final List<Map<String, dynamic>> collectionSongMaps =
         await db.query('collectionSongs');
-    return List.generate(collectionSongMaps.length, (i) {
-      return CollectionSong(
-        id: collectionSongMaps[i]['id'],
-        collectionId: collectionSongMaps[i]['collectionId'],
-        title: collectionSongMaps[i]['title'],
-        key: collectionSongMaps[i]['key'],
-        lyrics: collectionSongMaps[i]['lyrics'],
-      );
-    });
+      
+    // Group songs by collection ID to handle positions within each collection
+    Map<int, List<Map<String, dynamic>>> songsByCollection = {};
+    for (var song in collectionSongMaps) {
+      int collectionId = song['collectionId'];
+      songsByCollection.putIfAbsent(collectionId, () => []).add(song);
+    }
+
+    List<CollectionSong> allSongs = [];
+    
+    // Process each collection's songs
+    for (var collectionSongs in songsByCollection.values) {
+      for (int i = 0; i < collectionSongs.length; i++) {
+        var songMap = collectionSongs[i];
+        // Use existing position if available, otherwise use index
+        int position = songMap['songPosition'] ?? i;
+        
+        // If position was null, update it in the database
+        if (songMap['songPosition'] == null) {
+          await db.update(
+            'collectionSongs',
+            {'songPosition': position},
+            where: 'id = ?',
+            whereArgs: [songMap['id']],
+          );
+        }
+
+        allSongs.add(CollectionSong(
+          id: songMap['id'],
+          collectionId: songMap['collectionId'],
+          title: songMap['title'],
+          key: songMap['key'],
+          lyrics: songMap['lyrics'],
+          songPosition: position,
+        ));
+      }
+    }
+
+    return allSongs;
   }
 
   static Future<void> deleteDatabaseFile() async {
     final databasePath = await getDatabasesPath();
     final databasePathToDelete = join(databasePath, 'local_database.db');
     await deleteDatabase(databasePathToDelete);
+  }
+
+  static Future<void> onCreate(Database db, int version) async {
+    // Create your tables here
+    await db.execute('''
+      CREATE TABLE collections (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        dateCreated TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE collectionSongs (
+        id INTEGER PRIMARY KEY,
+        collectionId INTEGER,
+        title TEXT,
+        key TEXT,
+        lyrics TEXT,
+        songPosition INTEGER
+      )
+    ''');
+  }
+
+  static Future<void> onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE collectionSongs ADD COLUMN songPosition INTEGER');
+    }
   }
 }
