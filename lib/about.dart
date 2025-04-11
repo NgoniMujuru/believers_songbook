@@ -10,14 +10,42 @@ import 'styles.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:believers_songbook/generated/build_date.dart';
+
+import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
 
-class AboutPage extends StatelessWidget {
-  AboutPage({super.key});
+class AboutPage extends StatefulWidget {
+  const AboutPage({super.key});
+
+  @override
+  State<AboutPage> createState() => _AboutPageState();
+}
+
+class _AboutPageState extends State<AboutPage> {
   final InAppReview _inAppReview = InAppReview.instance;
+
+  String _version = '';
+  var _formattedDate = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPackageInfo();
+  }
+
+  Future<void> _loadPackageInfo() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = packageInfo.version;
+      _formattedDate = DateFormat('dd MMMM yyyy').format(DateTime.parse(buildDate));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
@@ -204,9 +232,9 @@ class AboutPage extends StatelessWidget {
                       const Card(
                           child: Icon(Icons.handshake,
                               color: Styles.themeColor, size: 50.0)),
-                      const Text(
-                        'v1.8.0 - 21/07/24',
-                      ),
+
+                      Text('Version: $_version'),                      
+                      Text('Build date: $_formattedDate'),
                     ],
                   )),
                 ),
