@@ -1,10 +1,7 @@
-import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:believers_songbook/models/local_database.dart';
 import 'package:believers_songbook/models/collection.dart';
-
 
 void main() {
   // Initialize FFI for testing
@@ -32,11 +29,14 @@ void main() {
     await db.close();
   });
 
-  test('getCollectionSongs sets and persists positions for legacy songs', () async {
+  test('getCollectionSongs sets and persists positions for legacy songs',
+      () async {
     // 1. Insert test collections
-    final collection1 = Collection(id: 1, name: 'Collection 1', dateCreated: DateTime.now().toString());
-    final collection2 = Collection(id: 2, name: 'Collection 2', dateCreated: DateTime.now().toString());
-    
+    final collection1 = Collection(
+        id: 1, name: 'Collection 1', dateCreated: DateTime.now().toString());
+    final collection2 = Collection(
+        id: 2, name: 'Collection 2', dateCreated: DateTime.now().toString());
+
     await db.insert('collections', collection1.toMap());
     await db.insert('collections', collection2.toMap());
 
@@ -86,17 +86,26 @@ void main() {
     expect(loadedSongs.length, equals(4));
 
     // Verify songs in collection 1
-    final collection1Songs = loadedSongs.where((s) => s.collectionId == 1).toList();
+    final collection1Songs =
+        loadedSongs.where((s) => s.collectionId == 1).toList();
     expect(collection1Songs.length, equals(3));
-    
+
     // Check legacy songs got sequential positions
-    expect(collection1Songs.any((s) => s.title == 'Song 1' && s.songPosition == 0), isTrue);
-    expect(collection1Songs.any((s) => s.title == 'Song 2' && s.songPosition == 1), isTrue);
+    expect(
+        collection1Songs.any((s) => s.title == 'Song 1' && s.songPosition == 0),
+        isTrue);
+    expect(
+        collection1Songs.any((s) => s.title == 'Song 2' && s.songPosition == 1),
+        isTrue);
     // Verify the existing position was preserved
-    expect(collection1Songs.any((s) => s.title == 'Song 4' && s.songPosition == 99), isTrue);
+    expect(
+        collection1Songs
+            .any((s) => s.title == 'Song 4' && s.songPosition == 99),
+        isTrue);
 
     // Verify song in collection 2
-    final collection2Songs = loadedSongs.where((s) => s.collectionId == 2).toList();
+    final collection2Songs =
+        loadedSongs.where((s) => s.collectionId == 2).toList();
     expect(collection2Songs.length, equals(1));
     expect(collection2Songs[0].songPosition, equals(0));
 
