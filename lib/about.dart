@@ -142,9 +142,9 @@ class AboutPage extends StatelessWidget {
                         children: [
                           ElevatedButton(
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateColor.resolveWith(
+                              foregroundColor: WidgetStateColor.resolveWith(
                                   (states) => Colors.white),
-                              backgroundColor: MaterialStateColor.resolveWith(
+                              backgroundColor: WidgetStateColor.resolveWith(
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () {
@@ -155,9 +155,9 @@ class AboutPage extends StatelessWidget {
                           ),
                           ElevatedButton(
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateColor.resolveWith(
+                              foregroundColor: WidgetStateColor.resolveWith(
                                   (states) => Colors.white),
-                              backgroundColor: MaterialStateColor.resolveWith(
+                              backgroundColor: WidgetStateColor.resolveWith(
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () async {
@@ -181,9 +181,9 @@ class AboutPage extends StatelessWidget {
                           ),
                           ElevatedButton(
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateColor.resolveWith(
+                              foregroundColor: WidgetStateColor.resolveWith(
                                   (states) => Colors.white),
-                              backgroundColor: MaterialStateColor.resolveWith(
+                              backgroundColor: WidgetStateColor.resolveWith(
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () {
