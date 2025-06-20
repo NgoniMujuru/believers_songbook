@@ -270,7 +270,8 @@ class _SongState extends State<Song> {
                                         Text(
                                             AppLocalizations.of(context)!
                                                 .globalCollections,
-                                            style: TextStyle(fontSize: 25)),
+                                            style:
+                                                const TextStyle(fontSize: 25)),
                                         TextButton(
                                           onPressed: () {
                                             if (!_isSelectingCollection) {
@@ -637,12 +638,11 @@ class _SongState extends State<Song> {
                                           ElevatedButton(
                                             style: ButtonStyle(
                                               foregroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
-                                                          Colors.white),
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) => Colors.white),
                                               backgroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) =>
                                                           Styles.themeColor),
                                             ),
                                             onPressed: () {
@@ -668,8 +668,8 @@ class _SongState extends State<Song> {
                                                   WidgetStateColor.resolveWith(
                                                       (states) => Colors.white),
                                               backgroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) =>
                                                           Styles.themeColor),
                                             ),
                                             onPressed: () {
