@@ -54,6 +54,8 @@ class MyApp extends StatelessWidget {
     SharedPreferences.getInstance().then((prefs) {
       final songSettings = context.read<SongSettings>();
       songSettings.setFontSize(prefs.getDouble('fontSize') ?? 30);
+      songSettings.setDisplayKey(prefs.getBool('displayKey') ?? true);
+      songSettings.setDisplaySongNumber(prefs.getBool('displaySongNumber') ?? false);
       final themeSettings = context.read<ThemeSettings>();
       themeSettings.setIsDarkMode(prefs.getBool('isDarkMode') ?? false);
     });
