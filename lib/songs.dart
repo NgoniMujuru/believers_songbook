@@ -190,7 +190,11 @@ class SongsState extends State<Songs> {
     }
 
     if (kDebugMode) {
-      print(_csvData?.length ?? 0);
+      if (_csvData == null) {
+        print('CSV Data is null');
+      } else {
+        print('All songs before duplicate removal: ${_csvData!.length}');
+      }
     }
 
     _csvData?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
@@ -219,7 +223,11 @@ class SongsState extends State<Songs> {
     }
 
     if (kDebugMode) {
-      print(_csvData?.length ?? 0);
+      if (_csvData == null) {
+        print('CSV Data is null');
+      } else {
+        print('All songs after duplicate removal: ${_csvData!.length}');
+      }
     }
 
     // for each element in _csvData, add a number to it
