@@ -505,6 +505,35 @@ class SongsState extends State<Songs> {
                                               prefs.setString('sortOrder',
                                                   SortOrder.alphabetic.name);
                                             }),
+                                            const SizedBox(width: 20),
+                                        ChoiceChip(
+                                            label: Text(AppLocalizations.of(
+                                                    context)!
+                                                .songsPageSortOrderKey),
+                                            selected:
+                                                _sortBy == SortOrder.key,
+                                            onSelected: (bool selected) async {
+                                              _csvData?.sort((a, b) {
+                                                  int primary = customComparator(
+                                                      a.elementAt(2),
+                                                      b.elementAt(2));
+                                                  if (primary != 0) return primary;
+                                                  return a.elementAt(1).compareTo(b.elementAt(1));
+                                              });
+                                              setState(() {
+                                                _sortBy = SortOrder.key;
+                                              });
+                                              setLocalState(() {
+                                                _sortBy = SortOrder.key;
+                                              });
+                                              final Future<SharedPreferences>
+                                                  prefsRef = SharedPreferences
+                                                      .getInstance();
+                                              final SharedPreferences prefs =
+                                                  await prefsRef;
+                                              prefs.setString('sortOrder',
+                                                  SortOrder.key.name);
+                                            }),
                                       ],
                                     ),
                                     const SizedBox(height: 10),
@@ -539,6 +568,43 @@ class SongsState extends State<Songs> {
                                               var songSettings =
                                                   context.read<SongSettings>();
                                               songSettings.setDisplayKey(false);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(AppLocalizations.of(context)!
+                                        .globalPageDisplaySongNumber),
+                                        Consumer<SongSettings>(
+                                      builder: (context, songSettings, child) =>
+                                          Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ChoiceChip(
+                                            label: Text(
+                                                AppLocalizations.of(context)!
+                                                    .globalDisplaySongKeyYes),
+                                            selected:
+                                                songSettings.displaySongNumber == true,
+                                            onSelected: (bool selected) async {
+                                              var songSettings =
+                                                  context.read<SongSettings>();
+                                              songSettings.setDisplaySongNumber(true);
+                                            },
+                                          ),
+                                          const SizedBox(width: 20),
+                                          ChoiceChip(
+                                            label: Text(
+                                                AppLocalizations.of(context)!
+                                                    .globalDisplaySongKeyNo),
+                                            selected: songSettings.displaySongNumber ==
+                                                false,
+                                            onSelected: (bool selected) async {
+                                              var songSettings =
+                                                  context.read<SongSettings>();
+                                              songSettings.setDisplaySongNumber(false);
                                             },
                                           ),
                                         ],
@@ -726,11 +792,8 @@ class SongsState extends State<Songs> {
                                 builder: (context, songSettings, child) {
                               return ListTile(
                                 title: Text(results == null
-                                    ? AppLocalizations.of(context)!
-                                        .songsPageLoading
-                                    : capitalizeFirstLetters(results!
-                                        .elementAt(index)
-                                        .elementAt(1))),
+                                    ? AppLocalizations.of(context)!.songsPageLoading
+                                    : songNumAndTitle(results!.elementAt(index))),
                                 trailing: songSettings.displayKey
                                     ? Text(
                                         results!.elementAt(index).elementAt(2))
@@ -808,7 +871,10 @@ class SongsState extends State<Songs> {
   }
 
   String songNumAndTitle(List song) {
-    return '${song.elementAt(0)}. ${capitalizeFirstLetters(song.elementAt(1))}';
+    if (context.read<SongSettings>().displaySongNumber) {
+      return '${song.elementAt(0)}. ${capitalizeFirstLetters(song.elementAt(1))}';
+    }
+    return capitalizeFirstLetters(song.elementAt(1));
   }
 
   String capitalizeFirstLetters(String s) {
