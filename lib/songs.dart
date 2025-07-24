@@ -190,7 +190,11 @@ class SongsState extends State<Songs> {
     }
 
     if (kDebugMode) {
-      print(_csvData?.length ?? 0);
+      if (_csvData == null) {
+        print('CSV Data is null');
+      } else {
+        print('All songs before duplicate removal: ${_csvData!.length}');
+      }
     }
 
     _csvData?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
@@ -219,7 +223,11 @@ class SongsState extends State<Songs> {
     }
 
     if (kDebugMode) {
-      print(_csvData?.length ?? 0);
+      if (_csvData == null) {
+        print('CSV Data is null');
+      } else {
+        print('All songs after duplicate removal: ${_csvData!.length}');
+      }
     }
 
     // for each element in _csvData, add a number to it
@@ -266,7 +274,8 @@ class SongsState extends State<Songs> {
             fileName == 'HebronTabernacle_Lusaka_Zambia' ||
             fileName == "TokenTabernacle_Soweto_SA" ||
             fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe' ||
-            fileName == 'CityTabernacleBulawayo_Bulawayo_Zimbabwe'
+            fileName == 'CityTabernacleBulawayo_Bulawayo_Zimbabwe' ||
+            fileName == 'ChesilyotWordOfLifeTabernacle_BometCounty_Kenya'
         ? '\r\n'
         : '\n';
     return const CsvToListConverter()
@@ -505,20 +514,22 @@ class SongsState extends State<Songs> {
                                               prefs.setString('sortOrder',
                                                   SortOrder.alphabetic.name);
                                             }),
-                                            const SizedBox(width: 20),
+                                        const SizedBox(width: 20),
                                         ChoiceChip(
-                                            label: Text(AppLocalizations.of(
-                                                    context)!
-                                                .songsPageSortOrderKey),
-                                            selected:
-                                                _sortBy == SortOrder.key,
+                                            label: Text(
+                                                AppLocalizations.of(context)!
+                                                    .songsPageSortOrderKey),
+                                            selected: _sortBy == SortOrder.key,
                                             onSelected: (bool selected) async {
                                               _csvData?.sort((a, b) {
-                                                  int primary = customComparator(
-                                                      a.elementAt(2),
-                                                      b.elementAt(2));
-                                                  if (primary != 0) return primary;
-                                                  return a.elementAt(1).compareTo(b.elementAt(1));
+                                                int primary = customComparator(
+                                                    a.elementAt(2),
+                                                    b.elementAt(2));
+                                                if (primary != 0)
+                                                  return primary;
+                                                return a
+                                                    .elementAt(1)
+                                                    .compareTo(b.elementAt(1));
                                               });
                                               setState(() {
                                                 _sortBy = SortOrder.key;
@@ -576,7 +587,7 @@ class SongsState extends State<Songs> {
                                     const SizedBox(height: 10),
                                     Text(AppLocalizations.of(context)!
                                         .globalPageDisplaySongNumber),
-                                        Consumer<SongSettings>(
+                                    Consumer<SongSettings>(
                                       builder: (context, songSettings, child) =>
                                           Row(
                                         mainAxisAlignment:
@@ -586,12 +597,14 @@ class SongsState extends State<Songs> {
                                             label: Text(
                                                 AppLocalizations.of(context)!
                                                     .globalDisplaySongKeyYes),
-                                            selected:
-                                                songSettings.displaySongNumber == true,
+                                            selected: songSettings
+                                                    .displaySongNumber ==
+                                                true,
                                             onSelected: (bool selected) async {
                                               var songSettings =
                                                   context.read<SongSettings>();
-                                              songSettings.setDisplaySongNumber(true);
+                                              songSettings
+                                                  .setDisplaySongNumber(true);
                                             },
                                           ),
                                           const SizedBox(width: 20),
@@ -599,12 +612,14 @@ class SongsState extends State<Songs> {
                                             label: Text(
                                                 AppLocalizations.of(context)!
                                                     .globalDisplaySongKeyNo),
-                                            selected: songSettings.displaySongNumber ==
+                                            selected: songSettings
+                                                    .displaySongNumber ==
                                                 false,
                                             onSelected: (bool selected) async {
                                               var songSettings =
                                                   context.read<SongSettings>();
-                                              songSettings.setDisplaySongNumber(false);
+                                              songSettings
+                                                  .setDisplaySongNumber(false);
                                             },
                                           ),
                                         ],
@@ -792,8 +807,10 @@ class SongsState extends State<Songs> {
                                 builder: (context, songSettings, child) {
                               return ListTile(
                                 title: Text(results == null
-                                    ? AppLocalizations.of(context)!.songsPageLoading
-                                    : songNumAndTitle(results!.elementAt(index))),
+                                    ? AppLocalizations.of(context)!
+                                        .songsPageLoading
+                                    : songNumAndTitle(
+                                        results!.elementAt(index))),
                                 trailing: songSettings.displayKey
                                     ? Text(
                                         results!.elementAt(index).elementAt(2))
