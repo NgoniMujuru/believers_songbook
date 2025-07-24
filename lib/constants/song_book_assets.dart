@@ -13,6 +13,7 @@ class SongBookAssets {
         'English',
         'French',
         'German',
+        'Kalenjin',
         'Lingala',
         'Ndebele',
         'Nyanja',
@@ -33,10 +34,10 @@ class SongBookAssets {
     {
       'Title': 'Chesilyot Word of Life Tabernacle',
       'Location': 'Bomet County, Kenya',
-      'Songs': '3416',
+      'Songs': '245',
       'FileName': 'ChesilyotWordOfLifeTabernacle_BometCounty_Kenya',
       'Last Updated': '2025-06-19',
-      'Languages': ['Swahili', 'English']
+      'Languages': ['Kalenjin']
     },
     {
       'Title': 'City Tabernacle Bulawayo',
