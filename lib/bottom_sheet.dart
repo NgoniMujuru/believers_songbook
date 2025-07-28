@@ -69,6 +69,9 @@ class BottomSheetSettings extends StatefulWidget {
 }
 
 class _BottomSheetSettingsState extends State<BottomSheetSettings> {
+  static const double _chipSpacing = 20.0;
+  static const double _sectionSpacing = 10.0;
+  
   List<List<dynamic>>? get _csvData => widget.csvData;
   late SortOrder? _localSortBy;
   late SearchBy? _localSearchBy;
@@ -81,67 +84,75 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     _localSearchBy = widget.searchBy;
   }
 
+  Future<void> _handleSortOrderChange(SortOrder sortOrder) async {
+    // Sort the data based on the selected order
+    switch (sortOrder) {
+      case SortOrder.numerical:
+        _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
+        // Automatically set display song number to true when numerical sort is selected
+        var songSettings = context.read<SongSettings>();
+        songSettings.setDisplaySongNumber(true);
+        break;
+      case SortOrder.alphabetic:
+        _csvData?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
+        break;
+      case SortOrder.key:
+        _csvData?.sort((a, b) {
+          int primary = customComparator(a.elementAt(2), b.elementAt(2));
+          if (primary != 0) return primary;
+          return a.elementAt(1).compareTo(b.elementAt(1));
+        });
+        // Automatically set display key to true when key sort is selected
+        var songSettings = context.read<SongSettings>();
+        songSettings.setDisplayKey(true);
+        break;
+    }
+
+    // Update callbacks
+    if (widget.onCsvDataChanged != null) {
+      widget.onCsvDataChanged!(_csvData);
+    }
+    if (widget.onSortByChanged != null) {
+      widget.onSortByChanged!(sortOrder);
+    }
+
+    // Update local state
+    setState(() {
+      _localSortBy = sortOrder;
+    });
+
+    // Save to preferences
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('sortOrder', sortOrder.name);
+  }
+
+  Future<void> _handleSearchByChange(SearchBy searchBy) async {
+    if (widget.onSearchByChanged != null) {
+      widget.onSearchByChanged!(searchBy);
+    }
+    setState(() {
+      _localSearchBy = searchBy;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('searchBy', searchBy.name);
+  }
+
   Widget _buildSortOrderChips(BuildContext context) {
     final sortOptions = [
       {
         'label': AppLocalizations.of(context)!.songsPageSortOrderNumerical,
         'value': SortOrder.numerical,
-        'onSelected': (bool selected) async {
-          _csvData?.sort((a, b) => a.elementAt(0).compareTo(b.elementAt(0)));
-          if (widget.onCsvDataChanged != null) {
-            widget.onCsvDataChanged!(_csvData);
-          }
-          if (widget.onSortByChanged != null) {
-            widget.onSortByChanged!(SortOrder.numerical);
-          }
-          setState(() {
-            _localSortBy = SortOrder.numerical;
-          });
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setString('sortOrder', SortOrder.numerical.name);
-        },
       },
       {
         'label': AppLocalizations.of(context)!.songsPageSortOrderAlphabetic,
         'value': SortOrder.alphabetic,
-        'onSelected': (bool selected) async {
-          _csvData?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
-          if (widget.onCsvDataChanged != null) {
-            widget.onCsvDataChanged!(_csvData);
-          }
-          if (widget.onSortByChanged != null) {
-            widget.onSortByChanged!(SortOrder.alphabetic);
-          }
-          setState(() {
-            _localSortBy = SortOrder.alphabetic;
-          });
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setString('sortOrder', SortOrder.alphabetic.name);
-        },
       },
       {
         'label': AppLocalizations.of(context)!.songsPageSortOrderKey,
         'value': SortOrder.key,
-        'onSelected': (bool selected) async {
-          _csvData?.sort((a, b) {
-            int primary = customComparator(a.elementAt(2), b.elementAt(2));
-            if (primary != 0) return primary;
-            return a.elementAt(1).compareTo(b.elementAt(1));
-          });
-          if (widget.onCsvDataChanged != null) {
-            widget.onCsvDataChanged!(_csvData);
-          }
-          if (widget.onSortByChanged != null) {
-            widget.onSortByChanged!(SortOrder.key);
-          }
-          setState(() {
-            _localSortBy = SortOrder.key;
-          });
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setString('sortOrder', SortOrder.key.name);
-        },
       },
     ];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: sortOptions.map<Widget>((option) {
@@ -150,9 +161,9 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
             ChoiceChip(
               label: Text(option['label'] as String),
               selected: _localSortBy == option['value'],
-              onSelected: option['onSelected'] as void Function(bool),
+              onSelected: (bool selected) => _handleSortOrderChange(option['value'] as SortOrder),
             ),
-            if (option != sortOptions.last) const SizedBox(width: 20),
+            if (option != sortOptions.last) const SizedBox(width: _chipSpacing),
           ],
         );
       }).toList(),
@@ -178,6 +189,7 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
         'value': SearchBy.lyrics,
       },
     ];
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -188,22 +200,106 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
               ChoiceChip(
                 label: Text(option['label'] as String),
                 selected: _localSearchBy == option['value'],
-                onSelected: (bool selected) async {
-                  if (widget.onSearchByChanged != null) {
-                    widget.onSearchByChanged!(option['value'] as SearchBy);
-                  }
-                  setState(() {
-                    _localSearchBy = option['value'] as SearchBy;
-                  });
-                  final prefs = await SharedPreferences.getInstance();
-                  prefs.setString('searchBy', (option['value'] as SearchBy).name);
-                },
+                onSelected: (bool selected) => _handleSearchByChange(option['value'] as SearchBy),
               ),
-              if (option != searchOptions.last) const SizedBox(width: 20),
+              if (option != searchOptions.last) const SizedBox(width: _chipSpacing),
             ],
           );
         }).toList(),
       ),
+    );
+  }
+
+  Widget _buildThemeSettings() {
+    return Consumer<ThemeSettings>(
+      builder: (context, themeSettings, child) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          ChoiceChip(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            label: Text(AppLocalizations.of(context)!.globalThemeSettingLight),
+            selected: !themeSettings.isDarkMode,
+            onSelected: (bool selected) {
+              var themeSettings = context.read<ThemeSettings>();
+              themeSettings.setIsDarkMode(false);
+            },
+          ),
+          const SizedBox(width: _chipSpacing),
+          ChoiceChip(
+            label: Text(AppLocalizations.of(context)!.globalThemeSettingDark),
+            selected: themeSettings.isDarkMode,
+            onSelected: (bool selected) {
+              var themeSettings = context.read<ThemeSettings>();
+              themeSettings.setIsDarkMode(true);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDisplayKeySettings() {
+    return Consumer<SongSettings>(
+      builder: (context, songSettings, child) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          ChoiceChip(
+            label: Text(AppLocalizations.of(context)!.globalDisplaySongKeyYes),
+            selected: songSettings.displayKey == true,
+            onSelected: (bool selected) {
+              var songSettings = context.read<SongSettings>();
+              songSettings.setDisplayKey(true);
+            },
+          ),
+          const SizedBox(width: _chipSpacing),
+          ChoiceChip(
+            label: Text(AppLocalizations.of(context)!.globalDisplaySongKeyNo),
+            selected: songSettings.displayKey == false,
+            onSelected: (bool selected) {
+              var songSettings = context.read<SongSettings>();
+              songSettings.setDisplayKey(false);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDisplaySongNumberSettings() {
+    return Consumer<SongSettings>(
+      builder: (context, songSettings, child) => Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          ChoiceChip(
+            label: Text(AppLocalizations.of(context)!.globalDisplaySongKeyYes),
+            selected: songSettings.displaySongNumber == true,
+            onSelected: (bool selected) {
+              var songSettings = context.read<SongSettings>();
+              songSettings.setDisplaySongNumber(true);
+            },
+          ),
+          const SizedBox(width: _chipSpacing),
+          ChoiceChip(
+            label: Text(AppLocalizations.of(context)!.globalDisplaySongKeyNo),
+            selected: songSettings.displaySongNumber == false,
+            onSelected: (bool selected) {
+              var songSettings = context.read<SongSettings>();
+              songSettings.setDisplaySongNumber(false);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingSection(String title, Widget content) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title),
+        content,
+        const SizedBox(height: _sectionSpacing),
+      ],
     );
   }
 
@@ -214,95 +310,25 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(AppLocalizations.of(context)!.globalThemeSetting),
-              Consumer<ThemeSettings>(
-                  builder: (context, themeSettings, child) =>
-                      (Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ChoiceChip(
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              label: Text(AppLocalizations.of(context)!.globalThemeSettingLight),
-                              selected: !themeSettings.isDarkMode,
-                              onSelected: (bool selected) async {
-                                var themeSettings = context.read<ThemeSettings>();
-                                themeSettings.setIsDarkMode(false);
-                              }),
-                          const SizedBox(width: 20),
-                          ChoiceChip(
-                              label: Text(AppLocalizations.of(context)!.globalThemeSettingDark),
-                              selected: themeSettings.isDarkMode,
-                              onSelected: (bool selected) async {
-                                var themeSettings = context.read<ThemeSettings>();
-                                themeSettings.setIsDarkMode(true);
-                              }),
-                        ],
-                      ))),
-              const SizedBox(height: 10),
-              Text(AppLocalizations.of(context)!.songsPageSortOrder),
-              _buildSortOrderChips(context),
-              const SizedBox(height: 10),
-              Text(AppLocalizations.of(context)!.globalDisplaySongKey),
-              Consumer<SongSettings>(
-                builder: (context, songSettings, child) =>
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ChoiceChip(
-                          label: Text(AppLocalizations.of(context)!.globalDisplaySongKeyYes),
-                          selected: songSettings.displayKey == true,
-                          onSelected: (bool selected) async {
-                            var songSettings = context.read<SongSettings>();
-                            songSettings.setDisplayKey(true);
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        ChoiceChip(
-                          label: Text(AppLocalizations.of(context)!.globalDisplaySongKeyNo),
-                          selected: songSettings.displayKey == false,
-                          onSelected: (bool selected) async {
-                            var songSettings = context.read<SongSettings>();
-                            songSettings.setDisplayKey(false);
-                          },
-                        ),
-                      ],
-                    ),
-              ),
-              const SizedBox(height: 10),
-              Text(AppLocalizations.of(context)!.globalPageDisplaySongNumber),
-              Consumer<SongSettings>(
-                builder: (context, songSettings, child) =>
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ChoiceChip(
-                          label: Text(AppLocalizations.of(context)!.globalDisplaySongKeyYes),
-                          selected: songSettings.displaySongNumber == true,
-                          onSelected: (bool selected) async {
-                            var songSettings = context.read<SongSettings>();
-                            songSettings.setDisplaySongNumber(true);
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        ChoiceChip(
-                          label: Text(AppLocalizations.of(context)!.globalDisplaySongKeyNo),
-                          selected: songSettings.displaySongNumber == false,
-                          onSelected: (bool selected) async {
-                            var songSettings = context.read<SongSettings>();
-                            songSettings.setDisplaySongNumber(false);
-                          },
-                        ),
-                      ],
-                    ),
-              ),
-              const SizedBox(height: 10),
-              Text(AppLocalizations.of(context)!.songsPageSearchSongsBy),
-              _buildSearchByChips(context),
-            ],
+          _buildSettingSection(
+            AppLocalizations.of(context)!.globalThemeSetting,
+            _buildThemeSettings(),
+          ),
+          _buildSettingSection(
+            AppLocalizations.of(context)!.songsPageSortOrder,
+            _buildSortOrderChips(context),
+          ),
+          _buildSettingSection(
+            AppLocalizations.of(context)!.globalDisplaySongKey,
+            _buildDisplayKeySettings(),
+          ),
+          _buildSettingSection(
+            AppLocalizations.of(context)!.globalPageDisplaySongNumber,
+            _buildDisplaySongNumberSettings(),
+          ),
+          _buildSettingSection(
+            AppLocalizations.of(context)!.songsPageSearchSongsBy,
+            _buildSearchByChips(context),
           ),
         ],
       ),

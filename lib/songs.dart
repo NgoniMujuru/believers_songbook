@@ -360,6 +360,16 @@ class SongsState extends State<Songs> {
                         setState(() {
                           _csvData = newCsvData;
                         });
+                      },
+                      onSearchByChanged: (newSearchBy) {
+                        setState(() {
+                          _searchBy = newSearchBy;
+                        });
+                      },
+                      onSortByChanged: (newSortBy) {
+                        setState(() {
+                          _sortBy = newSortBy;
+                        });
                       }
                     );
                   }),
