@@ -286,7 +286,7 @@ class SongsState extends State<Songs> {
 
     if (_searchBy == SearchBy.key) {
       for (var song in _csvData!) {
-        if (song.elementAt(2).toString().toLowerCase().contains(_terms)) {
+        if (song.elementAt(2).toString().toLowerCase().contains(_terms.toLowerCase())) {
           results.add(song);
         }
       }
