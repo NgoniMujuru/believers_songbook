@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:believers_songbook/bottom_sheet.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
@@ -294,7 +295,7 @@ class SongsState extends State<Songs> {
 
     if (_searchBy == SearchBy.key) {
       for (var song in _csvData!) {
-        if (song.elementAt(2).toString().toLowerCase().contains(_terms)) {
+        if (song.elementAt(2).toString().toLowerCase().contains(_terms.toLowerCase())) {
           results.add(song);
         }
       }
@@ -358,7 +359,28 @@ class SongsState extends State<Songs> {
               IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    buildBottomSheet();
+                    BottomSheetSettings.show(
+                      context,
+                      csvData: _csvData,
+                      sortBy: _sortBy,
+                      searchBy: _searchBy,
+                      customComparator: customComparator,
+                      onCsvDataChanged: (newCsvData){
+                        setState(() {
+                          _csvData = newCsvData;
+                        });
+                      },
+                      onSearchByChanged: (newSearchBy) {
+                        setState(() {
+                          _searchBy = newSearchBy;
+                        });
+                      },
+                      onSortByChanged: (newSortBy) {
+                        setState(() {
+                          _sortBy = newSortBy;
+                        });
+                      }
+                    );
                   }),
             ]),
         body: DecoratedBox(
@@ -380,369 +402,7 @@ class SongsState extends State<Songs> {
     );
   }
 
-  buildBottomSheet() {
-    return showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width < 600
-            ? MediaQuery.of(context).size.width
-            : MediaQuery.of(context).size.width * 0.6,
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(15.0),
-          topRight: Radius.circular(15.0),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setLocalState) {
-            return Consumer<MainPageSettings>(
-                builder: (context, mainPageSettings, child) =>
-                    (Localizations.override(
-                        context: context,
-                        locale: Locale(mainPageSettings.getLocale),
-                        child: Consumer<MainPageSettings>(
-                          builder: (context, mainPageSettings, child) =>
-                              (Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(AppLocalizations.of(context)!
-                                        .globalThemeSetting),
-                                    Consumer<ThemeSettings>(
-                                        builder: (context, themeSettings,
-                                                child) =>
-                                            (Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                ChoiceChip(
-                                                    materialTapTargetSize:
-                                                        MaterialTapTargetSize
-                                                            .shrinkWrap,
-                                                    label: Text(AppLocalizations
-                                                            .of(context)!
-                                                        .globalThemeSettingLight),
-                                                    selected: !themeSettings
-                                                        .isDarkMode,
-                                                    onSelected:
-                                                        (bool selected) async {
-                                                      var themeSettings =
-                                                          context.read<
-                                                              ThemeSettings>();
-                                                      themeSettings
-                                                          .setIsDarkMode(false);
-                                                    }),
-                                                const SizedBox(width: 20),
-                                                ChoiceChip(
-                                                    label: Text(AppLocalizations
-                                                            .of(context)!
-                                                        .globalThemeSettingDark),
-                                                    selected: themeSettings
-                                                        .isDarkMode,
-                                                    onSelected:
-                                                        (bool selected) async {
-                                                      var themeSettings =
-                                                          context.read<
-                                                              ThemeSettings>();
-                                                      themeSettings
-                                                          .setIsDarkMode(true);
-                                                    }),
-                                              ],
-                                            ))),
-                                    const SizedBox(height: 10),
-                                    Text(AppLocalizations.of(context)!
-                                        .songsPageSortOrder),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        ChoiceChip(
-                                          label: Text(
-                                              AppLocalizations.of(context)!
-                                                  .songsPageSortOrderNumerical),
-                                          selected:
-                                              _sortBy == SortOrder.numerical,
-                                          onSelected: (bool selected) async {
-                                            _csvData?.sort((a, b) => a
-                                                .elementAt(0)
-                                                .compareTo(b.elementAt(0)));
-                                            setState(() {
-                                              _sortBy = SortOrder.numerical;
-                                            });
-                                            setLocalState(() {
-                                              _sortBy = SortOrder.numerical;
-                                            });
-                                            final Future<SharedPreferences>
-                                                prefsRef =
-                                                SharedPreferences.getInstance();
-                                            final SharedPreferences prefs =
-                                                await prefsRef;
-                                            prefs.setString('sortOrder',
-                                                SortOrder.numerical.name);
-                                          },
-                                        ),
-                                        const SizedBox(width: 20),
-                                        ChoiceChip(
-                                            label: Text(AppLocalizations.of(
-                                                    context)!
-                                                .songsPageSortOrderAlphabetic),
-                                            selected:
-                                                _sortBy == SortOrder.alphabetic,
-                                            onSelected: (bool selected) async {
-                                              _csvData?.sort((a, b) =>
-                                                  customComparator(
-                                                      a.elementAt(1),
-                                                      b.elementAt(1)));
-                                              setState(() {
-                                                _sortBy = SortOrder.alphabetic;
-                                              });
-                                              setLocalState(() {
-                                                _sortBy = SortOrder.alphabetic;
-                                              });
-                                              final Future<SharedPreferences>
-                                                  prefsRef = SharedPreferences
-                                                      .getInstance();
-                                              final SharedPreferences prefs =
-                                                  await prefsRef;
-                                              prefs.setString('sortOrder',
-                                                  SortOrder.alphabetic.name);
-                                            }),
-                                        const SizedBox(width: 20),
-                                        ChoiceChip(
-                                            label: Text(
-                                                AppLocalizations.of(context)!
-                                                    .songsPageSortOrderKey),
-                                            selected: _sortBy == SortOrder.key,
-                                            onSelected: (bool selected) async {
-                                              _csvData?.sort((a, b) {
-                                                int primary = customComparator(
-                                                    a.elementAt(2),
-                                                    b.elementAt(2));
-                                                if (primary != 0)
-                                                  return primary;
-                                                return a
-                                                    .elementAt(1)
-                                                    .compareTo(b.elementAt(1));
-                                              });
-                                              setState(() {
-                                                _sortBy = SortOrder.key;
-                                              });
-                                              setLocalState(() {
-                                                _sortBy = SortOrder.key;
-                                              });
-                                              final Future<SharedPreferences>
-                                                  prefsRef = SharedPreferences
-                                                      .getInstance();
-                                              final SharedPreferences prefs =
-                                                  await prefsRef;
-                                              prefs.setString('sortOrder',
-                                                  SortOrder.key.name);
-                                            }),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(AppLocalizations.of(context)!
-                                        .globalDisplaySongKey),
-                                    Consumer<SongSettings>(
-                                      builder: (context, songSettings, child) =>
-                                          Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          ChoiceChip(
-                                            label: Text(
-                                                AppLocalizations.of(context)!
-                                                    .globalDisplaySongKeyYes),
-                                            selected:
-                                                songSettings.displayKey == true,
-                                            onSelected: (bool selected) async {
-                                              var songSettings =
-                                                  context.read<SongSettings>();
-                                              songSettings.setDisplayKey(true);
-                                            },
-                                          ),
-                                          const SizedBox(width: 20),
-                                          ChoiceChip(
-                                            label: Text(
-                                                AppLocalizations.of(context)!
-                                                    .globalDisplaySongKeyNo),
-                                            selected: songSettings.displayKey ==
-                                                false,
-                                            onSelected: (bool selected) async {
-                                              var songSettings =
-                                                  context.read<SongSettings>();
-                                              songSettings.setDisplayKey(false);
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(AppLocalizations.of(context)!
-                                        .globalPageDisplaySongNumber),
-                                    Consumer<SongSettings>(
-                                      builder: (context, songSettings, child) =>
-                                          Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          ChoiceChip(
-                                            label: Text(
-                                                AppLocalizations.of(context)!
-                                                    .globalDisplaySongKeyYes),
-                                            selected: songSettings
-                                                    .displaySongNumber ==
-                                                true,
-                                            onSelected: (bool selected) async {
-                                              var songSettings =
-                                                  context.read<SongSettings>();
-                                              songSettings
-                                                  .setDisplaySongNumber(true);
-                                            },
-                                          ),
-                                          const SizedBox(width: 20),
-                                          ChoiceChip(
-                                            label: Text(
-                                                AppLocalizations.of(context)!
-                                                    .globalDisplaySongKeyNo),
-                                            selected: songSettings
-                                                    .displaySongNumber ==
-                                                false,
-                                            onSelected: (bool selected) async {
-                                              var songSettings =
-                                                  context.read<SongSettings>();
-                                              songSettings
-                                                  .setDisplaySongNumber(false);
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(AppLocalizations.of(context)!
-                                        .songsPageSearchSongsBy),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          ChoiceChip(
-                                              label: Text(AppLocalizations.of(
-                                                      context)!
-                                                  .songsPageSearchSongsByKey),
-                                              selected:
-                                                  _searchBy == SearchBy.key,
-                                              onSelected:
-                                                  (bool selected) async {
-                                                setState(() {
-                                                  _searchBy = SearchBy.key;
-                                                });
-                                                setLocalState(() {
-                                                  _searchBy = SearchBy.key;
-                                                });
-                                                final Future<SharedPreferences>
-                                                    prefsRef = SharedPreferences
-                                                        .getInstance();
-                                                final SharedPreferences prefs =
-                                                    await prefsRef;
-                                                prefs.setString('searchBy',
-                                                    SearchBy.key.name);
-                                              }),
-                                          const SizedBox(width: 20),
-                                          ChoiceChip(
-                                              label: Text(AppLocalizations.of(
-                                                      context)!
-                                                  .songsPageSearchSongsByTitleAndLyrics),
-                                              selected: _searchBy ==
-                                                  SearchBy.titleAndLyrics,
-                                              onSelected:
-                                                  (bool selected) async {
-                                                setState(() {
-                                                  _searchBy =
-                                                      SearchBy.titleAndLyrics;
-                                                });
-                                                setLocalState(() {
-                                                  _searchBy =
-                                                      SearchBy.titleAndLyrics;
-                                                });
-                                                final Future<SharedPreferences>
-                                                    prefsRef = SharedPreferences
-                                                        .getInstance();
-                                                final SharedPreferences prefs =
-                                                    await prefsRef;
-                                                prefs.setString(
-                                                    'searchBy',
-                                                    SearchBy
-                                                        .titleAndLyrics.name);
-                                              }),
-                                          const SizedBox(width: 20),
-                                          ChoiceChip(
-                                            label: Text(AppLocalizations.of(
-                                                    context)!
-                                                .songsPageSearchSongsByTitle),
-                                            selected:
-                                                _searchBy == SearchBy.title,
-                                            onSelected: (bool selected) async {
-                                              setState(() {
-                                                _searchBy = SearchBy.title;
-                                              });
-                                              setLocalState(() {
-                                                _searchBy = SearchBy.title;
-                                              });
-                                              final Future<SharedPreferences>
-                                                  prefsRef = SharedPreferences
-                                                      .getInstance();
-                                              final SharedPreferences prefs =
-                                                  await prefsRef;
-                                              prefs.setString('searchBy',
-                                                  SearchBy.title.name);
-                                            },
-                                          ),
-                                          const SizedBox(width: 20),
-                                          ChoiceChip(
-                                              label: Text(AppLocalizations.of(
-                                                      context)!
-                                                  .songsPageSearchSongsByLyrics),
-                                              selected:
-                                                  _searchBy == SearchBy.lyrics,
-                                              onSelected:
-                                                  (bool selected) async {
-                                                setState(() {
-                                                  _searchBy = SearchBy.lyrics;
-                                                });
-                                                setLocalState(() {
-                                                  _searchBy = SearchBy.lyrics;
-                                                });
-                                                final Future<SharedPreferences>
-                                                    prefsRef = SharedPreferences
-                                                        .getInstance();
-                                                final SharedPreferences prefs =
-                                                    await prefsRef;
-                                                prefs.setString('searchBy',
-                                                    SearchBy.lyrics.name);
-                                              }),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )),
-                        ))));
-          },
-        );
-      },
-    );
-  }
+
 
   Expanded _buildAlphabeticList(results) {
     return Expanded(
