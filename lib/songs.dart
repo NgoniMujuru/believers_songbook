@@ -191,7 +191,11 @@ class SongsState extends State<Songs> {
     }
 
     if (kDebugMode) {
-      print(_csvData?.length ?? 0);
+      if (_csvData == null) {
+        print('CSV Data is null');
+      } else {
+        print('All songs before duplicate removal: ${_csvData!.length}');
+      }
     }
 
     _csvData?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
@@ -220,7 +224,11 @@ class SongsState extends State<Songs> {
     }
 
     if (kDebugMode) {
-      print(_csvData?.length ?? 0);
+      if (_csvData == null) {
+        print('CSV Data is null');
+      } else {
+        print('All songs after duplicate removal: ${_csvData!.length}');
+      }
     }
 
     // for each element in _csvData, add a number to it
@@ -267,7 +275,8 @@ class SongsState extends State<Songs> {
             fileName == 'HebronTabernacle_Lusaka_Zambia' ||
             fileName == "TokenTabernacle_Soweto_SA" ||
             fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe' ||
-            fileName == 'CityTabernacleBulawayo_Bulawayo_Zimbabwe'
+            fileName == 'CityTabernacleBulawayo_Bulawayo_Zimbabwe' ||
+            fileName == 'ChesilyotWordOfLifeTabernacle_BometCounty_Kenya'
         ? '\r\n'
         : '\n';
     return const CsvToListConverter()
@@ -458,8 +467,10 @@ class SongsState extends State<Songs> {
                                 builder: (context, songSettings, child) {
                               return ListTile(
                                 title: Text(results == null
-                                    ? AppLocalizations.of(context)!.songsPageLoading
-                                    : songNumAndTitle(results!.elementAt(index))),
+                                    ? AppLocalizations.of(context)!
+                                        .songsPageLoading
+                                    : songNumAndTitle(
+                                        results!.elementAt(index))),
                                 trailing: songSettings.displayKey
                                     ? Text(
                                         results!.elementAt(index).elementAt(2))
