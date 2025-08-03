@@ -63,6 +63,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    namespace 'com.ngonimujuru.songbook_for_believers'
 }
 
 flutter {
