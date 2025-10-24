@@ -1,122 +1,115 @@
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/styles.dart';
-// import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/song_book_settings.dart';
 import 'constants/song_book_assets.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 
 class SongBooks extends StatelessWidget {
   const SongBooks({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isWideScreen = MediaQuery.of(context).size.width > 600;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.songBooksPageTitle),
       ),
       body: SafeArea(
         child: Padding(
-          padding: MediaQuery.of(context).size.width > 600
+          padding: isWideScreen
               ? const EdgeInsets.fromLTRB(80, 0, 80, 0)
               : const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Column(
-            children: [
-              Expanded(
-                child: Consumer<SongBookSettings>(
-                    builder: (context, songBookSettings, child) {
-                  return ListView.builder(
-                      itemCount: SongBookAssets.songList.length,
-                      itemBuilder: (itemBuilder, index) {
-                        return Consumer<ThemeSettings>(
-                          builder: (context, themeSettings, child) => Card(
-                            clipBehavior: Clip.hardEdge,
-                            color: songBookSettings.songBookFile ==
-                                    SongBookAssets.songList[index]['FileName']
-                                ? (themeSettings.isDarkMode
-                                    ? Styles.selectedSongBookBackgroundDark
-                                    : Styles.selectedSongBookBackground)
-                                : (themeSettings.isDarkMode
-                                    ? Styles.songBookBackgroundDark
-                                    : Styles.songBookBackground),
-                            child: InkWell(
-                              splashColor: Styles.themeColor.withAlpha(30),
-                              onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      '${AppLocalizations.of(context)!.songBooksChangeSnackBarText} ${SongBookAssets.songList[index]['Title']}',
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                    backgroundColor: themeSettings.isDarkMode
-                                        ? Styles.searchBackgroundDark
-                                        : Styles.themeColor,
-                                    duration: const Duration(seconds: 3),
-                                  ),
-                                );
-                                Provider.of<MainPageSettings>(context, listen: false)
-                                    .setOpenPageIndex(0);
-                                songBookSettings.setSongBookFile(
-                                    SongBookAssets.songList[index]['FileName']);
-                              },
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ListTile(
-                                    title: Text(SongBookAssets.songList[index]['Title']),
-                                    textColor: themeSettings.isDarkMode
-                                        ? Styles.songBookTextDark
-                                        : Styles.songBookText,
-                                    subtitle:
-                                        Text(SongBookAssets.songList[index]['Location']),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(16.0, 0, 8.0, 8.0),
-                                    child: Text(
-                                      SongBookAssets.songList[index]['Languages']
-                                          .join(', '),
-                                      style: TextStyle(
-                                          color: themeSettings.isDarkMode
-                                              ? Styles.songBookLanguagesDark
-                                              : Styles.songBookLanguages),
-                                      softWrap: true,
-                                    ),
-                                  )
-                                ],
+          child: Consumer2<SongBookSettings, ThemeSettings>(
+            builder: (context, songBookSettings, themeSettings, child) {
+              return RawScrollbar(
+                minThumbLength: isWideScreen ? 100 : 40,
+                thickness: isWideScreen ? 20 : 10.0,
+                radius: const Radius.circular(5.0),
+                thumbVisibility: true,
+                child: ListView.builder(
+                  itemCount: SongBookAssets.songList.length,
+                  itemBuilder: (context, index) {
+                    final songBook = SongBookAssets.songList[index];
+                    final isSelected =
+                        songBookSettings.songBookFile == songBook['FileName'];
+
+                    final cardColor = isSelected
+                        ? (themeSettings.isDarkMode
+                            ? Styles.selectedSongBookBackgroundDark
+                            : Styles.selectedSongBookBackground)
+                        : (themeSettings.isDarkMode
+                            ? Styles.songBookBackgroundDark
+                            : Styles.songBookBackground);
+
+                    return Padding(
+                      padding: isWideScreen
+                          ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
+                          : const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                      child: Card(
+                        clipBehavior: Clip.hardEdge,
+                        color: cardColor,
+                        child: InkWell(
+                          splashColor: Styles.themeColor.withAlpha(30),
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '${AppLocalizations.of(context)!.songBooksChangeSnackBarText} ${songBook['Title']}',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: themeSettings.isDarkMode
+                                    ? Styles.searchBackgroundDark
+                                    : Styles.themeColor,
+                                duration: const Duration(seconds: 3),
                               ),
-                            ),
+                            );
+
+                            Provider.of<MainPageSettings>(context, listen: false)
+                                .setOpenPageIndex(0);
+
+                            songBookSettings
+                                .setSongBookFile(songBook['FileName']);
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                title: Text(songBook['Title']),
+                                textColor: themeSettings.isDarkMode
+                                    ? Styles.songBookTextDark
+                                    : Styles.songBookText,
+                                subtitle: Text(songBook['Location']),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16.0, 0, 8.0, 8.0),
+                                child: Text(
+                                  (songBook['Languages'] as List<dynamic>)
+                                      .join(', '),
+                                  style: TextStyle(
+                                    color: themeSettings.isDarkMode
+                                        ? Styles.songBookLanguagesDark
+                                        : Styles.songBookLanguages,
+                                  ),
+                                  softWrap: true,
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      });
-                }),
-              ),
-            ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //     onPressed: () {
-      //       DatabaseReference _testRef =
-      //           FirebaseDatabase.instance.ref().child('SongBooks');
-      //       _testRef.get().then((DataSnapshot snapshot) {
-      //         Iterable<DataSnapshot> values = snapshot.children;
-      //         values.forEach((DataSnapshot child) {
-      //           // print(child.key);
-      //           // print(child.value);
-      //           // song_book_assets.add(child.value);
-      //         });
-      //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      //             content: Text(
-      //               'Songbooks updated successfully',
-      //               style: TextStyle(color: Colors.white),
-      //             ),
-      //             backgroundColor: Styles.themeColor,
-      //             duration: Duration(seconds: 2)));
-      //       });
-      //     },
-      //     label: const Text('Check for updates')),
     );
   }
 }
