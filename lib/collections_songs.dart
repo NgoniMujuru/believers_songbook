@@ -7,7 +7,7 @@ import 'package:believers_songbook/song.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 
 class CollectionSongs extends StatelessWidget {
   final int collectionId;

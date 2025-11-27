@@ -10,7 +10,7 @@ import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import 'package:provider/provider.dart';

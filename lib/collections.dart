@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'collections_songs.dart';
 import 'styles.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 
 class Collections extends StatelessWidget {
   const Collections({super.key});

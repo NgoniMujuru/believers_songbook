@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'styles.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:believers_songbook/generated/build_date.dart';
 

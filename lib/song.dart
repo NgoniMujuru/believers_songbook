@@ -9,7 +9,7 @@ import 'models/collection.dart';
 import 'styles.dart';
 import 'package:provider/provider.dart';
 import 'providers/song_settings.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 
 class Song extends StatefulWidget {
   final String songTitle;
