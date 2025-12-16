@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
-import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import '/models/song_sort_order.dart';
 

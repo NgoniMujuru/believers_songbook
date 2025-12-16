@@ -168,51 +168,85 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
       padding: const EdgeInsets.symmetric(horizontal: 5),
       buildDefaultDragHandles: false, // Custom drag handles
       children: List.generate(_songs.length, (index) {
-        return Container(
-          key: ValueKey(_songs[index].id),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  String lyrics = _songs[index].lyrics;
-                  String title = _songs[index].title;
-                  String key = _songs[index].key;
+        final song = _songs[index];
+        return Dismissible(
+          key: ValueKey('collection_song_${song.id}'),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            color: Colors.red,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 20),
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          onDismissed: (direction) async {
+            // remove locally and from provider/db
+            setState(() {
+              _songs.removeAt(index);
+            });
+            final collectionsData = Provider.of<CollectionsData>(context, listen: false);
+            final scaffold = ScaffoldMessenger.of(context);
+            await collectionsData.deleteCollectionSong(song.id);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Song(
-                        songText: lyrics,
-                        songKey: key,
-                        songTitle: title,
-                        isCollectionSong: true,
-                      ),
-                    ),
-                  );
-                },
-                child: Consumer<SongSettings>(
-                  builder: (context, songSettings, child) {
-                    return ListTile(
-                      title: Text(_songs[index].title),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (songSettings.displayKey) Text(_songs[index].key),
-                          const Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
-                          // Custom drag handle for reordering
-                          ReorderableDragStartListener(
-                            index: index,
-                            child: const Icon(Icons.menu),
-                          ),
-                        ],
-                      ),
-                    );
+            scaffold.showSnackBar(
+              SnackBar(
+                content: Text('${song.title} removed'),
+                action: SnackBarAction(
+                  label: 'Undo',
+                  onPressed: () async {
+                    await collectionsData.addCollectionSong(song);
+                    setState(() {
+                      _songs.insert(index, song);
+                    });
                   },
                 ),
               ),
-              const Divider(height: 0.5),
-            ],
+            );
+          },
+          child: Container(
+            key: ValueKey(song.id),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    String lyrics = song.lyrics;
+                    String title = song.title;
+                    String key = song.key;
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Song(
+                          songText: lyrics,
+                          songKey: key,
+                          songTitle: title,
+                          isCollectionSong: true,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Consumer<SongSettings>(
+                    builder: (context, songSettings, child) {
+                      return ListTile(
+                        title: Text(song.title),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (songSettings.displayKey) Text(song.key),
+                            const Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
+                            // Custom drag handle for reordering
+                            ReorderableDragStartListener(
+                              index: index,
+                              child: const Icon(Icons.menu),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const Divider(height: 0.5),
+              ],
+            ),
           ),
         );
       }),
