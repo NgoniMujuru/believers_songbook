@@ -1,4 +1,5 @@
 import 'package:believers_songbook/models/collection_song.dart';
+import 'package:believers_songbook/models/collection.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,46 @@ class Collections extends StatelessWidget {
           appBar: AppBar(
             title: Text(AppLocalizations.of(context)!.globalCollections),
             scrolledUnderElevation: 4,
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              final TextEditingController controller = TextEditingController();
+              showDialog(
+                context: context,
+                builder: (dialogContext) {
+                  return AlertDialog(
+                    title: const Text('New collection'),
+                    content: TextField(
+                      controller: controller,
+                      decoration: InputDecoration(hintText: AppLocalizations.of(dialogContext)!.songPageCollectionNameLabel),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text(AppLocalizations.of(dialogContext)!.collectionSongsDialogCancel),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          final name = controller.text.trim();
+                          final navigator = Navigator.of(dialogContext);
+                          if (name.isNotEmpty) {
+                            final newCollection = Collection(
+                              id: DateTime.now().millisecondsSinceEpoch,
+                              name: name,
+                              dateCreated: DateTime.now().toIso8601String(),
+                            );
+                            await collectionsData.addCollection(newCollection);
+                          }
+                          navigator.pop();
+                        },
+                        child: Text(AppLocalizations.of(dialogContext)!.songPageCreate),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: const Icon(Icons.add),
           ),
           body: SafeArea(
             child: collectionsData.collections.isNotEmpty
@@ -108,3 +149,4 @@ class Collections extends StatelessWidget {
     );
   }
 }
+

@@ -270,7 +270,7 @@ class _SongState extends State<Song> {
                                         Text(
                                             AppLocalizations.of(context)!
                                                 .globalCollections,
-                                            style: TextStyle(fontSize: 25)),
+                                            style: const TextStyle(fontSize: 25)),
                                         TextButton(
                                           onPressed: () {
                                             if (!_isSelectingCollection) {
@@ -602,13 +602,13 @@ class _SongState extends State<Song> {
                                               ? ElevatedButton(
                                                   style: ButtonStyle(
                                                     foregroundColor:
-                                                        MaterialStateColor
+                                                        WidgetStateColor
                                                             .resolveWith(
                                                                 (states) =>
                                                                     Colors
                                                                         .white),
                                                     backgroundColor:
-                                                        MaterialStateColor
+                                                        WidgetStateColor
                                                             .resolveWith(
                                                                 (states) => Styles
                                                                     .themeColor),
@@ -629,11 +629,11 @@ class _SongState extends State<Song> {
                                           ElevatedButton(
                                             style: ButtonStyle(
                                               foregroundColor:
-                                                  MaterialStateColor
+                                                  WidgetStateColor
                                                       .resolveWith((states) =>
                                                           Colors.white),
                                               backgroundColor:
-                                                  MaterialStateColor
+                                                  WidgetStateColor
                                                       .resolveWith((states) =>
                                                           Styles.themeColor),
                                             ),
@@ -657,11 +657,11 @@ class _SongState extends State<Song> {
                                           ElevatedButton(
                                             style: ButtonStyle(
                                               foregroundColor:
-                                                  MaterialStateColor
+                                                  WidgetStateColor
                                                       .resolveWith((states) =>
                                                           Colors.white),
                                               backgroundColor:
-                                                  MaterialStateColor
+                                                  WidgetStateColor
                                                       .resolveWith((states) =>
                                                           Styles.themeColor),
                                             ),

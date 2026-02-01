@@ -14,7 +14,7 @@ class AppPages extends StatelessWidget {
     const Songs(),
     const SongBooks(),
     const Collections(),
-    AboutPage(),
+    const AboutPage(),
   ];
 
 // manual language translations as flutter_localizations was not working for nav elements

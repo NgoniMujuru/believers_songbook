@@ -3,7 +3,6 @@ import 'package:believers_songbook/bottom_sheet.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
-import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
@@ -144,8 +143,7 @@ class SongsState extends State<Songs> {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       String? model = iosInfo.utsname.machine;
       // Check if the model is relatively new or considered high-end.
-      return model != null &&
-          (model.contains("iPhone11,") || model.compareTo("iPhone11,") > 0);
+      return (model.contains("iPhone11,") || model.compareTo("iPhone11,") > 0);
     }
     return false;
   }

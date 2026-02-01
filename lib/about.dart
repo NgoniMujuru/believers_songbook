@@ -170,9 +170,9 @@ class _AboutPageState extends State<AboutPage> {
                         children: [
                           ElevatedButton(
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateColor.resolveWith(
+                              foregroundColor: WidgetStateColor.resolveWith(
                                   (states) => Colors.white),
-                              backgroundColor: MaterialStateColor.resolveWith(
+                              backgroundColor: WidgetStateColor.resolveWith(
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () {
@@ -183,9 +183,9 @@ class _AboutPageState extends State<AboutPage> {
                           ),
                           ElevatedButton(
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateColor.resolveWith(
+                              foregroundColor: WidgetStateColor.resolveWith(
                                   (states) => Colors.white),
-                              backgroundColor: MaterialStateColor.resolveWith(
+                              backgroundColor: WidgetStateColor.resolveWith(
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () async {
@@ -209,9 +209,9 @@ class _AboutPageState extends State<AboutPage> {
                           ),
                           ElevatedButton(
                             style: ButtonStyle(
-                              foregroundColor: MaterialStateColor.resolveWith(
+                              foregroundColor: WidgetStateColor.resolveWith(
                                   (states) => Colors.white),
-                              backgroundColor: MaterialStateColor.resolveWith(
+                              backgroundColor: WidgetStateColor.resolveWith(
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () {
