@@ -147,5 +147,13 @@ class SongBookAssets {
       'Last Updated': '2022-08-01',
       'Languages': ['English'],
     },
+    {
+      'Title': 'Westertimke Tabernacle',
+      'Location': 'Westertimke, Germany',
+      'Songs': '819',
+      'FileName': 'WestertimkeTabernacle_Westertimke_Germany',
+      'Last Updated': '2026-02-01',
+      'Languages': ['English', 'German'],
+    },
   ];
 }
