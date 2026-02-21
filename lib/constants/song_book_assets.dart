@@ -3,9 +3,9 @@ class SongBookAssets {
     {
       'Title': 'All Songs (Experimental Feature)',
       'Location': 'Global',
-      'Songs': '3416',
+      'Songs': '9076',
       'FileName': 'All',
-      'Last Updated': '2023-01-15',
+      'Last Updated': '2026-02-02',
       'Languages': [
         'Afrikaans',
         'Bemba',
@@ -20,7 +20,10 @@ class SongBookAssets {
         'Português',
         'Shona',
         'Swahili',
+        'Tagalog',
+        'Tswana',
         'Xitchewa',
+        'Zulu',
       ]
     },
     {
@@ -46,6 +49,14 @@ class SongBookAssets {
       'FileName': 'CityTabernacleBulawayo_Bulawayo_Zimbabwe',
       'Last Updated': '2024-07-20',
       'Languages': ['English, Ndebele, Shona'],
+    },
+    {
+      'Title': 'Christengemeinschaft in Westertimke',
+      'Location': 'Westertimke, Germany',
+      'Songs': '819',
+      'FileName': 'WestertimkeTabernacle_Westertimke_Germany',
+      'Last Updated': '2026-02-01',
+      'Languages': ['English', 'German'],
     },
     {
       'Title': 'Eastlea Tabernacle',
@@ -124,6 +135,14 @@ class SongBookAssets {
       'Languages': ['French', 'Lingala'],
     },
     {
+      'Title': 'Spoken Word Christian Assembly',
+      'Location': 'Quezon City, Philippines',
+      'Songs': '1052',
+      'FileName': 'SpokenWordChristianAssembly_QuezonCity_Philippines',
+      'Last Updated': '2026-02-01',
+      'Languages': ['English', 'Tagalog'],
+    },
+    {
       'Title': 'Tabernáculo de Maputo Interdenominacional',
       'Location': 'Maputo, Moçambizue',
       'Songs': '411',
@@ -146,6 +165,6 @@ class SongBookAssets {
       'FileName': 'ThirdExodusAssembly_Trinidad',
       'Last Updated': '2022-08-01',
       'Languages': ['English'],
-    },
+    }
   ];
 }

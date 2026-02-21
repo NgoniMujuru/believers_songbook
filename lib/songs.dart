@@ -274,7 +274,8 @@ class SongsState extends State<Songs> {
             fileName == "TokenTabernacle_Soweto_SA" ||
             fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe' ||
             fileName == 'CityTabernacleBulawayo_Bulawayo_Zimbabwe' ||
-            fileName == 'ChesilyotWordOfLifeTabernacle_BometCounty_Kenya'
+            fileName == 'ChesilyotWordOfLifeTabernacle_BometCounty_Kenya' ||
+            fileName == 'SpokenWordChristianAssembly_QuezonCity_Philippines'
         ? '\r\n'
         : '\n';
     return const CsvToListConverter()
