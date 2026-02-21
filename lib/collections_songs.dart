@@ -1,13 +1,14 @@
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
+import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
-import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/song.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:believers_songbook/l10n/app_localizations.dart';
 
 class CollectionSongs extends StatelessWidget {
   final int collectionId;
@@ -212,15 +213,21 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
                     String title = song.title;
                     String key = song.key;
 
+                    AnalyticsService.instance.trackSongOpened(
+                      songId: song.id.toString(),
+                      songTitle: title,
+                      source: 'collection',
+                    );
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => Song(
-                          songText: lyrics,
-                          songKey: key,
-                          songTitle: title,
-                          isCollectionSong: true,
-                        ),
+                              songText: lyrics,
+                              songKey: key,
+                              songTitle: title,
+                              isCollectionSong: true,
+                            ),
                       ),
                     );
                   },

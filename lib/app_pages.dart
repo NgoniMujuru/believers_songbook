@@ -1,5 +1,6 @@
 import 'package:believers_songbook/collections.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,9 @@ class AppPages extends StatelessWidget {
                 NavigationRail(
                   onDestinationSelected: (int index) {
                     settings.setOpenPageIndex(index);
+                    AnalyticsService.instance.trackTabChanged(
+                      tabName: _tabNameForIndex(index),
+                    );
                   },
                   groupAlignment: 0.0,
                   selectedIndex: settings.openPageIndex,
@@ -97,6 +101,9 @@ class AppPages extends StatelessWidget {
                 : NavigationBar(
                     onDestinationSelected: (int index) {
                       settings.setOpenPageIndex(index);
+                      AnalyticsService.instance.trackTabChanged(
+                        tabName: _tabNameForIndex(index),
+                      );
                     },
                     selectedIndex: settings.openPageIndex,
                     destinations: <Widget>[
@@ -120,5 +127,20 @@ class AppPages extends StatelessWidget {
                   )),
       );
     });
+  }
+
+  String _tabNameForIndex(int index) {
+    switch (index) {
+      case 0:
+        return 'songs';
+      case 1:
+        return 'songbooks';
+      case 2:
+        return 'collections';
+      case 3:
+        return 'about';
+      default:
+        return 'unknown';
+    }
   }
 }

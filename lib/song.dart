@@ -1,15 +1,16 @@
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/main.dart';
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'models/collection.dart';
 import 'styles.dart';
-import 'package:provider/provider.dart';
-import 'providers/song_settings.dart';
-import 'package:believers_songbook/l10n/app_localizations.dart';
 
 class Song extends StatefulWidget {
   final String songTitle;
@@ -648,6 +649,11 @@ class _SongState extends State<Song> {
                                                       text:
                                                           '$titleWithoutNumber\n\n${widget.songText}'))
                                                   .then((_) {});
+                                              AnalyticsService.instance
+                                                  .trackSongShared(
+                                                songTitle: titleWithoutNumber,
+                                                channel: 'copy',
+                                              );
                                             },
                                             child: Text(
                                                 AppLocalizations.of(context)!
@@ -674,6 +680,11 @@ class _SongState extends State<Song> {
                                                   .trim();
                                               Share.share(
                                                   '$titleWithoutNumber\n\n${widget.songText}');
+                                              AnalyticsService.instance
+                                                  .trackSongShared(
+                                                songTitle: titleWithoutNumber,
+                                                channel: 'share',
+                                              );
                                             },
                                             child: Text(
                                                 AppLocalizations.of(context)!
