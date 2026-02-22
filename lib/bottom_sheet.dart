@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 import '/models/song_sort_order.dart';
 
 class BottomSheetSettings extends StatefulWidget {
@@ -69,6 +71,7 @@ class BottomSheetSettings extends StatefulWidget {
 class _BottomSheetSettingsState extends State<BottomSheetSettings> {
   static const double _chipSpacing = 20.0;
   static const double _sectionSpacing = 10.0;
+  final GlobalKey _sortOrderKey = GlobalKey();
   
   List<List<dynamic>>? get _csvData => widget.csvData;
   late SortOrder? _localSortBy;
@@ -80,6 +83,11 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     super.initState();
     _localSortBy = widget.sortBy;
     _localSearchBy = widget.searchBy;
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.songsSettingsSortChip, _sortOrderKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.songsSettingsSheetScreen, context);
+    });
   }
 
   Future<void> _handleSortOrderChange(SortOrder sortOrder) async {
@@ -152,6 +160,7 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     ];
 
     return Row(
+      key: _sortOrderKey,
       mainAxisAlignment: MainAxisAlignment.end,
       children: sortOptions.map<Widget>((option) {
         return Row(

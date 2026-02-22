@@ -12,6 +12,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:believers_songbook/generated/build_date.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 
 import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
@@ -25,6 +27,7 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   final InAppReview _inAppReview = InAppReview.instance;
+  final GlobalKey _settingsCogKey = GlobalKey();
 
   String _version = '';
   var _formattedDate = '';
@@ -33,6 +36,11 @@ class _AboutPageState extends State<AboutPage> {
   void initState() {
     super.initState();
     _loadPackageInfo();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.aboutSettingsCog, _settingsCogKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.aboutScreen, context);
+    });
   }
 
   Future<void> _loadPackageInfo() async {
@@ -53,6 +61,7 @@ class _AboutPageState extends State<AboutPage> {
             scrolledUnderElevation: 4,
             actions: <Widget>[
               IconButton(
+                  key: _settingsCogKey,
                   icon: const Icon(Icons.settings),
                   onPressed: () {
                     buildSettingsBottomSheet(context);
