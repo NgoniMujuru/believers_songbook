@@ -296,10 +296,9 @@ packages:
   flutter_welcome_kit:
     dependency: "direct main"
     description:
-      name: flutter_welcome_kit
-      sha256: a71558901734644cbdb172d1ddee6880812f0aed7d2fffed0c72f5b78b9d9284
-      url: "https://pub.dev"
-    source: hosted
+      path: "third_party/flutter_welcome_kit"
+      relative: true
+    source: path
     version: "2.0.0"
   fuzzywuzzy:
     dependency: "direct main"
@@ -651,7 +650,7 @@ packages:
     source: hosted
     version: "2.5.4+2"
   sqflite_common_ffi:
-    dependency: "direct dev"
+    dependency: "direct overridden"
     description:
       name: sqflite_common_ffi
       sha256: d316908f1537725427ff2827a5c5f3b2c1bc311caed985fe3c9b10939c9e11ca

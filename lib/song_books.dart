@@ -69,7 +69,7 @@ class _SongBooksState extends State<SongBooks> {
                           ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
                           : const EdgeInsets.fromLTRB(0, 0, 15, 0),
                       child: Card(
-                        key: index == 0 ? _firstCardKey : null,
+                        key: index == 1 ? _firstCardKey : null,
                         clipBehavior: Clip.hardEdge,
                         color: cardColor,
                         child: InkWell(
@@ -88,7 +88,8 @@ class _SongBooksState extends State<SongBooks> {
                               ),
                             );
 
-                            Provider.of<MainPageSettings>(context, listen: false)
+                            Provider.of<MainPageSettings>(context,
+                                    listen: false)
                                 .setOpenPageIndex(0);
 
                             songBookSettings
@@ -105,8 +106,8 @@ class _SongBooksState extends State<SongBooks> {
                                 subtitle: Text(songBook['Location']),
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16.0, 0, 8.0, 8.0),
+                                padding: const EdgeInsets.fromLTRB(
+                                    16.0, 0, 8.0, 8.0),
                                 child: Text(
                                   (songBook['Languages'] as List<dynamic>)
                                       .join(', '),
