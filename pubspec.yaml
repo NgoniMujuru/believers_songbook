@@ -73,8 +73,6 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 dependency_overrides:
-  flutter_welcome_kit:
-    path: third_party/flutter_welcome_kit
   sqflite_common_ffi: ^2.3.2
 
 # For information on the generic Dart part of this file, see the
