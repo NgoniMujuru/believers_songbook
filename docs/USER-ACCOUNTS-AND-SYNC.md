@@ -291,6 +291,29 @@ Update this document to reflect the finished state:
 
 ---
 
+## API key security
+
+Google will flag the Firebase API keys in `GoogleService-Info.plist` and `google-services.json` because they're committed to a public GitHub repo. **This is expected** — Firebase API keys are client-side identifiers (not secrets) and are designed to be shipped inside the app binary. Your data is protected by Firestore security rules and Firebase Auth, not by key secrecy.
+
+However, to prevent quota abuse (someone using your key to spam API calls against your free tier), **restrict the API key**:
+
+1. Go to https://console.cloud.google.com/apis/credentials?project=believers-songbook-v2-11edb
+2. Click on the flagged API key
+3. Under **API restrictions**, select **Restrict key** and allow only:
+   - Firebase Installations API
+   - Firebase Cloud Messaging API
+   - Cloud Firestore API
+   - Identity Toolkit API (for Firebase Auth)
+   - Token Service API
+4. Under **Application restrictions** (optional but recommended):
+   - For Android: restrict to package `com.ngonimujuru.songbook_for_believers` + SHA-1 fingerprint(s)
+   - For iOS/macOS: restrict to bundle ID `com.ngonimujuru.songbookForBelievers`
+5. Click **Save**
+
+You do **not** need to regenerate the key or remove the files from the repo. These config files are required for the app to build.
+
+---
+
 ## Known issues / TODO
 
 - **Hardcoded English strings**: About 30 strings in the auth/account UI are hardcoded in English. They should eventually be moved to the l10n files for localization. Not blocking for the initial release.
