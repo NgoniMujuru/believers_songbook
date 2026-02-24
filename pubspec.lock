@@ -296,10 +296,9 @@ packages:
   flutter_welcome_kit:
     dependency: "direct main"
     description:
-      name: flutter_welcome_kit
-      sha256: a71558901734644cbdb172d1ddee6880812f0aed7d2fffed0c72f5b78b9d9284
-      url: "https://pub.dev"
-    source: hosted
+      path: "third_party/flutter_welcome_kit"
+      relative: true
+    source: path
     version: "2.0.0"
   fuzzywuzzy:
     dependency: "direct main"
