@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 import '/models/song_sort_order.dart';
 
 class BottomSheetSettings extends StatefulWidget {
@@ -69,7 +71,8 @@ class BottomSheetSettings extends StatefulWidget {
 class _BottomSheetSettingsState extends State<BottomSheetSettings> {
   static const double _chipSpacing = 20.0;
   static const double _sectionSpacing = 10.0;
-  
+  final GlobalKey _sortOrderKey = GlobalKey();
+
   List<List<dynamic>>? get _csvData => widget.csvData;
   late SortOrder? _localSortBy;
   late SearchBy? _localSearchBy;
@@ -80,6 +83,11 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     super.initState();
     _localSortBy = widget.sortBy;
     _localSearchBy = widget.searchBy;
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.songsSettingsSortChip, _sortOrderKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.songsSettingsSheetScreen, context);
+    });
   }
 
   Future<void> _handleSortOrderChange(SortOrder sortOrder) async {
@@ -92,7 +100,8 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
         songSettings.setDisplaySongNumber(true);
         break;
       case SortOrder.alphabetic:
-        _csvData?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
+        _csvData
+            ?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
         break;
       case SortOrder.key:
         _csvData?.sort((a, b) {
@@ -159,7 +168,8 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
             ChoiceChip(
               label: Text(option['label'] as String),
               selected: _localSortBy == option['value'],
-              onSelected: (bool selected) => _handleSortOrderChange(option['value'] as SortOrder),
+              onSelected: (bool selected) =>
+                  _handleSortOrderChange(option['value'] as SortOrder),
             ),
             if (option != sortOptions.last) const SizedBox(width: _chipSpacing),
           ],
@@ -175,7 +185,8 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
         'value': SearchBy.key,
       },
       {
-        'label': AppLocalizations.of(context)!.songsPageSearchSongsByTitleAndLyrics,
+        'label':
+            AppLocalizations.of(context)!.songsPageSearchSongsByTitleAndLyrics,
         'value': SearchBy.titleAndLyrics,
       },
       {
@@ -198,9 +209,11 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
               ChoiceChip(
                 label: Text(option['label'] as String),
                 selected: _localSearchBy == option['value'],
-                onSelected: (bool selected) => _handleSearchByChange(option['value'] as SearchBy),
+                onSelected: (bool selected) =>
+                    _handleSearchByChange(option['value'] as SearchBy),
               ),
-              if (option != searchOptions.last) const SizedBox(width: _chipSpacing),
+              if (option != searchOptions.last)
+                const SizedBox(width: _chipSpacing),
             ],
           );
         }).toList(),
@@ -304,6 +317,7 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
   @override
   Widget build(BuildContext context) {
     return Padding(
+      key: _sortOrderKey,
       padding: const EdgeInsets.fromLTRB(20, 30, 20, 50),
       child: Column(
         mainAxisSize: MainAxisSize.min,
