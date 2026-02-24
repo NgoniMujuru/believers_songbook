@@ -1,5 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:believers_songbook/account_page.dart';
+import 'package:believers_songbook/providers/auth_provider.dart';
+import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/gestures.dart';
@@ -52,6 +55,7 @@ class _AboutPageState extends State<AboutPage> {
             title: Text(AppLocalizations.of(context)!.aboutPageTitle),
             scrolledUnderElevation: 4,
             actions: <Widget>[
+              const SyncStatusIcon(),
               IconButton(
                   icon: const Icon(Icons.settings),
                   onPressed: () {
@@ -412,6 +416,73 @@ class _AboutPageState extends State<AboutPage> {
                                                   }),
                                             ],
                                           ))),
+                                  const SizedBox(height: 16),
+                                  // Account / Sign-in section
+                                  Consumer<AuthProvider>(
+                                    builder: (context, auth, child) => Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        if (auth.isSignedIn) ...[
+                                          if (auth.photoUrl != null)
+                                            CircleAvatar(
+                                              radius: 14,
+                                              backgroundImage:
+                                                  NetworkImage(auth.photoUrl!),
+                                            )
+                                          else
+                                            const CircleAvatar(
+                                              radius: 14,
+                                              backgroundColor: Styles.themeColor,
+                                              child: Icon(Icons.person,
+                                                  size: 16, color: Colors.white),
+                                            ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              auth.displayName ?? auth.email ?? 'Signed in',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const AccountPage(),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text('Account'),
+                                          ),
+                                        ] else ...[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const AccountPage(),
+                                                  ),
+                                                );
+                                              },
+                                              icon: const Icon(Icons.cloud_sync),
+                                              label: const Text(
+                                                  'Sign in to sync'),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Styles.themeColor,
+                                                foregroundColor: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],

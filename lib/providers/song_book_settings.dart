@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:believers_songbook/services/sync_service.dart';
 
 class SongBookSettings extends ChangeNotifier {
   late String _songBookFile;
@@ -12,5 +13,6 @@ class SongBookSettings extends ChangeNotifier {
     final Future<SharedPreferences> prefsRef = SharedPreferences.getInstance();
     final SharedPreferences prefs = await prefsRef;
     prefs.setString('songBookFile', songBookFile);
+    SyncService.pushSetting('songBookFile', songBookFile);
   }
 }

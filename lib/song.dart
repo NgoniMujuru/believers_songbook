@@ -5,6 +5,7 @@ import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uuid/uuid.dart';
 import 'models/collection.dart';
 import 'styles.dart';
 import 'package:provider/provider.dart';
@@ -33,8 +34,15 @@ class _SongState extends State<Song> {
   bool _isSelectingCollection = true;
   bool _isEditingSong = false;
   final _editSongFormKey = GlobalKey<FormState>();
+  final ScrollController _collectionsScrollController = ScrollController();
   late String _lyrics = widget.songText;
   late String _key = widget.songKey;
+
+  @override
+  void dispose() {
+    _collectionsScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +118,7 @@ class _SongState extends State<Song> {
                     //save form
                     _editSongFormKey.currentState!.save();
                     var collectionSongs = collectionsData.collectionSongs;
-                    List<int> collectionSongsIds = [];
+                    List<String> collectionSongsIds = [];
                     for (int i = 0; i < collectionSongs.length; i++) {
                       CollectionSong collectionSong = collectionSongs[i];
                       if (collectionSong.title == widget.songTitle) {
@@ -329,6 +337,7 @@ class _SongState extends State<Song> {
   RawScrollbar listCollections(CollectionsData collectionsData,
       StateSetter setLocalState, BuildContext context,screenSize) {
     return RawScrollbar(
+      controller: _collectionsScrollController,
       minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
       thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
       radius: const Radius.circular(5.0),
@@ -338,6 +347,7 @@ class _SongState extends State<Song> {
       trackColor: Colors.grey.withOpacity(0.1),
        
       child: ListView.builder(
+        controller: _collectionsScrollController,
         padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
         shrinkWrap: true,
         itemCount: collectionsData.collections.length,
@@ -355,7 +365,7 @@ class _SongState extends State<Song> {
                         AppLocalizations.of(context)!.songPageAddedToSnackbar,
                         collectionName,screenSize);
                     CollectionSong collectionSong = CollectionSong(
-                      id: getAvailableId(collectionsData.collectionSongs),
+                      id: const Uuid().v4(),
                       collectionId: collectionsData.collections[index].id,
                       title: widget.songTitle,
                       key: widget.songKey,
@@ -428,10 +438,9 @@ class _SongState extends State<Song> {
         },
         onSaved: (value) {
           _songPresentInCollection.add(false);
-          int nextId = getAvailableId(collectionsData.collections);
 
           var collection = Collection(
-            id: nextId,
+            id: const Uuid().v4(),
             name: value!,
             dateCreated: DateTime.now().toString(),
           );
@@ -458,25 +467,6 @@ class _SongState extends State<Song> {
             duration: duration,
           );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  int getAvailableId(list) {
-    int nextId = 0;
-    if (list.isEmpty) {
-      nextId = 1;
-    } else {
-      // iterate through list ids and find the smallest available number
-      var ids = list.map((item) => item.id).toList();
-      ids.sort();
-      for (var i = 0; i < ids.length; i++) {
-        if (ids[i] != i + 1) {
-          nextId = i + 1;
-          break;
-        }
-        nextId = i + 2;
-      }
-    }
-    return nextId;
   }
 
   void initializeSongCollections(collectionsData) {

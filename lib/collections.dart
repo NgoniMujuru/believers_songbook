@@ -1,16 +1,31 @@
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/models/collection.dart';
+import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import 'collections_songs.dart';
 import 'styles.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 
-class Collections extends StatelessWidget {
+class Collections extends StatefulWidget {
   const Collections({super.key});
+
+  @override
+  State<Collections> createState() => _CollectionsState();
+}
+
+class _CollectionsState extends State<Collections> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +35,7 @@ class Collections extends StatelessWidget {
           appBar: AppBar(
             title: Text(AppLocalizations.of(context)!.globalCollections),
             scrolledUnderElevation: 4,
+            actions: const [SyncStatusIcon()],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
@@ -44,7 +60,7 @@ class Collections extends StatelessWidget {
                           final navigator = Navigator.of(dialogContext);
                           if (name.isNotEmpty) {
                             final newCollection = Collection(
-                              id: DateTime.now().millisecondsSinceEpoch,
+                              id: const Uuid().v4(),
                               name: name,
                               dateCreated: DateTime.now().toIso8601String(),
                             );
@@ -91,11 +107,12 @@ class Collections extends StatelessWidget {
   }
 
   Widget _buildCollectionList(collectionsData, context) {
-    Map<int, List<CollectionSong>> songsByCollection = collectionsData.songsByCollection;
+    Map<String, List<CollectionSong>> songsByCollection = collectionsData.songsByCollection;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
       child: RawScrollbar(
+        controller: _scrollController,
         minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
         thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
         radius: const Radius.circular(5.0),
@@ -104,6 +121,7 @@ class Collections extends StatelessWidget {
         thumbColor: Colors.grey.withOpacity(0.5),
         trackColor: Colors.grey.withOpacity(0.1),
         child: ListView.builder(
+          controller: _scrollController,
           itemCount: collectionsData.collections.length,
           itemBuilder: (context, index) {
             int? numSongs =
@@ -127,7 +145,7 @@ class Collections extends StatelessWidget {
                       subtitle: Text(
                           '${AppLocalizations.of(context)!.collectionsCreated}: $formattedDate'),
                       onTap: () {
-                        int collectionId = collectionsData.collections[index].id;
+                        String collectionId = collectionsData.collections[index].id;
                         Navigator.push(
                           context,
                           MaterialPageRoute(

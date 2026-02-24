@@ -1,5 +1,6 @@
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +8,21 @@ import 'providers/song_book_settings.dart';
 import 'constants/song_book_assets.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 
-class SongBooks extends StatelessWidget {
+class SongBooks extends StatefulWidget {
   const SongBooks({super.key});
+
+  @override
+  State<SongBooks> createState() => _SongBooksState();
+}
+
+class _SongBooksState extends State<SongBooks> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +31,7 @@ class SongBooks extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.songBooksPageTitle),
+        actions: const [SyncStatusIcon()],
       ),
       body: SafeArea(
         child: Padding(
@@ -26,11 +41,13 @@ class SongBooks extends StatelessWidget {
           child: Consumer2<SongBookSettings, ThemeSettings>(
             builder: (context, songBookSettings, themeSettings, child) {
               return RawScrollbar(
+                controller: _scrollController,
                 minThumbLength: isWideScreen ? 100 : 40,
                 thickness: isWideScreen ? 20 : 10.0,
                 radius: const Radius.circular(5.0),
                 thumbVisibility: true,
                 child: ListView.builder(
+                  controller: _scrollController,
                   itemCount: SongBookAssets.songList.length,
                   itemBuilder: (context, index) {
                     final songBook = SongBookAssets.songList[index];
