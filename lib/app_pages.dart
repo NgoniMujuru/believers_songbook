@@ -1,15 +1,23 @@
+import 'package:believers_songbook/account_page.dart';
 import 'package:believers_songbook/collections.dart';
+import 'package:believers_songbook/providers/auth_provider.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'about.dart';
 import 'song_books.dart';
 
-class AppPages extends StatelessWidget {
-  AppPages({super.key});
+class AppPages extends StatefulWidget {
+  const AppPages({super.key});
 
+  @override
+  State<AppPages> createState() => _AppPagesState();
+}
+
+class _AppPagesState extends State<AppPages> {
   static final List<Widget> _widgetOptions = <Widget>[
     const Songs(),
     const SongBooks(),
@@ -38,6 +46,75 @@ class AppPages extends StatelessWidget {
       'songsPageTitle': 'Nyimbo',
     },
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _showSyncExplainerIfNeeded();
+  }
+
+  Future<void> _showSyncExplainerIfNeeded() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenExplainer = prefs.getBool('hasSeenSyncExplainer') ?? false;
+    if (hasSeenExplainer) return;
+    await prefs.setBool('hasSeenSyncExplainer', true);
+
+    if (!mounted) return;
+    // Delay slightly so the page is fully built first
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+
+    final auth = context.read<AuthProvider>();
+    if (auth.isSignedIn) return; // Already signed in, no need for explainer
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: const Icon(Icons.cloud_sync, size: 48, color: Styles.themeColor),
+        title: const Text("What's new"),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'You can now sign in to back up your collections and settings '
+              'to the cloud.',
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 12),
+            Text(
+              'If you reinstall the app or switch to a new device, just sign '
+              'in again and everything will be restored automatically.',
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 12),
+            Text(
+              'You can use Google, Apple, or email to create an account.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Maybe later'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AccountPage()),
+              );
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: Styles.themeColor,
+            ),
+            child: const Text('Sign in now'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

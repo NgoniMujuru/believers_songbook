@@ -1,5 +1,5 @@
 class Collection {
-  final int id;
+  final String id;
   final String name;
   final String dateCreated;
 
@@ -15,6 +15,14 @@ class Collection {
       'name': name,
       'dateCreated': dateCreated,
     };
+  }
+
+  factory Collection.fromMap(Map<String, dynamic> map) {
+    return Collection(
+      id: map['id'].toString(),
+      name: map['name'],
+      dateCreated: map['dateCreated'],
+    );
   }
 
   @override

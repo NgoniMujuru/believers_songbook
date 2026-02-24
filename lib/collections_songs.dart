@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 
 class CollectionSongs extends StatelessWidget {
-  final int collectionId;
+  final String collectionId;
   final ScrollController _scrollController = ScrollController();
 
   CollectionSongs({

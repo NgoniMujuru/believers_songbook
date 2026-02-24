@@ -32,8 +32,8 @@ void main() {
 
   test('getCollectionSongs sets and persists positions for legacy songs', () async {
     // 1. Insert test collections
-    final collection1 = Collection(id: 1, name: 'Collection 1', dateCreated: DateTime.now().toString());
-    final collection2 = Collection(id: 2, name: 'Collection 2', dateCreated: DateTime.now().toString());
+    final collection1 = Collection(id: '1', name: 'Collection 1', dateCreated: DateTime.now().toString());
+    final collection2 = Collection(id: '2', name: 'Collection 2', dateCreated: DateTime.now().toString());
     
     await db.insert('collections', collection1.toMap());
     await db.insert('collections', collection2.toMap());
@@ -41,22 +41,22 @@ void main() {
     // 2. Insert legacy songs (without songPosition)
     final legacySongs = [
       {
-        'id': 1,
-        'collectionId': 1,
+        'id': '1',
+        'collectionId': '1',
         'title': 'Song 1',
         'key': 'C',
         'lyrics': 'lyrics 1',
       },
       {
-        'id': 2,
-        'collectionId': 1,
+        'id': '2',
+        'collectionId': '1',
         'title': 'Song 2',
         'key': 'D',
         'lyrics': 'lyrics 2',
       },
       {
-        'id': 3,
-        'collectionId': 2,
+        'id': '3',
+        'collectionId': '2',
         'title': 'Song 3',
         'key': 'E',
         'lyrics': 'lyrics 3',
@@ -69,8 +69,8 @@ void main() {
 
     // 3. Add one song with existing position to verify it's not changed
     await db.insert('collectionSongs', {
-      'id': 4,
-      'collectionId': 1,
+      'id': '4',
+      'collectionId': '1',
       'title': 'Song 4',
       'key': 'F',
       'lyrics': 'lyrics 4',
@@ -84,7 +84,7 @@ void main() {
     expect(loadedSongs.length, equals(4));
 
     // Verify songs in collection 1
-    final collection1Songs = loadedSongs.where((s) => s.collectionId == 1).toList();
+    final collection1Songs = loadedSongs.where((s) => s.collectionId == '1').toList();
     expect(collection1Songs.length, equals(3));
     
     // Check legacy songs got sequential positions
@@ -94,7 +94,7 @@ void main() {
     expect(collection1Songs.any((s) => s.title == 'Song 4' && s.songPosition == 99), isTrue);
 
     // Verify song in collection 2
-    final collection2Songs = loadedSongs.where((s) => s.collectionId == 2).toList();
+    final collection2Songs = loadedSongs.where((s) => s.collectionId == '2').toList();
     expect(collection2Songs.length, equals(1));
     expect(collection2Songs[0].songPosition, equals(0));
 

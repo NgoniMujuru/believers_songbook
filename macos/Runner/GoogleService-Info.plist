@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CLIENT_ID</key>
-		<string>107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com</string>
-		<key>REVERSED_CLIENT_ID</key>
-		<string>com.googleusercontent.apps.107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59</string>
-		<key>API_KEY</key>
-		<string>AIzaSyC477dR9Y3wUl03Aa0tPrnXG1fFGhyQm4M</string>
-		<key>GCM_SENDER_ID</key>
-		<string>107811782306</string>
-		<key>PLIST_VERSION</key>
-		<string>1</string>
-		<key>BUNDLE_ID</key>
-		<string>com.ngonimujuru.songbookForBelievers</string>
-		<key>PROJECT_ID</key>
-		<string>songbook-for-believers</string>
-		<key>STORAGE_BUCKET</key>
-		<string>songbook-for-believers.appspot.com</string>
-		<key>IS_ADS_ENABLED</key>
-		<false></false>
-		<key>IS_ANALYTICS_ENABLED</key>
-		<false></false>
-		<key>IS_APPINVITE_ENABLED</key>
-		<true></true>
-		<key>IS_GCM_ENABLED</key>
-		<true></true>
-		<key>IS_SIGNIN_ENABLED</key>
-		<true></true>
-		<key>GOOGLE_APP_ID</key>
-		<string>1:107811782306:ios:6137da093f67b9cdf4a1fb</string>
-	</dict>
+<dict>
+	<key>CLIENT_ID</key>
+	<string>767948267709-32n90o0ur07bvfulif6vnc058k3coenl.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.767948267709-32n90o0ur07bvfulif6vnc058k3coenl</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>767948267709-lvteea6cnsjqvjdat7bs87qij5v0c8tk.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD7emVBZS1H_JJj8Jbj_QxQFnKA6_nHB5Q</string>
+	<key>GCM_SENDER_ID</key>
+	<string>767948267709</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ngonimujuru.songbookForBelievers</string>
+	<key>PROJECT_ID</key>
+	<string>believers-songbook-v2-11edb</string>
+	<key>STORAGE_BUCKET</key>
+	<string>believers-songbook-v2-11edb.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:767948267709:ios:6317911d280248991397d4</string>
+</dict>
 </plist>

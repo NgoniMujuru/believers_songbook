@@ -1,37 +1,45 @@
 {
   "project_info": {
-    "project_number": "107811782306",
-    "project_id": "songbook-for-believers",
-    "storage_bucket": "songbook-for-believers.appspot.com"
+    "project_number": "767948267709",
+    "project_id": "believers-songbook-v2-11edb",
+    "storage_bucket": "believers-songbook-v2-11edb.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:107811782306:android:65798dbc33a55f95f4a1fb",
+        "mobilesdk_app_id": "1:767948267709:android:551925aa151976ca1397d4",
         "android_client_info": {
           "package_name": "com.ngonimujuru.songbook_for_believers"
         }
       },
       "oauth_client": [
         {
-          "client_id": "107811782306-unnn1j6akmr879dvita4e2vl83gae4fo.apps.googleusercontent.com",
+          "client_id": "767948267709-lvteea6cnsjqvjdat7bs87qij5v0c8tk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ngonimujuru.songbook_for_believers",
+            "certificate_hash": "c3a5e393fb92e4ab36a2eb14e1b45971edae6b82"
+          }
+        },
+        {
+          "client_id": "767948267709-o11u63hdp6fo2k2jrik6g5jmpn5uhn45.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBpvK9z6-X-7xFL3sK0DLFpnZ8n9XclJvc"
+          "current_key": "AIzaSyDTEqbLV5vYtecTcBumW1cLWJOLkVFgMo0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "107811782306-unnn1j6akmr879dvita4e2vl83gae4fo.apps.googleusercontent.com",
+              "client_id": "767948267709-o11u63hdp6fo2k2jrik6g5jmpn5uhn45.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com",
+              "client_id": "767948267709-32n90o0ur07bvfulif6vnc058k3coenl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.ngonimujuru.songbookForBelievers"

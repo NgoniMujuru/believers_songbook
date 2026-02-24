@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:believers_songbook/bottom_sheet.dart';
+import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
@@ -33,6 +34,7 @@ class Songs extends StatefulWidget {
 
 class SongsState extends State<Songs> {
   late final TextEditingController _controller;
+  final ScrollController _numericScrollController = ScrollController();
   Timer? _debounce;
   late final FocusNode _focusNode;
   String _fileName = '';
@@ -100,6 +102,7 @@ class SongsState extends State<Songs> {
     _controller.removeListener(_onTextChanged);
     _focusNode.dispose();
     _controller.dispose();
+    _numericScrollController.dispose();
     super.dispose();
   }
 
@@ -355,6 +358,7 @@ class SongsState extends State<Songs> {
             // shadowColor: Styles.themeColor,
             scrolledUnderElevation: 4,
             actions: <Widget>[
+              const SyncStatusIcon(),
               IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
@@ -494,11 +498,13 @@ class SongsState extends State<Songs> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
         child: RawScrollbar(
+          controller: _numericScrollController,
           minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
           thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
           radius: const Radius.circular(5.0),
           thumbVisibility: true,
           child: ListView.builder(
+            controller: _numericScrollController,
             itemBuilder: (context, index) => Padding(
               padding: MediaQuery.of(context).size.width > 600
                   ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
