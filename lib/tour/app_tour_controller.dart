@@ -26,6 +26,8 @@ class AppTourController extends ChangeNotifier {
       title: 'Songs Options',
       description: 'Open the song screen settings.',
       allowTargetTap: true,
+      backgroundColor: AppTourController._defaultTourCardColor,
+      showProgress: true,
       isLast: false,
       buttonLabel: 'Continue',
     ),
@@ -168,14 +170,9 @@ class AppTourController extends ChangeNotifier {
     final targetKey = await _waitForTarget(spec.targetId);
     final screenContext = await _waitForScreenContext(spec.screenId);
 
-    if (targetKey == null || screenContext == null) {
-      debugPrint(
-        'Tour step skipped: missing target or context for ${spec.screenId}/${spec.targetId}',
-      );
-      debugPrint(
-        'Tour debug: targetKey=${targetKey != null}, '
-        'screenContext=${screenContext != null}',
-      );
+    if (targetKey == null ||
+        screenContext == null ||
+        screenContext is Element && !screenContext.mounted) {
       _stop();
       return;
     }
