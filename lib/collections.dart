@@ -8,9 +8,28 @@ import 'package:intl/intl.dart';
 import 'collections_songs.dart';
 import 'styles.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 
-class Collections extends StatelessWidget {
+class Collections extends StatefulWidget {
   const Collections({super.key});
+
+  @override
+  State<Collections> createState() => _CollectionsState();
+}
+
+class _CollectionsState extends State<Collections> {
+  final GlobalKey _addFabKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.collectionsAddFab, _addFabKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.collectionsScreen, context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +41,7 @@ class Collections extends StatelessWidget {
             scrolledUnderElevation: 4,
           ),
           floatingActionButton: FloatingActionButton(
+            key: _addFabKey,
             onPressed: () {
               final TextEditingController controller = TextEditingController();
               showDialog(
@@ -149,4 +169,3 @@ class Collections extends StatelessWidget {
     );
   }
 }
-

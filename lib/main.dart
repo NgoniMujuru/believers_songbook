@@ -13,6 +13,7 @@ import 'providers/song_book_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,15 +24,20 @@ Future<void> main() async {
     ChangeNotifierProvider(create: (context) => ThemeSettings()),
     ChangeNotifierProvider(create: (context) => CollectionsData()),
     ListenableProvider(create: (context) => SongBookSettings()),
-    
+    ChangeNotifierProvider(create: (context) => AppTourController()),
   ], child: ScreenSizeProvider(child: MyApp())));
 }
 
-class ScreenSizeProvider extends StatelessWidget {
+class ScreenSizeProvider extends StatefulWidget {
   final Widget child;
 
   const ScreenSizeProvider({super.key, required this.child});
 
+  @override
+  State<ScreenSizeProvider> createState() => _ScreenSizeProviderState();
+}
+
+class _ScreenSizeProviderState extends State<ScreenSizeProvider> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -39,10 +45,11 @@ class ScreenSizeProvider extends StatelessWidget {
 
     return Provider<ScreenSize>(
       create: (_) => ScreenSize(screenWidth, screenHeight),
-      child: child,
+      child: widget.child,
     );
   }
 }
+
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
@@ -55,7 +62,8 @@ class MyApp extends StatelessWidget {
       final songSettings = context.read<SongSettings>();
       songSettings.setFontSize(prefs.getDouble('fontSize') ?? 30);
       songSettings.setDisplayKey(prefs.getBool('displayKey') ?? true);
-      songSettings.setDisplaySongNumber(prefs.getBool('displaySongNumber') ?? false);
+      songSettings
+          .setDisplaySongNumber(prefs.getBool('displaySongNumber') ?? false);
       final themeSettings = context.read<ThemeSettings>();
       themeSettings.setIsDarkMode(prefs.getBool('isDarkMode') ?? false);
     });
@@ -93,7 +101,6 @@ class MyApp extends StatelessWidget {
         home: FutureBuilder(
           future: _fbApp,
           builder: (context, snapshot) {
-
             double screenWidth = MediaQuery.of(context).size.width;
             double screenHeight = MediaQuery.of(context).size.height;
 

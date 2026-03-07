@@ -54,6 +54,7 @@ dependencies:
   device_info_plus: ^10.1.2
   win32: ^5.5.3
   package_info_plus: ^8.3.0
+  flutter_welcome_kit: ^2.0.0
 
 flutter_icons:
   image_path: "assets/icon.png"
@@ -71,6 +72,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
   sqflite_common_ffi: ^2.3.2
+
+dependency_overrides:
+  flutter_welcome_kit:
+    path: third_party/flutter_welcome_kit
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
