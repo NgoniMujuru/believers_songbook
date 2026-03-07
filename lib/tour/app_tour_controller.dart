@@ -4,6 +4,7 @@ import 'package:flutter_welcome_kit/core/tour_controller.dart';
 import 'package:flutter_welcome_kit/core/tour_step.dart';
 import 'package:flutter_welcome_kit/widgets/progress_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../providers/main_page_settings.dart';
 import 'tour_ids.dart';
@@ -102,6 +103,18 @@ class AppTourController extends ChangeNotifier {
     _actions[id] = action;
   }
 
+  static const String _tourSeenKey = 'tourSeen';
+
+  Future<bool> shouldAutoStart() async {
+    final prefs = await SharedPreferences.getInstance();
+    return !(prefs.getBool(_tourSeenKey) ?? false);
+  }
+
+  Future<void> _markTourSeen() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_tourSeenKey, true);
+  }
+
   Future<void> start(BuildContext context) async {
     if (_isRunning) {
       _stop();
@@ -118,6 +131,7 @@ class AppTourController extends ChangeNotifier {
     _activeController = null;
     _isRunning = false;
     _isAdvancing = false;
+    _markTourSeen();
   }
 
   Future<void> _advance() async {

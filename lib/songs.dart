@@ -65,6 +65,11 @@ class SongsState extends State<Songs> {
         TourIds.songsSettingsSheetAction, _openSettingsBottomSheet);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       tour.registerScreenContext(TourIds.songsScreen, context);
+      tour.shouldAutoStart().then((autoStart) {
+        if (autoStart && mounted) {
+          tour.start(context);
+        }
+      });
     });
     SharedPreferences.getInstance().then((prefs) {
       final songBookSettings = context.read<SongBookSettings>();
