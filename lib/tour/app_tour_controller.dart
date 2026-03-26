@@ -3,6 +3,7 @@ import 'package:flutter_welcome_kit/core/enums.dart';
 import 'package:flutter_welcome_kit/core/tour_controller.dart';
 import 'package:flutter_welcome_kit/core/tour_step.dart';
 import 'package:flutter_welcome_kit/widgets/progress_indicator.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -144,6 +145,7 @@ class AppTourController extends ChangeNotifier {
     _currentIndex++;
     if (_currentIndex >= _steps.length) {
       debugPrint('Tour finished all steps.');
+      AnalyticsService.instance.trackTourCompleted();
       _stop();
       return;
     }
@@ -156,6 +158,7 @@ class AppTourController extends ChangeNotifier {
   }
 
   void _skip() {
+    AnalyticsService.instance.trackTourSkipped(atStep: _currentIndex + 1);
     _stop();
   }
 

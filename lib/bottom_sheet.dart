@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/services/sync_service.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/tour/app_tour_controller.dart';
@@ -133,6 +134,7 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('sortOrder', sortOrder.name);
     SyncService.pushSetting('sortOrder', sortOrder.name);
+    AnalyticsService.instance.trackSortOrderChanged(sortOrder: sortOrder.name);
   }
 
   Future<void> _handleSearchByChange(SearchBy searchBy) async {
@@ -145,6 +147,7 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('searchBy', searchBy.name);
     SyncService.pushSetting('searchBy', searchBy.name);
+    AnalyticsService.instance.trackSearchByChanged(searchBy: searchBy.name);
   }
 
   Widget _buildSortOrderChips(BuildContext context) {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import 'package:believers_songbook/bottom_sheet.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
@@ -172,7 +173,9 @@ class SongsState extends State<Songs> {
         _terms = query;
         _loadingSongs = false;
       });
-
+      if (query.isNotEmpty) {
+        AnalyticsService.instance.trackSearch(searchTerm: query);
+      }
     });
   }
 
@@ -480,6 +483,8 @@ class SongsState extends State<Songs> {
                             onTap: () {
                               _focusNode.unfocus();
                               final songRow = results!.elementAt(index);
+                              final title = capitalizeFirstLetters(songRow.elementAt(1));
+                              AnalyticsService.instance.trackSongOpened(songTitle: title, source: 'songs_list');
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -489,9 +494,7 @@ class SongsState extends State<Songs> {
                                               songRow.elementAt(3),
                                           songKey:
                                               songRow.elementAt(2),
-                                          songTitle:
-                                              capitalizeFirstLetters(
-                                                  songRow.elementAt(1)))));
+                                          songTitle: title)));
                             },
                             child: Consumer<SongSettings>(
                                 builder: (context, songSettings, child) {
@@ -542,6 +545,8 @@ class SongsState extends State<Songs> {
                     onTap: () {
                       _focusNode.unfocus();
                       final songRow = results!.elementAt(index);
+                      final title = songNumAndTitle(songRow);
+                      AnalyticsService.instance.trackSongOpened(songTitle: title, source: 'songs_list');
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -549,9 +554,7 @@ class SongsState extends State<Songs> {
                                   isCollectionSong: false,
                                   songText: songRow.elementAt(3),
                                   songKey: songRow.elementAt(2),
-                                  songTitle: songNumAndTitle(
-                                    songRow,
-                                  ))));
+                                  songTitle: title)));
                     },
                     child: Consumer<SongSettings>(
                         builder: (context, songSettings, child) {

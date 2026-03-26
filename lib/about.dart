@@ -132,6 +132,7 @@ class _AboutPageState extends State<AboutPage> {
                               : Styles.link,
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
+                              AnalyticsService.instance.trackContactUsClicked();
                               contactUs(context);
                             },
                         ),
@@ -174,6 +175,7 @@ class _AboutPageState extends State<AboutPage> {
                                 : Styles.link,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () async {
+                                AnalyticsService.instance.trackPrivacyPolicyClicked();
                                 String url =
                                     "https://ngonimujuru.com/songbook_for_believers/privacy_policy.html";
                                 if (await canLaunchUrlString(url)) {
@@ -205,6 +207,7 @@ class _AboutPageState extends State<AboutPage> {
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () {
+                              AnalyticsService.instance.trackContactUsClicked();
                               contactUs(context);
                             },
                             child: Text(AppLocalizations.of(context)!
@@ -218,6 +221,7 @@ class _AboutPageState extends State<AboutPage> {
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () async {
+                              AnalyticsService.instance.trackRateAppClicked();
                               if (Platform.isAndroid) {
                                 //android does not support in app review from button press
                                 manualReview(context);

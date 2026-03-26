@@ -5,6 +5,7 @@ import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/services/sync_service.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/foundation.dart';
@@ -203,7 +204,10 @@ class _SignInViewState extends State<_SignInView> {
                       ],
                       const SizedBox(height: 32),
                       TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () {
+                          AnalyticsService.instance.trackSignInSkipped();
+                          Navigator.of(context).pop();
+                        },
                         child: const Text('Skip for now'),
                       ),
                     ],
@@ -350,6 +354,11 @@ class _SignInViewState extends State<_SignInView> {
       );
     }
     if (success && mounted) {
+      if (_isCreateAccount) {
+        AnalyticsService.instance.trackSignUp(method: 'email');
+      } else {
+        AnalyticsService.instance.trackLogin(method: 'email');
+      }
       await _syncAfterSignIn(context);
       if (mounted) Navigator.of(context).pop();
     }
@@ -367,6 +376,7 @@ class _SignInViewState extends State<_SignInView> {
     }
     final auth = context.read<AuthProvider>();
     final sent = await auth.sendPasswordReset(email);
+    if (sent) AnalyticsService.instance.trackPasswordResetRequested();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -382,6 +392,7 @@ class _SignInViewState extends State<_SignInView> {
     final auth = context.read<AuthProvider>();
     final success = await auth.signInWithGoogle();
     if (success && mounted) {
+      AnalyticsService.instance.trackLogin(method: 'google');
       await _syncAfterSignIn(context);
       if (mounted) Navigator.of(context).pop();
     }
@@ -391,6 +402,7 @@ class _SignInViewState extends State<_SignInView> {
     final auth = context.read<AuthProvider>();
     final success = await auth.signInWithApple();
     if (success && mounted) {
+      AnalyticsService.instance.trackLogin(method: 'apple');
       await _syncAfterSignIn(context);
       if (mounted) Navigator.of(context).pop();
     }
@@ -588,6 +600,7 @@ class _SignedInView extends StatelessWidget {
     String songBookFile = prefs.getString('songBookFile') ??
         'CityTabernacleBulawayo_Bulawayo_Zimbabwe';
 
+    AnalyticsService.instance.trackManualSync();
     final result = await SyncService.fullSync(
       fontSize: songSettings.fontSize,
       displayKey: songSettings.displayKey,
@@ -653,6 +666,7 @@ class _SignedInView extends StatelessWidget {
   Future<void> _handleSignOut(BuildContext context) async {
     final auth = context.read<AuthProvider>();
     await auth.signOut();
+    AnalyticsService.instance.trackSignOut();
     if (context.mounted) Navigator.of(context).pop();
   }
 }

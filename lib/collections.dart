@@ -162,6 +162,9 @@ class _CollectionsState extends State<Collections> {
                           '${AppLocalizations.of(context)!.collectionsCreated}: $formattedDate'),
                       onTap: () {
                         String collectionId = collectionsData.collections[index].id;
+                        AnalyticsService.instance.trackCollectionOpened(
+                          collectionName: collectionsData.collections[index].name,
+                        );
                         Navigator.push(
                           context,
                           MaterialPageRoute(

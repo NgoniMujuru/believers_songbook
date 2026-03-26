@@ -403,6 +403,9 @@ class _SongState extends State<Song> {
                     collectionsData.deleteCollectionSong(
                       collectionSongId,
                     );
+                    AnalyticsService.instance.trackSongRemovedFromCollection(
+                      songTitle: widget.songTitle,
+                    );
                   }
                   setLocalState(() {
                     _songPresentInCollection[index] = value!;

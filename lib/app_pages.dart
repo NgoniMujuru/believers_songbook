@@ -136,6 +136,7 @@ class _AppPagesState extends State<AppPages> {
     final auth = context.read<AuthProvider>();
     if (auth.isSignedIn) return; // Already signed in, no need for explainer
 
+    AnalyticsService.instance.trackSyncExplainerShown();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -170,6 +171,7 @@ class _AppPagesState extends State<AppPages> {
           ),
           FilledButton(
             onPressed: () {
+              AnalyticsService.instance.trackSyncExplainerSignInClicked();
               Navigator.of(ctx).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const AccountPage()),
