@@ -52,6 +52,7 @@ dependencies:
   path: ^1.8.2
   intl: any
   firebase_core: ^4.2.0
+  firebase_analytics: ^12.0.3
   flutter_localizations:
     sdk: flutter
   device_info_plus: ^10.1.2

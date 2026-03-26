@@ -20,6 +20,7 @@ import 'package:believers_songbook/tour/tour_ids.dart';
 
 import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
+import 'package:believers_songbook/services/analytics_service.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -245,6 +246,7 @@ class _AboutPageState extends State<AboutPage> {
                             onPressed: () {
                               Share.share(
                                   '${AppLocalizations.of(context)!.aboutShareText} https://onelink.to/songbook');
+                              AnalyticsService.instance.trackAppShared();
                             },
                             child: Text(
                                 AppLocalizations.of(context)!.aboutShareAppBtn),
@@ -369,6 +371,8 @@ class _AboutPageState extends State<AboutPage> {
                                             var settings = context
                                                 .read<MainPageSettings>();
                                             settings.setLocale('sw');
+                                            AnalyticsService.instance.trackSettingsChanged(settingType: 'language', value: 'sw');
+                                            AnalyticsService.instance.setPreferredLanguage('sw');
                                           }),
                                       const SizedBox(width: 20),
                                       ChoiceChip(
@@ -384,6 +388,8 @@ class _AboutPageState extends State<AboutPage> {
                                             var settings = context
                                                 .read<MainPageSettings>();
                                             settings.setLocale('fr');
+                                            AnalyticsService.instance.trackSettingsChanged(settingType: 'language', value: 'fr');
+                                            AnalyticsService.instance.setPreferredLanguage('fr');
                                           }),
                                       const SizedBox(width: 20),
                                       ChoiceChip(
@@ -397,6 +403,8 @@ class _AboutPageState extends State<AboutPage> {
                                             var settings = context
                                                 .read<MainPageSettings>();
                                             settings.setLocale('en');
+                                            AnalyticsService.instance.trackSettingsChanged(settingType: 'language', value: 'en');
+                                            AnalyticsService.instance.setPreferredLanguage('en');
                                           }),
                                     ],
                                   ),
@@ -424,6 +432,8 @@ class _AboutPageState extends State<AboutPage> {
                                                         .read<ThemeSettings>();
                                                     themeSettings
                                                         .setIsDarkMode(false);
+                                                    AnalyticsService.instance.trackSettingsChanged(settingType: 'theme', value: 'light');
+                                                    AnalyticsService.instance.setTheme('light');
                                                   }),
                                               const SizedBox(width: 20),
                                               ChoiceChip(
@@ -437,6 +447,8 @@ class _AboutPageState extends State<AboutPage> {
                                                         .read<ThemeSettings>();
                                                     themeSettings
                                                         .setIsDarkMode(true);
+                                                    AnalyticsService.instance.trackSettingsChanged(settingType: 'theme', value: 'dark');
+                                                    AnalyticsService.instance.setTheme('dark');
                                                   }),
                                             ],
                                           ))),

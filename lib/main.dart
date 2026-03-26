@@ -17,9 +17,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SongSettings()),
@@ -58,9 +60,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   static const String _title = 'Believers Songbook';
-  final Future<FirebaseApp> _fbApp = Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +79,9 @@ class MyApp extends StatelessWidget {
     WakelockPlus.enable();
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+        ],
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -106,31 +109,7 @@ class MyApp extends StatelessWidget {
         themeMode: themeSettings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
         debugShowCheckedModeBanner: false,
         title: _title,
-        home: FutureBuilder(
-          future: _fbApp,
-          builder: (context, snapshot) {
-            double screenWidth = MediaQuery.of(context).size.width;
-            double screenHeight = MediaQuery.of(context).size.height;
-
-            if (snapshot.hasError) {
-              return const Scaffold(
-                body: Center(
-                  child: Text(
-                      'Loading songbooks failed, please try again later'),
-                ),
-              );
-            } else if (snapshot.hasData) {
-              return Provider<ScreenSize>(
-                create: (_) => ScreenSize(screenWidth, screenHeight),
-                child: const _OnboardingGate(),
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
+        home: const _OnboardingGate(),
       ),
     );
   }

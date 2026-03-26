@@ -1,5 +1,6 @@
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/models/collection.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
@@ -79,6 +80,7 @@ class _CollectionsState extends State<Collections> {
                               dateCreated: DateTime.now().toIso8601String(),
                             );
                             await collectionsData.addCollection(newCollection);
+                            AnalyticsService.instance.trackCollectionCreated();
                           }
                           navigator.pop();
                         },

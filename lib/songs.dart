@@ -1,29 +1,29 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import 'package:believers_songbook/bottom_sheet.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:csv/csv.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:believers_songbook/l10n/app_localizations.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import 'package:provider/provider.dart';
 import 'package:believers_songbook/tour/app_tour_controller.dart';
 import 'package:believers_songbook/tour/tour_ids.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'constants/song_book_assets.dart';
 import 'custom_search_bar.dart';
-import 'styles.dart';
 import 'song.dart';
+import 'styles.dart';
 import '/models/song_search_result.dart';
 import '/models/song_sort_order.dart';
-import 'constants/song_book_assets.dart';
-import 'dart:async';
 
 class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
@@ -167,10 +167,12 @@ class SongsState extends State<Songs> {
       }
     }
     _debounce = Timer(Duration(milliseconds: _debounceTime), () {
+      final query = _controller.text;
       setState(() {
-        _terms = _controller.text;
+        _terms = query;
         _loadingSongs = false;
       });
+
     });
   }
 
@@ -477,21 +479,19 @@ class SongsState extends State<Songs> {
                           child: GestureDetector(
                             onTap: () {
                               _focusNode.unfocus();
+                              final songRow = results!.elementAt(index);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => Song(
                                           isCollectionSong: false,
-                                          songText: results!
-                                              .elementAt(index)
-                                              .elementAt(3),
-                                          songKey: results!
-                                              .elementAt(index)
-                                              .elementAt(2),
-                                          songTitle: capitalizeFirstLetters(
-                                              results!
-                                                  .elementAt(index)
-                                                  .elementAt(1)))));
+                                          songText:
+                                              songRow.elementAt(3),
+                                          songKey:
+                                              songRow.elementAt(2),
+                                          songTitle:
+                                              capitalizeFirstLetters(
+                                                  songRow.elementAt(1)))));
                             },
                             child: Consumer<SongSettings>(
                                 builder: (context, songSettings, child) {
@@ -541,17 +541,16 @@ class SongsState extends State<Songs> {
                   GestureDetector(
                     onTap: () {
                       _focusNode.unfocus();
+                      final songRow = results!.elementAt(index);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Song(
                                   isCollectionSong: false,
-                                  songText:
-                                      results!.elementAt(index).elementAt(3),
-                                  songKey:
-                                      results!.elementAt(index).elementAt(2),
+                                  songText: songRow.elementAt(3),
+                                  songKey: songRow.elementAt(2),
                                   songTitle: songNumAndTitle(
-                                    results!.elementAt(index),
+                                    songRow,
                                   ))));
                     },
                     child: Consumer<SongSettings>(

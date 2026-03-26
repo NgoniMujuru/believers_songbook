@@ -6,6 +6,7 @@ import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/services/sync_service.dart';
 import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
@@ -205,6 +206,9 @@ class _AppPagesState extends State<AppPages> {
                 NavigationRail(
                   onDestinationSelected: (int index) {
                     settings.setOpenPageIndex(index);
+                    AnalyticsService.instance.trackTabChanged(
+                      tabName: _tabNameForIndex(index),
+                    );
                   },
                   groupAlignment: 0.0,
                   selectedIndex: settings.openPageIndex,
@@ -242,6 +246,9 @@ class _AppPagesState extends State<AppPages> {
                 : NavigationBar(
                     onDestinationSelected: (int index) {
                       settings.setOpenPageIndex(index);
+                      AnalyticsService.instance.trackTabChanged(
+                        tabName: _tabNameForIndex(index),
+                      );
                     },
                     selectedIndex: settings.openPageIndex,
                     destinations: <Widget>[
@@ -265,5 +272,20 @@ class _AppPagesState extends State<AppPages> {
                   )),
       );
     });
+  }
+
+  String _tabNameForIndex(int index) {
+    switch (index) {
+      case 0:
+        return 'songs';
+      case 1:
+        return 'songbooks';
+      case 2:
+        return 'collections';
+      case 3:
+        return 'about';
+      default:
+        return 'unknown';
+    }
   }
 }

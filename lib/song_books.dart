@@ -1,4 +1,5 @@
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/styles.dart';
@@ -105,6 +106,9 @@ class _SongBooksState extends State<SongBooks> {
 
                             songBookSettings
                                 .setSongBookFile(songBook['FileName']);
+                            AnalyticsService.instance.trackSongbookChanged(
+                              songbookName: songBook['Title'],
+                            );
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
