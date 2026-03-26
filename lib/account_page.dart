@@ -355,9 +355,9 @@ class _SignInViewState extends State<_SignInView> {
     }
     if (success && mounted) {
       if (_isCreateAccount) {
-        AnalyticsService.instance.trackSignUp(method: 'email');
+        await AnalyticsService.instance.trackSignUp(method: 'email');
       } else {
-        AnalyticsService.instance.trackLogin(method: 'email');
+        await AnalyticsService.instance.trackLogin(method: 'email');
       }
       await _syncAfterSignIn(context);
       if (mounted) Navigator.of(context).pop();
@@ -392,7 +392,7 @@ class _SignInViewState extends State<_SignInView> {
     final auth = context.read<AuthProvider>();
     final success = await auth.signInWithGoogle();
     if (success && mounted) {
-      AnalyticsService.instance.trackLogin(method: 'google');
+      await AnalyticsService.instance.trackLogin(method: 'google');
       await _syncAfterSignIn(context);
       if (mounted) Navigator.of(context).pop();
     }
@@ -402,7 +402,7 @@ class _SignInViewState extends State<_SignInView> {
     final auth = context.read<AuthProvider>();
     final success = await auth.signInWithApple();
     if (success && mounted) {
-      AnalyticsService.instance.trackLogin(method: 'apple');
+      await AnalyticsService.instance.trackLogin(method: 'apple');
       await _syncAfterSignIn(context);
       if (mounted) Navigator.of(context).pop();
     }
