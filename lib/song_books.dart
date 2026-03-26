@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'providers/song_book_settings.dart';
 import 'constants/song_book_assets.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 
 class SongBooks extends StatefulWidget {
   const SongBooks({super.key});
@@ -17,6 +19,17 @@ class SongBooks extends StatefulWidget {
 
 class _SongBooksState extends State<SongBooks> {
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey _firstCardKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.songBooksFirstCard, _firstCardKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.songBooksScreen, context);
+    });
+  }
 
   @override
   void dispose() {
@@ -67,6 +80,7 @@ class _SongBooksState extends State<SongBooks> {
                           ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
                           : const EdgeInsets.fromLTRB(0, 0, 15, 0),
                       child: Card(
+                        key: index == 1 ? _firstCardKey : null,
                         clipBehavior: Clip.hardEdge,
                         color: cardColor,
                         child: InkWell(
@@ -85,7 +99,8 @@ class _SongBooksState extends State<SongBooks> {
                               ),
                             );
 
-                            Provider.of<MainPageSettings>(context, listen: false)
+                            Provider.of<MainPageSettings>(context,
+                                    listen: false)
                                 .setOpenPageIndex(0);
 
                             songBookSettings
@@ -102,8 +117,8 @@ class _SongBooksState extends State<SongBooks> {
                                 subtitle: Text(songBook['Location']),
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16.0, 0, 8.0, 8.0),
+                                padding: const EdgeInsets.fromLTRB(
+                                    16.0, 0, 8.0, 8.0),
                                 child: Text(
                                   (songBook['Languages'] as List<dynamic>)
                                       .join(', '),

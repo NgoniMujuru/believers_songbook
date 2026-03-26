@@ -15,6 +15,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:believers_songbook/generated/build_date.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 
 import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
@@ -28,6 +30,8 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   final InAppReview _inAppReview = InAppReview.instance;
+  final GlobalKey _settingsCogKey = GlobalKey();
+  final GlobalKey _bottomSheet = GlobalKey();
 
   String _version = '';
   var _formattedDate = '';
@@ -36,19 +40,33 @@ class _AboutPageState extends State<AboutPage> {
   void initState() {
     super.initState();
     _loadPackageInfo();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.aboutSettingsCog, _settingsCogKey);
+    tour.registerTarget(TourIds.aboutSettingsSheet, _bottomSheet);
+    tour.registerAction(
+        TourIds.aboutSettingsSheetAction, _openSettingsBottomSheet);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.aboutScreen, context);
+    });
+  }
+
+  Future<void> _openSettingsBottomSheet() async {
+    buildSettingsBottomSheet(context);
+    await Future.delayed(const Duration(milliseconds: 100));
   }
 
   Future<void> _loadPackageInfo() async {
     final packageInfo = await PackageInfo.fromPlatform();
     setState(() {
       _version = packageInfo.version;
-      _formattedDate = DateFormat('dd MMMM yyyy').format(DateTime.parse(buildDate));
+      _formattedDate =
+          DateFormat('dd MMMM yyyy').format(DateTime.parse(buildDate));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
@@ -57,6 +75,12 @@ class _AboutPageState extends State<AboutPage> {
             actions: <Widget>[
               const SyncStatusIcon(),
               IconButton(
+                  icon: const Icon(Icons.help_outline),
+                  onPressed: () {
+                    context.read<AppTourController>().start(context);
+                  }),
+              IconButton(
+                  key: _settingsCogKey,
                   icon: const Icon(Icons.settings),
                   onPressed: () {
                     buildSettingsBottomSheet(context);
@@ -236,8 +260,7 @@ class _AboutPageState extends State<AboutPage> {
                       const Card(
                           child: Icon(Icons.handshake,
                               color: Styles.themeColor, size: 50.0)),
-
-                      Text('Version: $_version'),                      
+                      Text('Version: $_version'),
                       Text('Build date: $_formattedDate'),
                     ],
                   )),
@@ -313,6 +336,7 @@ class _AboutPageState extends State<AboutPage> {
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
+          key: _bottomSheet,
           builder: (BuildContext context, StateSetter setLocalState) {
             return Consumer<MainPageSettings>(
                 builder: (context, mainPageSettings, child) =>

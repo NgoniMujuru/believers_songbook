@@ -10,6 +10,8 @@ import 'package:uuid/uuid.dart';
 import 'collections_songs.dart';
 import 'styles.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 
 class Collections extends StatefulWidget {
   const Collections({super.key});
@@ -20,6 +22,17 @@ class Collections extends StatefulWidget {
 
 class _CollectionsState extends State<Collections> {
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey _addFabKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.collectionsAddFab, _addFabKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.collectionsScreen, context);
+    });
+  }
 
   @override
   void dispose() {
@@ -38,6 +51,7 @@ class _CollectionsState extends State<Collections> {
             actions: const [SyncStatusIcon()],
           ),
           floatingActionButton: FloatingActionButton(
+            key: _addFabKey,
             onPressed: () {
               final TextEditingController controller = TextEditingController();
               showDialog(
@@ -167,4 +181,3 @@ class _CollectionsState extends State<Collections> {
     );
   }
 }
-

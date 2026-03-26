@@ -62,7 +62,7 @@ class _SongState extends State<Song> {
               IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    settingsBottomSheet(context,screenSize);
+                    settingsBottomSheet(context, screenSize);
                   }),
             ]),
         // backgroundColor: Styles.scaffoldBackground,
@@ -229,13 +229,14 @@ class _SongState extends State<Song> {
       ),
       builder: screenSize.screenWidth < 600
           ? (BuildContext context) => Scaffold(
-                body: collectionsModalContent(context,screenSize),
+                body: collectionsModalContent(context, screenSize),
               )
-          : (BuildContext context) => collectionsModalContent(context, screenSize),
+          : (BuildContext context) =>
+              collectionsModalContent(context, screenSize),
     );
   }
 
-  StatefulBuilder collectionsModalContent(context,screenSize) {
+  StatefulBuilder collectionsModalContent(context, screenSize) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setLocalState) {
         return Consumer<MainPageSettings>(
@@ -245,8 +246,7 @@ class _SongState extends State<Song> {
                     locale: Locale(mainPageSettings.getLocale),
                     child: Consumer<MainPageSettings>(
                         builder: (context, mainPageSettings, child) => (Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                               child: Consumer<CollectionsData>(
                                 builder: (context, collectionsData, child) =>
                                     Column(
@@ -278,7 +278,8 @@ class _SongState extends State<Song> {
                                         Text(
                                             AppLocalizations.of(context)!
                                                 .globalCollections,
-                                            style: const TextStyle(fontSize: 25)),
+                                            style:
+                                                const TextStyle(fontSize: 25)),
                                         TextButton(
                                           onPressed: () {
                                             if (!_isSelectingCollection) {
@@ -323,8 +324,13 @@ class _SongState extends State<Song> {
                                     const Divider(),
                                     Expanded(
                                       child: _isSelectingCollection
-                                          ? listCollections(collectionsData, setLocalState, context,screenSize)
-                                          : createNewCollection(context, collectionsData),
+                                          ? listCollections(
+                                              collectionsData,
+                                              setLocalState,
+                                              context,
+                                              screenSize)
+                                          : createNewCollection(
+                                              context, collectionsData),
                                     ),
                                   ],
                                 ),
@@ -335,7 +341,7 @@ class _SongState extends State<Song> {
   }
 
   RawScrollbar listCollections(CollectionsData collectionsData,
-      StateSetter setLocalState, BuildContext context,screenSize) {
+      StateSetter setLocalState, BuildContext context, screenSize) {
     return RawScrollbar(
       controller: _collectionsScrollController,
       minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
@@ -345,7 +351,6 @@ class _SongState extends State<Song> {
       trackVisibility: true,
       thumbColor: Colors.grey.withOpacity(0.5),
       trackColor: Colors.grey.withOpacity(0.1),
-       
       child: ListView.builder(
         controller: _collectionsScrollController,
         padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -359,11 +364,13 @@ class _SongState extends State<Song> {
                 title: Text(collectionsData.collections[index].name),
                 value: _songPresentInCollection[index],
                 onChanged: (bool? value) {
-                  String collectionName = collectionsData.collections[index].name;
+                  String collectionName =
+                      collectionsData.collections[index].name;
                   if (value == true) {
                     createCollectionSnackBar(
                         AppLocalizations.of(context)!.songPageAddedToSnackbar,
-                        collectionName,screenSize);
+                        collectionName,
+                        screenSize);
                     CollectionSong collectionSong = CollectionSong(
                       id: const Uuid().v4(),
                       collectionId: collectionsData.collections[index].id,
@@ -377,7 +384,8 @@ class _SongState extends State<Song> {
                     );
                   } else {
                     createCollectionSnackBar(
-                        AppLocalizations.of(context)!.songPageRemovedFromSnackbar,
+                        AppLocalizations.of(context)!
+                            .songPageRemovedFromSnackbar,
                         collectionName,
                         screenSize);
                     // get collectionSongId based on title and collectionId
@@ -387,7 +395,7 @@ class _SongState extends State<Song> {
                                 collectionsData.collections[index].id &&
                             collectionSong.title == widget.songTitle)
                         .id;
-      
+
                     collectionsData.deleteCollectionSong(
                       collectionSongId,
                     );
@@ -407,7 +415,7 @@ class _SongState extends State<Song> {
 
   Form createNewCollection(
       BuildContext context, CollectionsData collectionsData) {
-        final FocusNode focusNode = FocusNode();
+    final FocusNode focusNode = FocusNode();
 
     // Request focus after the widget tree has been built
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -419,8 +427,9 @@ class _SongState extends State<Song> {
       child: TextFormField(
         focusNode: focusNode,
         decoration: InputDecoration(
-            border: const UnderlineInputBorder(), labelText: AppLocalizations.of(context)!.songPageCollectionNameLabel,
-            ),
+          border: const UnderlineInputBorder(),
+          labelText: AppLocalizations.of(context)!.songPageCollectionNameLabel,
+        ),
         // The validator receives the text that the user has entered.
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -451,7 +460,7 @@ class _SongState extends State<Song> {
     );
   }
 
-  void createCollectionSnackBar(String action, collectionName,screenSize) {
+  void createCollectionSnackBar(String action, collectionName, screenSize) {
     const Duration duration = Duration(seconds: 1);
     final snackBar = screenSize.screenWidth > 600
         ? SnackBar(
@@ -484,7 +493,7 @@ class _SongState extends State<Song> {
     }
   }
 
-  Future<void> settingsBottomSheet(context,screenSize) {
+  Future<void> settingsBottomSheet(context, screenSize) {
     return showModalBottomSheet<void>(
       isScrollControlled: true,
       context: context,
@@ -619,12 +628,11 @@ class _SongState extends State<Song> {
                                           ElevatedButton(
                                             style: ButtonStyle(
                                               foregroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
-                                                          Colors.white),
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) => Colors.white),
                                               backgroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) =>
                                                           Styles.themeColor),
                                             ),
                                             onPressed: () {
@@ -647,12 +655,11 @@ class _SongState extends State<Song> {
                                           ElevatedButton(
                                             style: ButtonStyle(
                                               foregroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
-                                                          Colors.white),
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) => Colors.white),
                                               backgroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) =>
                                                           Styles.themeColor),
                                             ),
                                             onPressed: () {
