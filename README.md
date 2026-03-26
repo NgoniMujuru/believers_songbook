@@ -90,6 +90,7 @@ Follow these steps to prepare and run the app locally after cloning the reposito
 
 ## More help
 - For details on the user accounts & cloud sync feature, see [docs/USER-ACCOUNTS-AND-SYNC.md](docs/USER-ACCOUNTS-AND-SYNC.md).
+- For Firebase Analytics (DebugView setup, tracked events, adding new events), see [docs/ANALYTICS.md](docs/ANALYTICS.md).
 
 ## Useful commands
 - `git clone https://github.com/NgoniMujuru/believers_songbook.git` — clone the repo
