@@ -70,13 +70,16 @@ Each user can only read/write their own data. Rules are in `firestore.rules` in 
 
 | File | What changed |
 |------|-------------|
-| `lib/main.dart` | Firebase initialization, `AuthProvider` in the widget tree, onboarding gate (`_OnboardingGate`) that detects first install vs. update, `_FirstInstallLoginScreen` for new users, "What's New" dialog for existing users. |
-| `lib/songs.dart` | Added `SyncStatusIcon` to AppBar, fixed ScrollController for desktop scrollbars. |
+| `lib/main.dart` | Firebase initialization, `AuthProvider` + `AppTourController` in the widget tree, onboarding gate (`_OnboardingGate`) that detects first install vs. update, `_FirstInstallLoginScreen` for new users, "What's New" dialog for existing users. `FirebaseAnalyticsObserver` added to `navigatorObservers`. |
+| `lib/songs.dart` | Added `SyncStatusIcon` to AppBar, fixed ScrollController for desktop scrollbars. Analytics tracking for song opens and search. |
 | `lib/song_books.dart` | Added `SyncStatusIcon` to AppBar, converted to StatefulWidget for ScrollController. |
-| `lib/collections.dart` | Added `SyncStatusIcon` to AppBar, converted to StatefulWidget for ScrollController. |
-| `lib/song.dart` | Added ScrollController for collections bottom sheet scrollbar. |
-| `lib/app_pages.dart` | Added Account page to the navigation. |
-| `pubspec.yaml` | Added `firebase_auth`, `cloud_firestore`, `google_sign_in`, `sign_in_with_apple`, `crypto` dependencies. |
+| `lib/collections.dart` | Added `SyncStatusIcon` to AppBar, converted to StatefulWidget for ScrollController. Analytics tracking for collection opens. |
+| `lib/collections_songs.dart` | Analytics tracking for song opens from collection and collection deletion. |
+| `lib/song.dart` | Added ScrollController for collections bottom sheet scrollbar. Analytics tracking for removing a song from collection. |
+| `lib/app_pages.dart` | Added Account page to navigation. Added sync explainer dialog for signed-out users on first launch (see below). |
+| `lib/bottom_sheet.dart` | Analytics tracking for sort order and search-by changes. |
+| `lib/about.dart` | Analytics tracking for rate app, contact us, and privacy policy taps. |
+| `pubspec.yaml` | Added `firebase_auth`, `cloud_firestore`, `google_sign_in`, `sign_in_with_apple`, `crypto`, `firebase_analytics`, `flutter_svg`, `flutter_welcome_kit` dependencies. |
 
 ### How sync works
 
@@ -90,6 +93,24 @@ The `fullSync` method in `SyncService` is the entry point for full sync. It:
 - Pushes all collections and songs (batched to avoid Firestore's 500-op limit)
 - Pulls settings and collections back
 - Returns the pulled data for the caller to merge into local state
+
+### Sync explainer dialog
+
+When an existing user who has never signed in taps the Collections tab, a one-time dialog explains the cloud sync feature and offers a "Sign in now" button that navigates to the Account page. The flag is stored in `SharedPreferences` as `hasSeenSyncExplainer`. This logic lives in `_showSyncExplainerIfNeeded()` in `lib/app_pages.dart`.
+
+---
+
+## In-app tour
+
+New users get a guided spotlight tour that walks them through the main screens (Songs, Songbooks, Collections, About). The tour is powered by a bundled fork of `flutter_welcome_kit` in `third_party/`.
+
+| File | What it does |
+|------|-------------|
+| `lib/tour/app_tour_controller.dart` | `ChangeNotifier` that manages tour state, registers target `GlobalKey`s per screen, and drives step sequencing. |
+| `lib/tour/tour_ids.dart` | String constants for tour target IDs (e.g. `songs_screen`, `collections_fab`). |
+| `third_party/flutter_welcome_kit/` | Custom spotlight overlay + tooltip library (bundled as a dependency override). |
+
+The tour starts automatically on first install after the user signs in or skips. Completion or skip is persisted via `SharedPreferences` so it only shows once.
 
 ---
 
@@ -328,6 +349,12 @@ You do **not** need to regenerate the key or remove the files from the repo. The
 | iOS Simulator (iOS 17) | ✅ | ✅ | ✅ after Step 2 | ✅ after Step 1 |
 | macOS | Untested | ✅ after Step 3 | ✅ after Steps 2+3 | ✅ after Step 1 |
 | Web | Untested | Untested | N/A | Untested |
+
+---
+
+## Related docs
+
+- [Analytics guide](ANALYTICS.md) — DebugView setup, full event catalog (including auth events like `login`, `sign_up`, `sign_out`), and how to add new events.
 
 ---
 
