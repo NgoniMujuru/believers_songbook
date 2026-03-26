@@ -8,16 +8,17 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'app_pages.dart';
 import 'styles.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'providers/song_settings.dart';
 import 'providers/song_book_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SongSettings()),
@@ -49,7 +50,6 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   static const String _title = 'Believers Songbook';
-  final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
@@ -95,28 +95,7 @@ class MyApp extends StatelessWidget {
         themeMode: themeSettings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
         debugShowCheckedModeBanner: false,
         title: _title,
-        home: FutureBuilder(
-          future: _fbApp,
-          builder: (context, snapshot) {
-
-            double screenWidth = MediaQuery.of(context).size.width;
-            double screenHeight = MediaQuery.of(context).size.height;
-
-            if (snapshot.hasError) {
-              return const Text(
-                  'Loading songbooks failed, please try again later');
-            } else if (snapshot.hasData) {
-              return Provider<ScreenSize>(
-                create: (_) => ScreenSize(screenWidth, screenHeight),
-                child: AppPages(),
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
+        home: AppPages(),
       ),
     );
   }

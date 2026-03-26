@@ -19,36 +19,6 @@ class AnalyticsService {
     );
   }
 
-  Future<void> trackSongOpened({
-    required String songId,
-    required String songTitle,
-    required String source,
-  }) {
-    return _analytics.logEvent(
-      name: 'song_opened',
-      parameters: {
-        'song_id': songId,
-        'song_title': songTitle,
-        'source': source,
-      },
-    );
-  }
-
-  Future<void> trackSearchPerformed({
-    required String query,
-    required int resultsCount,
-    String? filter,
-  }) {
-    return _analytics.logEvent(
-      name: 'search_performed',
-      parameters: {
-        'query_length': query.length,
-        'results_count': resultsCount,
-        if (filter != null) 'filter': filter,
-      },
-    );
-  }
-
   Future<void> trackSongShared({
     required String songTitle,
     required String channel,
@@ -69,6 +39,45 @@ class AnalyticsService {
         'tab_name': tabName,
       },
     );
+  }
+
+  Future<void> trackSettingsChanged({
+    required String settingType,
+    required String value,
+  }) {
+    return _analytics.logEvent(
+      name: 'settings_changed',
+      parameters: {
+        'setting_type': settingType,
+        'value': value,
+      },
+    );
+  }
+
+  Future<void> trackCollectionCreated() {
+    return _analytics.logEvent(name: 'collection_created');
+  }
+
+  Future<void> trackSongAddedToCollection({required String songTitle}) {
+    return _analytics.logEvent(
+      name: 'song_added_to_collection',
+      parameters: {
+        'song_title': songTitle,
+      },
+    );
+  }
+
+  Future<void> trackSongbookChanged({required String songbookName}) {
+    return _analytics.logEvent(
+      name: 'songbook_changed',
+      parameters: {
+        'songbook_name': songbookName,
+      },
+    );
+  }
+
+  Future<void> trackAppShared() {
+    return _analytics.logEvent(name: 'app_shared');
   }
 }
 

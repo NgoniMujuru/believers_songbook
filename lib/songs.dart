@@ -6,7 +6,6 @@ import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
-import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:csv/csv.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -131,15 +130,6 @@ class SongsState extends State<Songs> {
         _loadingSongs = false;
       });
 
-      final trimmedQuery = query.trim();
-      if (trimmedQuery.isNotEmpty && _csvData != null && _csvData!.isNotEmpty) {
-        final results = filterSongs() ?? [];
-        AnalyticsService.instance.trackSearchPerformed(
-          query: trimmedQuery,
-          resultsCount: results.length,
-          filter: _searchBy?.toString(),
-        );
-      }
     });
   }
 
@@ -459,13 +449,6 @@ class SongsState extends State<Songs> {
                             onTap: () {
                               _focusNode.unfocus();
                               final songRow = results!.elementAt(index);
-                              AnalyticsService.instance.trackSongOpened(
-                                songId: songRow.elementAt(0).toString(),
-                                songTitle: capitalizeFirstLetters(
-                                  songRow.elementAt(1),
-                                ),
-                                source: 'songs_tab_alphabetic',
-                              );
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -526,11 +509,6 @@ class SongsState extends State<Songs> {
                     onTap: () {
                       _focusNode.unfocus();
                       final songRow = results!.elementAt(index);
-                      AnalyticsService.instance.trackSongOpened(
-                        songId: songRow.elementAt(0).toString(),
-                        songTitle: songNumAndTitle(songRow),
-                        source: 'songs_tab_numeric',
-                      );
                       Navigator.push(
                           context,
                           MaterialPageRoute(

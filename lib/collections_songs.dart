@@ -4,7 +4,6 @@ import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
-import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/song.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
@@ -213,11 +212,6 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
                     String title = song.title;
                     String key = song.key;
 
-                    AnalyticsService.instance.trackSongOpened(
-                      songId: song.id.toString(),
-                      songTitle: title,
-                      source: 'collection',
-                    );
 
                     Navigator.push(
                       context,

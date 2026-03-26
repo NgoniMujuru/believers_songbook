@@ -366,6 +366,9 @@ class _SongState extends State<Song> {
                     collectionsData.addCollectionSong(
                       collectionSong,
                     );
+                    AnalyticsService.instance.trackSongAddedToCollection(
+                      songTitle: widget.songTitle,
+                    );
                   } else {
                     createCollectionSnackBar(
                         AppLocalizations.of(context)!.songPageRemovedFromSnackbar,
@@ -437,6 +440,7 @@ class _SongState extends State<Song> {
             dateCreated: DateTime.now().toString(),
           );
           collectionsData.addCollection(collection);
+          AnalyticsService.instance.trackCollectionCreated();
           initializeSongCollections(collectionsData);
         },
       ),
