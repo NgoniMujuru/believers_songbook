@@ -1,7 +1,12 @@
 import 'package:believers_songbook/account_page.dart';
 import 'package:believers_songbook/collections.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
+import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/providers/song_book_settings.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
+import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/services/sync_service.dart';
 import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
@@ -51,6 +56,69 @@ class _AppPagesState extends State<AppPages> {
   void initState() {
     super.initState();
     _showSyncExplainerIfNeeded();
+    _syncOnStartup();
+  }
+
+  /// Pull cloud settings/collections when the user is already signed in.
+  Future<void> _syncOnStartup() async {
+    final auth = context.read<AuthProvider>();
+    if (!auth.isSignedIn) return;
+
+    final cloudSettings = await SyncService.pullSettings();
+    if (cloudSettings != null && cloudSettings.isNotEmpty) {
+      final songSettings = context.read<SongSettings>();
+      final themeSettings = context.read<ThemeSettings>();
+      final mainPageSettings = context.read<MainPageSettings>();
+      final songBookSettings = context.read<SongBookSettings>();
+      final prefs = await SharedPreferences.getInstance();
+
+      if (cloudSettings['fontSize'] != null) {
+        songSettings.setFontSize((cloudSettings['fontSize'] as num).toDouble());
+      }
+      if (cloudSettings['displayKey'] != null) {
+        songSettings.setDisplayKey(cloudSettings['displayKey'] as bool);
+      }
+      if (cloudSettings['displaySongNumber'] != null) {
+        songSettings.setDisplaySongNumber(cloudSettings['displaySongNumber'] as bool);
+      }
+      if (cloudSettings['isDarkMode'] != null) {
+        themeSettings.setIsDarkMode(cloudSettings['isDarkMode'] as bool);
+      }
+      if (cloudSettings['locale'] != null) {
+        mainPageSettings.setLocale(cloudSettings['locale'] as String);
+      }
+      if (cloudSettings['songBookFile'] != null) {
+        songBookSettings.setSongBookFile(cloudSettings['songBookFile'] as String);
+      }
+      if (cloudSettings['sortOrder'] != null) {
+        prefs.setString('sortOrder', cloudSettings['sortOrder'] as String);
+      }
+      if (cloudSettings['searchBy'] != null) {
+        prefs.setString('searchBy', cloudSettings['searchBy'] as String);
+      }
+    }
+
+    // Merge cloud collections
+    final collectionsData = context.read<CollectionsData>();
+    final cloudCollections = await SyncService.pullCollections();
+    if (cloudCollections != null) {
+      final pulledCollections = cloudCollections['collections'];
+      final pulledSongs = cloudCollections['collectionSongs'];
+      if (pulledCollections != null) {
+        for (var collection in pulledCollections) {
+          if (!collectionsData.collections.any((c) => c.id == collection.id)) {
+            await collectionsData.addCollection(collection);
+          }
+        }
+      }
+      if (pulledSongs != null) {
+        for (var song in pulledSongs) {
+          if (!collectionsData.collectionSongs.any((s) => s.id == song.id)) {
+            await collectionsData.addCollectionSong(song);
+          }
+        }
+      }
+    }
   }
 
   Future<void> _showSyncExplainerIfNeeded() async {

@@ -34,7 +34,9 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       final googleSignIn = GoogleSignIn.instance;
-      await googleSignIn.initialize();
+      await googleSignIn.initialize(
+        serverClientId: '767948267709-o11u63hdp6fo2k2jrik6g5jmpn5uhn45.apps.googleusercontent.com',
+      );
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
 
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
