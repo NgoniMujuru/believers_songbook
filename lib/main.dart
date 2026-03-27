@@ -56,27 +56,51 @@ class _ScreenSizeProviderState extends State<ScreenSizeProvider> {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   MyApp({super.key});
 
   static const String _title = 'Believers Songbook';
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _prefsLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPrefs();
+  }
+
+  Future<void> _loadPrefs() async {
+    debugPrint('[PREFS] _loadPrefs START');
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    final songSettings = context.read<SongSettings>();
+    songSettings.setFontSize(prefs.getDouble('fontSize') ?? 30);
+    songSettings.setDisplayKey(prefs.getBool('displayKey') ?? true);
+    songSettings
+        .setDisplaySongNumber(prefs.getBool('displaySongNumber') ?? false);
+    final themeSettings = context.read<ThemeSettings>();
+    final darkMode = prefs.getBool('isDarkMode') ?? false;
+    debugPrint('[PREFS] Read isDarkMode=$darkMode from SharedPreferences');
+    themeSettings.setIsDarkMode(darkMode);
+    final mainPageSettings = context.read<MainPageSettings>();
+    final locale = prefs.getString('locale') ?? 'en';
+    debugPrint('[PREFS] Read locale=$locale from SharedPreferences');
+    mainPageSettings.setLocale(locale);
+    debugPrint('[PREFS] _loadPrefs DONE');
+    if (mounted) setState(() => _prefsLoaded = true);
+  }
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      final songSettings = context.read<SongSettings>();
-      songSettings.setFontSize(prefs.getDouble('fontSize') ?? 30);
-      songSettings.setDisplayKey(prefs.getBool('displayKey') ?? true);
-      songSettings
-          .setDisplaySongNumber(prefs.getBool('displaySongNumber') ?? false);
-      final themeSettings = context.read<ThemeSettings>();
-      themeSettings.setIsDarkMode(prefs.getBool('isDarkMode') ?? false);
-      final mainPageSettings = context.read<MainPageSettings>();
-      mainPageSettings.setLocale(prefs.getString('locale') ?? 'en');
-    });
-    initCollections(context);
-    WakelockPlus.enable();
+    if (!_prefsLoaded) {
+      initCollections(context);
+      WakelockPlus.enable();
+    }
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
         navigatorObservers: [
@@ -108,7 +132,7 @@ class MyApp extends StatelessWidget {
         ),
         themeMode: themeSettings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
         debugShowCheckedModeBanner: false,
-        title: _title,
+        title: MyApp._title,
         home: const _OnboardingGate(),
       ),
     );
@@ -153,10 +177,13 @@ class _OnboardingGateState extends State<_OnboardingGate> {
       return;
     }
     // Detect existing user: if they already have stored preferences
-    // (like fontSize, isDarkMode, locale) they are an update, not fresh.
-    final hasExistingData = prefs.containsKey('fontSize') ||
-        prefs.containsKey('isDarkMode') ||
-        prefs.containsKey('songBookFile');
+    // that are only set after the app has fully loaded (past onboarding),
+    // they are an update, not a fresh install. We check songBookFile
+    // because it's set by Songs.initState (after AppPages loads) and NOT
+    // by _loadPrefs (which writes defaults for isDarkMode/fontSize/etc.
+    // on every launch, creating false positives).
+    final hasExistingData = prefs.containsKey('songBookFile') ||
+        prefs.containsKey('hasSeenSyncExplainer');
     if (hasExistingData) {
       // Existing user updating — mark onboarding done, let What's New fire.
       await prefs.setBool('hasCompletedOnboarding', true);
@@ -173,6 +200,7 @@ class _OnboardingGateState extends State<_OnboardingGate> {
   }
 
   void _finishOnboarding() {
+    debugPrint('[ONBOARD] _finishOnboarding called — transitioning to AppPages');
     // Update UI immediately — no await before setState
     setState(() => _showOnboarding = false);
     // Persist in background
@@ -205,9 +233,11 @@ class _FirstInstallLoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
-        // If the user just signed in, finish onboarding automatically
+        // While the sign-in handler is finishing sync in the background,
+        // show a loading spinner. Do NOT call onComplete here —
+        // it fires before sync finishes, causing a race condition.
         if (auth.isSignedIn) {
-          WidgetsBinding.instance.addPostFrameCallback((_) => onComplete());
+          debugPrint('[FIRSTINSTALL] Consumer detected auth.isSignedIn — showing spinner');
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
@@ -249,13 +279,24 @@ class _FirstInstallLoginScreen extends StatelessWidget {
                       height: 50,
                       child: FilledButton.icon(
                         onPressed: () async {
+                          debugPrint('[FIRSTINSTALL] Sign-in button pressed, pushing AccountPage');
                           await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => const AccountPage(),
                             ),
                           );
-                          // If they signed in on that page, auth state changed
-                          // and the Consumer above will call onComplete.
+                          debugPrint('[FIRSTINSTALL] AccountPage popped, checking auth...');
+                          // AccountPage popped — sync already finished
+                          // (handler awaits sync before popping).
+                          // If user signed in, transition to home.
+                          if (context.read<AuthProvider>().isSignedIn) {
+                            debugPrint('[FIRSTINSTALL] Auth is signed in, calling onComplete');
+                            final themeSettings = context.read<ThemeSettings>();
+                            debugPrint('[FIRSTINSTALL] isDarkMode=${themeSettings.isDarkMode} before onComplete');
+                            onComplete();
+                          } else {
+                            debugPrint('[FIRSTINSTALL] Auth NOT signed in after AccountPage pop');
+                          }
                         },
                         icon: const Icon(Icons.cloud_sync),
                         label: const Text('Sign in or create account'),

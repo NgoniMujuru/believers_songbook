@@ -413,10 +413,13 @@ class _SignInViewState extends State<_SignInView> {
     final songBookSettings = context.read<SongBookSettings>();
     final collectionsData = context.read<CollectionsData>();
 
+    debugPrint('[HANDLER] _handleGoogleSignIn: calling signInWithGoogle...');
     final success = await auth.signInWithGoogle();
+    debugPrint('[HANDLER] signInWithGoogle returned success=$success');
     if (!success) return;
 
     await AnalyticsService.instance.trackLogin(method: 'google');
+    debugPrint('[HANDLER] Calling _syncAfterSignIn...');
     await _syncAfterSignIn(
       songSettings: songSettings,
       themeSettings: themeSettings,
@@ -424,6 +427,8 @@ class _SignInViewState extends State<_SignInView> {
       songBookSettings: songBookSettings,
       collectionsData: collectionsData,
     );
+    debugPrint('[HANDLER] _syncAfterSignIn done. isDarkMode=${themeSettings.isDarkMode}, locale=${mainPageSettings.getLocale}');
+    debugPrint('[HANDLER] Popping AccountPage...');
     if (navigator.canPop()) navigator.pop();
   }
 
@@ -460,12 +465,17 @@ class _SignInViewState extends State<_SignInView> {
     required SongBookSettings songBookSettings,
     required CollectionsData collectionsData,
   }) async {
+    debugPrint('[SYNC] _syncAfterSignIn START');
     final prefs = await SharedPreferences.getInstance();
 
     // Pull cloud settings first — cloud wins for returning users
     final cloudSettings = await SyncService.pullSettings();
+    debugPrint('[SYNC] pullSettings returned: $cloudSettings');
+    // Debug marker: write sync result to SharedPreferences for adb inspection
+    prefs.setString('_debug_sync', 'cloud=$cloudSettings');
 
     if (cloudSettings != null && cloudSettings.isNotEmpty) {
+      debugPrint('[SYNC] Applying cloud settings...');
       if (cloudSettings['fontSize'] != null) {
         songSettings.setFontSize((cloudSettings['fontSize'] as num).toDouble());
       }
@@ -476,9 +486,11 @@ class _SignInViewState extends State<_SignInView> {
         songSettings.setDisplaySongNumber(cloudSettings['displaySongNumber'] as bool);
       }
       if (cloudSettings['isDarkMode'] != null) {
+        debugPrint('[SYNC] Setting isDarkMode=${cloudSettings['isDarkMode']}');
         themeSettings.setIsDarkMode(cloudSettings['isDarkMode'] as bool);
       }
       if (cloudSettings['locale'] != null) {
+        debugPrint('[SYNC] Setting locale=${cloudSettings['locale']}');
         mainPageSettings.setLocale(cloudSettings['locale'] as String);
       }
       if (cloudSettings['songBookFile'] != null) {
@@ -490,6 +502,7 @@ class _SignInViewState extends State<_SignInView> {
       if (cloudSettings['searchBy'] != null) {
         prefs.setString('searchBy', cloudSettings['searchBy'] as String);
       }
+      debugPrint('[SYNC] Cloud settings applied. isDarkMode now=${themeSettings.isDarkMode}, locale=${mainPageSettings.getLocale}');
     } else {
       // No cloud settings — first sign-in, push local settings to seed cloud
       String songBookFile = prefs.getString('songBookFile') ??
@@ -532,6 +545,7 @@ class _SignInViewState extends State<_SignInView> {
       collectionsData.collections,
       collectionsData.collectionSongs,
     );
+    debugPrint('[SYNC] _syncAfterSignIn END');
   }
 }
 
