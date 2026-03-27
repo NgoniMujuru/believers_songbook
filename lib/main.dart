@@ -130,21 +130,28 @@ class _OnboardingGate extends StatefulWidget {
 }
 
 class _OnboardingGateState extends State<_OnboardingGate> {
-  late Future<bool> _shouldOnboard;
+  bool _isLoading = true;
+  bool _showOnboarding = false;
 
   @override
   void initState() {
     super.initState();
-    _shouldOnboard = _checkOnboarding();
+    _checkOnboarding();
   }
 
-  Future<bool> _checkOnboarding() async {
+  Future<void> _checkOnboarding() async {
     final auth = context.read<AuthProvider>();
-    if (auth.isSignedIn) return false; // already signed in
+    if (auth.isSignedIn) {
+      if (mounted) setState(() => _isLoading = false);
+      return;
+    }
 
     final prefs = await SharedPreferences.getInstance();
     // If the user has completed onboarding before, skip
-    if (prefs.getBool('hasCompletedOnboarding') == true) return false;
+    if (prefs.getBool('hasCompletedOnboarding') == true) {
+      if (mounted) setState(() => _isLoading = false);
+      return;
+    }
     // Detect existing user: if they already have stored preferences
     // (like fontSize, isDarkMode, locale) they are an update, not fresh.
     final hasExistingData = prefs.containsKey('fontSize') ||
@@ -153,35 +160,39 @@ class _OnboardingGateState extends State<_OnboardingGate> {
     if (hasExistingData) {
       // Existing user updating — mark onboarding done, let What's New fire.
       await prefs.setBool('hasCompletedOnboarding', true);
-      return false;
+      if (mounted) setState(() => _isLoading = false);
+      return;
     }
     // Truly fresh install — show onboarding login
-    return true;
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _showOnboarding = true;
+      });
+    }
   }
 
-  void _finishOnboarding() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasCompletedOnboarding', true);
-    await prefs.setBool('hasSeenSyncExplainer', true);
-    if (mounted) setState(() => _shouldOnboard = Future.value(false));
+  void _finishOnboarding() {
+    // Update UI immediately — no await before setState
+    setState(() => _showOnboarding = false);
+    // Persist in background
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setBool('hasCompletedOnboarding', true);
+      prefs.setBool('hasSeenSyncExplainer', true);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _shouldOnboard,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (snapshot.data == true) {
-          return _FirstInstallLoginScreen(onComplete: _finishOnboarding);
-        }
-        return const AppPages();
-      },
-    );
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (_showOnboarding) {
+      return _FirstInstallLoginScreen(onComplete: _finishOnboarding);
+    }
+    return const AppPages();
   }
 }
 

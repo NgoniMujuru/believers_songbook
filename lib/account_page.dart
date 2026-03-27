@@ -340,6 +340,16 @@ class _SignInViewState extends State<_SignInView> {
   Future<void> _handleEmailSubmit(BuildContext context) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final auth = context.read<AuthProvider>();
+    // Capture navigator and providers before the async sign-in call.
+    // The Consumer in AccountPage will dispose this State when auth
+    // state changes, so context.read / mounted will no longer work.
+    final navigator = Navigator.of(context);
+    final songSettings = context.read<SongSettings>();
+    final themeSettings = context.read<ThemeSettings>();
+    final mainPageSettings = context.read<MainPageSettings>();
+    final songBookSettings = context.read<SongBookSettings>();
+    final collectionsData = context.read<CollectionsData>();
+
     bool success;
     if (_isCreateAccount) {
       success = await auth.createAccountWithEmail(
@@ -353,15 +363,21 @@ class _SignInViewState extends State<_SignInView> {
         _passwordController.text,
       );
     }
-    if (success && mounted) {
-      if (_isCreateAccount) {
-        await AnalyticsService.instance.trackSignUp(method: 'email');
-      } else {
-        await AnalyticsService.instance.trackLogin(method: 'email');
-      }
-      await _syncAfterSignIn(context);
-      if (mounted) Navigator.of(context).pop();
+    if (!success) return;
+
+    if (_isCreateAccount) {
+      await AnalyticsService.instance.trackSignUp(method: 'email');
+    } else {
+      await AnalyticsService.instance.trackLogin(method: 'email');
     }
+    await _syncAfterSignIn(
+      songSettings: songSettings,
+      themeSettings: themeSettings,
+      mainPageSettings: mainPageSettings,
+      songBookSettings: songBookSettings,
+      collectionsData: collectionsData,
+    );
+    if (navigator.canPop()) navigator.pop();
   }
 
   Future<void> _handleForgotPassword(BuildContext context) async {
@@ -390,31 +406,60 @@ class _SignInViewState extends State<_SignInView> {
 
   Future<void> _handleGoogleSignIn(BuildContext context) async {
     final auth = context.read<AuthProvider>();
-    final success = await auth.signInWithGoogle();
-    if (success && mounted) {
-      await AnalyticsService.instance.trackLogin(method: 'google');
-      await _syncAfterSignIn(context);
-      if (mounted) Navigator.of(context).pop();
-    }
-  }
-
-  Future<void> _handleAppleSignIn(BuildContext context) async {
-    final auth = context.read<AuthProvider>();
-    final success = await auth.signInWithApple();
-    if (success && mounted) {
-      await AnalyticsService.instance.trackLogin(method: 'apple');
-      await _syncAfterSignIn(context);
-      if (mounted) Navigator.of(context).pop();
-    }
-  }
-
-  /// After signing in, pull cloud data first (cloud wins), then push local data.
-  Future<void> _syncAfterSignIn(BuildContext context) async {
+    final navigator = Navigator.of(context);
     final songSettings = context.read<SongSettings>();
     final themeSettings = context.read<ThemeSettings>();
     final mainPageSettings = context.read<MainPageSettings>();
     final songBookSettings = context.read<SongBookSettings>();
     final collectionsData = context.read<CollectionsData>();
+
+    final success = await auth.signInWithGoogle();
+    if (!success) return;
+
+    await AnalyticsService.instance.trackLogin(method: 'google');
+    await _syncAfterSignIn(
+      songSettings: songSettings,
+      themeSettings: themeSettings,
+      mainPageSettings: mainPageSettings,
+      songBookSettings: songBookSettings,
+      collectionsData: collectionsData,
+    );
+    if (navigator.canPop()) navigator.pop();
+  }
+
+  Future<void> _handleAppleSignIn(BuildContext context) async {
+    final auth = context.read<AuthProvider>();
+    final navigator = Navigator.of(context);
+    final songSettings = context.read<SongSettings>();
+    final themeSettings = context.read<ThemeSettings>();
+    final mainPageSettings = context.read<MainPageSettings>();
+    final songBookSettings = context.read<SongBookSettings>();
+    final collectionsData = context.read<CollectionsData>();
+
+    final success = await auth.signInWithApple();
+    if (!success) return;
+
+    await AnalyticsService.instance.trackLogin(method: 'apple');
+    await _syncAfterSignIn(
+      songSettings: songSettings,
+      themeSettings: themeSettings,
+      mainPageSettings: mainPageSettings,
+      songBookSettings: songBookSettings,
+      collectionsData: collectionsData,
+    );
+    if (navigator.canPop()) navigator.pop();
+  }
+
+  /// After signing in, pull cloud data first (cloud wins), then push local data.
+  /// Accepts providers directly because the calling widget may be disposed
+  /// by AccountPage's Consumer rebuild before this method runs.
+  static Future<void> _syncAfterSignIn({
+    required SongSettings songSettings,
+    required ThemeSettings themeSettings,
+    required MainPageSettings mainPageSettings,
+    required SongBookSettings songBookSettings,
+    required CollectionsData collectionsData,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
 
     // Pull cloud settings first — cloud wins for returning users
