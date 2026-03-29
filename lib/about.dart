@@ -177,7 +177,7 @@ class _AboutPageState extends State<AboutPage> {
                               ..onTap = () async {
                                 AnalyticsService.instance.trackPrivacyPolicyClicked();
                                 String url =
-                                    "https://ngonimujuru.com/songbook_for_believers/privacy_policy.html";
+                                    "https://songbookforbelievers.org/privacy-policy";
                                 if (await canLaunchUrlString(url)) {
                                   await launchUrlString(url);
                                 } else {
