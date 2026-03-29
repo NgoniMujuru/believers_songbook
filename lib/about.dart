@@ -1,5 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:believers_songbook/account_page.dart';
+import 'package:believers_songbook/providers/auth_provider.dart';
+import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:flutter/gestures.dart';
@@ -12,9 +15,12 @@ import 'package:share_plus/share_plus.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:believers_songbook/generated/build_date.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 
 import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
+import 'package:believers_songbook/services/analytics_service.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -25,6 +31,8 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   final InAppReview _inAppReview = InAppReview.instance;
+  final GlobalKey _settingsCogKey = GlobalKey();
+  final GlobalKey _bottomSheet = GlobalKey();
 
   String _version = '';
   var _formattedDate = '';
@@ -33,26 +41,47 @@ class _AboutPageState extends State<AboutPage> {
   void initState() {
     super.initState();
     _loadPackageInfo();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.aboutSettingsCog, _settingsCogKey);
+    tour.registerTarget(TourIds.aboutSettingsSheet, _bottomSheet);
+    tour.registerAction(
+        TourIds.aboutSettingsSheetAction, _openSettingsBottomSheet);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.aboutScreen, context);
+    });
+  }
+
+  Future<void> _openSettingsBottomSheet() async {
+    buildSettingsBottomSheet(context);
+    await Future.delayed(const Duration(milliseconds: 100));
   }
 
   Future<void> _loadPackageInfo() async {
     final packageInfo = await PackageInfo.fromPlatform();
     setState(() {
       _version = packageInfo.version;
-      _formattedDate = DateFormat('dd MMMM yyyy').format(DateTime.parse(buildDate));
+      _formattedDate =
+          DateFormat('dd MMMM yyyy').format(DateTime.parse(buildDate));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return SelectionArea(
       child: Scaffold(
         appBar: AppBar(
             title: Text(AppLocalizations.of(context)!.aboutPageTitle),
             scrolledUnderElevation: 4,
             actions: <Widget>[
+              const SyncStatusIcon(),
               IconButton(
+                  icon: const Icon(Icons.help_outline),
+                  onPressed: () {
+                    context.read<AppTourController>().start(context);
+                  }),
+              IconButton(
+                  key: _settingsCogKey,
                   icon: const Icon(Icons.settings),
                   onPressed: () {
                     buildSettingsBottomSheet(context);
@@ -103,6 +132,7 @@ class _AboutPageState extends State<AboutPage> {
                               : Styles.link,
                           recognizer: TapGestureRecognizer()
                             ..onTap = () async {
+                              AnalyticsService.instance.trackContactUsClicked();
                               contactUs(context);
                             },
                         ),
@@ -145,8 +175,9 @@ class _AboutPageState extends State<AboutPage> {
                                 : Styles.link,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () async {
+                                AnalyticsService.instance.trackPrivacyPolicyClicked();
                                 String url =
-                                    "https://ngonimujuru.com/songbook_for_believers/privacy_policy.html";
+                                    "https://songbookforbelievers.org/privacy-policy";
                                 if (await canLaunchUrlString(url)) {
                                   await launchUrlString(url);
                                 } else {
@@ -176,6 +207,7 @@ class _AboutPageState extends State<AboutPage> {
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () {
+                              AnalyticsService.instance.trackContactUsClicked();
                               contactUs(context);
                             },
                             child: Text(AppLocalizations.of(context)!
@@ -189,6 +221,7 @@ class _AboutPageState extends State<AboutPage> {
                                   (states) => Styles.themeColor),
                             ),
                             onPressed: () async {
+                              AnalyticsService.instance.trackRateAppClicked();
                               if (Platform.isAndroid) {
                                 //android does not support in app review from button press
                                 manualReview(context);
@@ -217,6 +250,7 @@ class _AboutPageState extends State<AboutPage> {
                             onPressed: () {
                               Share.share(
                                   '${AppLocalizations.of(context)!.aboutShareText} https://onelink.to/songbook');
+                              AnalyticsService.instance.trackAppShared();
                             },
                             child: Text(
                                 AppLocalizations.of(context)!.aboutShareAppBtn),
@@ -232,8 +266,7 @@ class _AboutPageState extends State<AboutPage> {
                       const Card(
                           child: Icon(Icons.handshake,
                               color: Styles.themeColor, size: 50.0)),
-
-                      Text('Version: $_version'),                      
+                      Text('Version: $_version'),
                       Text('Build date: $_formattedDate'),
                     ],
                   )),
@@ -309,6 +342,7 @@ class _AboutPageState extends State<AboutPage> {
       ),
       builder: (BuildContext context) {
         return StatefulBuilder(
+          key: _bottomSheet,
           builder: (BuildContext context, StateSetter setLocalState) {
             return Consumer<MainPageSettings>(
                 builder: (context, mainPageSettings, child) =>
@@ -341,6 +375,8 @@ class _AboutPageState extends State<AboutPage> {
                                             var settings = context
                                                 .read<MainPageSettings>();
                                             settings.setLocale('sw');
+                                            AnalyticsService.instance.trackSettingsChanged(settingType: 'language', value: 'sw');
+                                            AnalyticsService.instance.setPreferredLanguage('sw');
                                           }),
                                       const SizedBox(width: 20),
                                       ChoiceChip(
@@ -356,6 +392,8 @@ class _AboutPageState extends State<AboutPage> {
                                             var settings = context
                                                 .read<MainPageSettings>();
                                             settings.setLocale('fr');
+                                            AnalyticsService.instance.trackSettingsChanged(settingType: 'language', value: 'fr');
+                                            AnalyticsService.instance.setPreferredLanguage('fr');
                                           }),
                                       const SizedBox(width: 20),
                                       ChoiceChip(
@@ -369,6 +407,8 @@ class _AboutPageState extends State<AboutPage> {
                                             var settings = context
                                                 .read<MainPageSettings>();
                                             settings.setLocale('en');
+                                            AnalyticsService.instance.trackSettingsChanged(settingType: 'language', value: 'en');
+                                            AnalyticsService.instance.setPreferredLanguage('en');
                                           }),
                                     ],
                                   ),
@@ -396,6 +436,8 @@ class _AboutPageState extends State<AboutPage> {
                                                         .read<ThemeSettings>();
                                                     themeSettings
                                                         .setIsDarkMode(false);
+                                                    AnalyticsService.instance.trackSettingsChanged(settingType: 'theme', value: 'light');
+                                                    AnalyticsService.instance.setTheme('light');
                                                   }),
                                               const SizedBox(width: 20),
                                               ChoiceChip(
@@ -409,9 +451,78 @@ class _AboutPageState extends State<AboutPage> {
                                                         .read<ThemeSettings>();
                                                     themeSettings
                                                         .setIsDarkMode(true);
+                                                    AnalyticsService.instance.trackSettingsChanged(settingType: 'theme', value: 'dark');
+                                                    AnalyticsService.instance.setTheme('dark');
                                                   }),
                                             ],
                                           ))),
+                                  const SizedBox(height: 16),
+                                  // Account / Sign-in section
+                                  Consumer<AuthProvider>(
+                                    builder: (context, auth, child) => Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        if (auth.isSignedIn) ...[
+                                          if (auth.photoUrl != null)
+                                            CircleAvatar(
+                                              radius: 14,
+                                              backgroundImage:
+                                                  NetworkImage(auth.photoUrl!),
+                                            )
+                                          else
+                                            const CircleAvatar(
+                                              radius: 14,
+                                              backgroundColor: Styles.themeColor,
+                                              child: Icon(Icons.person,
+                                                  size: 16, color: Colors.white),
+                                            ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              auth.displayName ?? auth.email ?? 'Signed in',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const AccountPage(),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text('Account'),
+                                          ),
+                                        ] else ...[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const AccountPage(),
+                                                  ),
+                                                );
+                                              },
+                                              icon: const Icon(Icons.cloud_sync),
+                                              label: const Text(
+                                                  'Sign in to sync'),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Styles.themeColor,
+                                                foregroundColor: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],

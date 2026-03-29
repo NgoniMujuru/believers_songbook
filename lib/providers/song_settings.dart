@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:believers_songbook/services/sync_service.dart';
 
 class SongSettings extends ChangeNotifier {
   double _fontSize = 22; // Default font size
@@ -16,6 +17,7 @@ class SongSettings extends ChangeNotifier {
     final Future<SharedPreferences> prefsRef = SharedPreferences.getInstance();
     final SharedPreferences prefs = await prefsRef;
     prefs.setDouble('fontSize', size);
+    SyncService.pushSetting('fontSize', size);
   }
 
   Future<void> setDisplayKey(bool display) async {
@@ -24,6 +26,7 @@ class SongSettings extends ChangeNotifier {
     final Future<SharedPreferences> prefsRef = SharedPreferences.getInstance();
     final SharedPreferences prefs = await prefsRef;
     prefs.setBool('displayKey', display);
+    SyncService.pushSetting('displayKey', display);
   }
 
     Future<void> setDisplaySongNumber(bool display) async {
@@ -32,5 +35,6 @@ class SongSettings extends ChangeNotifier {
     final Future<SharedPreferences> prefsRef = SharedPreferences.getInstance();
     final SharedPreferences prefs = await prefsRef;
     prefs.setBool('displaySongNumber', display);
+    SyncService.pushSetting('displaySongNumber', display);
   }
 }

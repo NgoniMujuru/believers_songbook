@@ -44,42 +44,43 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB7cvT5QtIVZZ-WNn8vYapD8Q8SjLYOOrk',
-    appId: '1:107811782306:web:f5869bf13888260bf4a1fb',
-    messagingSenderId: '107811782306',
-    projectId: 'songbook-for-believers',
-    authDomain: 'songbook-for-believers.firebaseapp.com',
-    storageBucket: 'songbook-for-believers.appspot.com',
-    measurementId: 'G-LFMKX02Z7N',
+    apiKey: 'AIzaSyAXEPkRbJ7VCkhTRryRQtmUXx5QMcKwP2U',
+    appId: '1:767948267709:web:2e3379316645c6691397d4',
+    messagingSenderId: '767948267709',
+    projectId: 'believers-songbook-v2-11edb',
+    authDomain: 'believers-songbook-v2-11edb.firebaseapp.com',
+    storageBucket: 'believers-songbook-v2-11edb.firebasestorage.app',
+    measurementId: 'G-16WV5KD35G',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBpvK9z6-X-7xFL3sK0DLFpnZ8n9XclJvc',
-    appId: '1:107811782306:android:65798dbc33a55f95f4a1fb',
-    messagingSenderId: '107811782306',
-    projectId: 'songbook-for-believers',
-    storageBucket: 'songbook-for-believers.appspot.com',
+    apiKey: 'AIzaSyDTEqbLV5vYtecTcBumW1cLWJOLkVFgMo0',
+    appId: '1:767948267709:android:551925aa151976ca1397d4',
+    messagingSenderId: '767948267709',
+    projectId: 'believers-songbook-v2-11edb',
+    storageBucket: 'believers-songbook-v2-11edb.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC477dR9Y3wUl03Aa0tPrnXG1fFGhyQm4M',
-    appId: '1:107811782306:ios:6137da093f67b9cdf4a1fb',
-    messagingSenderId: '107811782306',
-    projectId: 'songbook-for-believers',
-    storageBucket: 'songbook-for-believers.appspot.com',
-    iosClientId:
-        '107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com',
+    apiKey: 'AIzaSyD7emVBZS1H_JJj8Jbj_QxQFnKA6_nHB5Q',
+    appId: '1:767948267709:ios:6317911d280248991397d4',
+    messagingSenderId: '767948267709',
+    projectId: 'believers-songbook-v2-11edb',
+    storageBucket: 'believers-songbook-v2-11edb.firebasestorage.app',
+    androidClientId: '767948267709-lvteea6cnsjqvjdat7bs87qij5v0c8tk.apps.googleusercontent.com',
+    iosClientId: '767948267709-32n90o0ur07bvfulif6vnc058k3coenl.apps.googleusercontent.com',
     iosBundleId: 'com.ngonimujuru.songbookForBelievers',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC477dR9Y3wUl03Aa0tPrnXG1fFGhyQm4M',
-    appId: '1:107811782306:ios:6137da093f67b9cdf4a1fb',
-    messagingSenderId: '107811782306',
-    projectId: 'songbook-for-believers',
-    storageBucket: 'songbook-for-believers.appspot.com',
-    iosClientId:
-        '107811782306-4j03n4s8pvov949il9fo7vhh0tagnv59.apps.googleusercontent.com',
+    apiKey: 'AIzaSyD7emVBZS1H_JJj8Jbj_QxQFnKA6_nHB5Q',
+    appId: '1:767948267709:ios:6317911d280248991397d4',
+    messagingSenderId: '767948267709',
+    projectId: 'believers-songbook-v2-11edb',
+    storageBucket: 'believers-songbook-v2-11edb.firebasestorage.app',
+    androidClientId: '767948267709-lvteea6cnsjqvjdat7bs87qij5v0c8tk.apps.googleusercontent.com',
+    iosClientId: '767948267709-32n90o0ur07bvfulif6vnc058k3coenl.apps.googleusercontent.com',
     iosBundleId: 'com.ngonimujuru.songbookForBelievers',
   );
+
 }

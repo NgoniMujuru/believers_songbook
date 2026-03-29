@@ -1,6 +1,6 @@
 class CollectionSong {
-  final int id;
-  final int collectionId;
+  final String id;
+  final String collectionId;
   final String title;
   final String key;
   final String lyrics;
@@ -26,10 +26,19 @@ class CollectionSong {
     };
   }
 
+  factory CollectionSong.fromMap(Map<String, dynamic> map) {
+    return CollectionSong(
+      id: map['id'].toString(),
+      collectionId: map['collectionId'].toString(),
+      title: map['title'],
+      key: map['key'],
+      lyrics: map['lyrics'],
+      songPosition: map['songPosition'] ?? 0,
+    );
+  }
+
   @override
   String toString() {
     return 'CollectionSong{id: $id, collectionId: $collectionId, title: $title, songPosition: $songPosition} ';
   }
-
-  
 }

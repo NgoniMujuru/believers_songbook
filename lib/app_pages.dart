@@ -1,15 +1,29 @@
+import 'package:believers_songbook/account_page.dart';
 import 'package:believers_songbook/collections.dart';
+import 'package:believers_songbook/providers/auth_provider.dart';
+import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/providers/song_book_settings.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
+import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
+import 'package:believers_songbook/services/sync_service.dart';
 import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'about.dart';
 import 'song_books.dart';
 
-class AppPages extends StatelessWidget {
-  AppPages({super.key});
+class AppPages extends StatefulWidget {
+  const AppPages({super.key});
 
+  @override
+  State<AppPages> createState() => _AppPagesState();
+}
+
+class _AppPagesState extends State<AppPages> {
   static final List<Widget> _widgetOptions = <Widget>[
     const Songs(),
     const SongBooks(),
@@ -40,6 +54,140 @@ class AppPages extends StatelessWidget {
   };
 
   @override
+  void initState() {
+    super.initState();
+    _showSyncExplainerIfNeeded();
+    _syncOnStartup();
+  }
+
+  /// Pull cloud settings/collections when the user is already signed in.
+  Future<void> _syncOnStartup() async {
+    final auth = context.read<AuthProvider>();
+    if (!auth.isSignedIn) return;
+
+    final cloudSettings = await SyncService.pullSettings();
+    if (cloudSettings != null && cloudSettings.isNotEmpty) {
+      final songSettings = context.read<SongSettings>();
+      final themeSettings = context.read<ThemeSettings>();
+      final mainPageSettings = context.read<MainPageSettings>();
+      final songBookSettings = context.read<SongBookSettings>();
+      final prefs = await SharedPreferences.getInstance();
+
+      if (cloudSettings['fontSize'] != null) {
+        songSettings.setFontSize((cloudSettings['fontSize'] as num).toDouble());
+      }
+      if (cloudSettings['displayKey'] != null) {
+        songSettings.setDisplayKey(cloudSettings['displayKey'] as bool);
+      }
+      if (cloudSettings['displaySongNumber'] != null) {
+        songSettings.setDisplaySongNumber(cloudSettings['displaySongNumber'] as bool);
+      }
+      if (cloudSettings['isDarkMode'] != null) {
+        themeSettings.setIsDarkMode(cloudSettings['isDarkMode'] as bool);
+      }
+      if (cloudSettings['locale'] != null) {
+        mainPageSettings.setLocale(cloudSettings['locale'] as String);
+      }
+      if (cloudSettings['songBookFile'] != null) {
+        songBookSettings.setSongBookFile(cloudSettings['songBookFile'] as String);
+      }
+      if (cloudSettings['sortOrder'] != null) {
+        prefs.setString('sortOrder', cloudSettings['sortOrder'] as String);
+      }
+      if (cloudSettings['searchBy'] != null) {
+        prefs.setString('searchBy', cloudSettings['searchBy'] as String);
+      }
+    }
+
+    // Merge cloud collections
+    final collectionsData = context.read<CollectionsData>();
+    final cloudCollections = await SyncService.pullCollections();
+    if (cloudCollections != null) {
+      final pulledCollections = cloudCollections['collections'];
+      final pulledSongs = cloudCollections['collectionSongs'];
+      if (pulledCollections != null) {
+        for (var collection in pulledCollections) {
+          if (!collectionsData.collections.any((c) => c.id == collection.id)) {
+            await collectionsData.addCollection(collection);
+          }
+        }
+      }
+      if (pulledSongs != null) {
+        for (var song in pulledSongs) {
+          if (!collectionsData.collectionSongs.any((s) => s.id == song.id)) {
+            await collectionsData.addCollectionSong(song);
+          }
+        }
+      }
+    }
+  }
+
+  Future<void> _showSyncExplainerIfNeeded() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenExplainer = prefs.getBool('hasSeenSyncExplainer') ?? false;
+    if (hasSeenExplainer) return;
+    await prefs.setBool('hasSeenSyncExplainer', true);
+
+    if (!mounted) return;
+    // Delay slightly so the page is fully built first
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+
+    final auth = context.read<AuthProvider>();
+    if (auth.isSignedIn) return; // Already signed in, no need for explainer
+
+    AnalyticsService.instance.trackSyncExplainerShown();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: const Icon(Icons.cloud_sync, size: 48, color: Styles.themeColor),
+        title: const Text("What's new"),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'You can now sign in to back up your collections and settings '
+              'to the cloud.',
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 12),
+            Text(
+              'If you reinstall the app or switch to a new device, just sign '
+              'in again and everything will be restored automatically.',
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 12),
+            Text(
+              'You can use Google, Apple, or email to create an account.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Maybe later'),
+          ),
+          FilledButton(
+            onPressed: () {
+              AnalyticsService.instance.trackSyncExplainerSignInClicked();
+              Navigator.of(ctx).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AccountPage()),
+              );
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: Styles.themeColor,
+            ),
+            child: const Text('Sign in now'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<MainPageSettings>(builder: (context, settings, child) {
       String locale = settings.locale;
@@ -60,6 +208,9 @@ class AppPages extends StatelessWidget {
                 NavigationRail(
                   onDestinationSelected: (int index) {
                     settings.setOpenPageIndex(index);
+                    AnalyticsService.instance.trackTabChanged(
+                      tabName: _tabNameForIndex(index),
+                    );
                   },
                   groupAlignment: 0.0,
                   selectedIndex: settings.openPageIndex,
@@ -97,6 +248,9 @@ class AppPages extends StatelessWidget {
                 : NavigationBar(
                     onDestinationSelected: (int index) {
                       settings.setOpenPageIndex(index);
+                      AnalyticsService.instance.trackTabChanged(
+                        tabName: _tabNameForIndex(index),
+                      );
                     },
                     selectedIndex: settings.openPageIndex,
                     destinations: <Widget>[
@@ -120,5 +274,20 @@ class AppPages extends StatelessWidget {
                   )),
       );
     });
+  }
+
+  String _tabNameForIndex(int index) {
+    switch (index) {
+      case 0:
+        return 'songs';
+      case 1:
+        return 'songbooks';
+      case 2:
+        return 'collections';
+      case 3:
+        return 'about';
+      default:
+        return 'unknown';
+    }
   }
 }

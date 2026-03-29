@@ -1,14 +1,42 @@
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/song_book_settings.dart';
 import 'constants/song_book_assets.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
 
-class SongBooks extends StatelessWidget {
+class SongBooks extends StatefulWidget {
   const SongBooks({super.key});
+
+  @override
+  State<SongBooks> createState() => _SongBooksState();
+}
+
+class _SongBooksState extends State<SongBooks> {
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _firstCardKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.songBooksFirstCard, _firstCardKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.songBooksScreen, context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +45,7 @@ class SongBooks extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.songBooksPageTitle),
+        actions: const [SyncStatusIcon()],
       ),
       body: SafeArea(
         child: Padding(
@@ -26,11 +55,13 @@ class SongBooks extends StatelessWidget {
           child: Consumer2<SongBookSettings, ThemeSettings>(
             builder: (context, songBookSettings, themeSettings, child) {
               return RawScrollbar(
+                controller: _scrollController,
                 minThumbLength: isWideScreen ? 100 : 40,
                 thickness: isWideScreen ? 20 : 10.0,
                 radius: const Radius.circular(5.0),
                 thumbVisibility: true,
                 child: ListView.builder(
+                  controller: _scrollController,
                   itemCount: SongBookAssets.songList.length,
                   itemBuilder: (context, index) {
                     final songBook = SongBookAssets.songList[index];
@@ -50,6 +81,7 @@ class SongBooks extends StatelessWidget {
                           ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
                           : const EdgeInsets.fromLTRB(0, 0, 15, 0),
                       child: Card(
+                        key: index == 1 ? _firstCardKey : null,
                         clipBehavior: Clip.hardEdge,
                         color: cardColor,
                         child: InkWell(
@@ -68,11 +100,15 @@ class SongBooks extends StatelessWidget {
                               ),
                             );
 
-                            Provider.of<MainPageSettings>(context, listen: false)
+                            Provider.of<MainPageSettings>(context,
+                                    listen: false)
                                 .setOpenPageIndex(0);
 
                             songBookSettings
                                 .setSongBookFile(songBook['FileName']);
+                            AnalyticsService.instance.trackSongbookChanged(
+                              songbookName: songBook['Title'],
+                            );
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,8 +121,8 @@ class SongBooks extends StatelessWidget {
                                 subtitle: Text(songBook['Location']),
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16.0, 0, 8.0, 8.0),
+                                padding: const EdgeInsets.fromLTRB(
+                                    16.0, 0, 8.0, 8.0),
                                 child: Text(
                                   (songBook['Languages'] as List<dynamic>)
                                       .join(', '),

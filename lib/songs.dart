@@ -1,26 +1,30 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import 'package:believers_songbook/bottom_sheet.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
+import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:csv/csv.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:believers_songbook/l10n/app_localizations.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import 'package:provider/provider.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'constants/song_book_assets.dart';
 import 'custom_search_bar.dart';
-import 'styles.dart';
 import 'song.dart';
+import 'styles.dart';
 import '/models/song_search_result.dart';
 import '/models/song_sort_order.dart';
-import 'constants/song_book_assets.dart';
-import 'dart:async';
 
 class Songs extends StatefulWidget {
   const Songs({Key? key}) : super(key: key);
@@ -33,8 +37,10 @@ class Songs extends StatefulWidget {
 
 class SongsState extends State<Songs> {
   late final TextEditingController _controller;
+  final ScrollController _numericScrollController = ScrollController();
   Timer? _debounce;
   late final FocusNode _focusNode;
+  final GlobalKey _settingsMenuKey = GlobalKey();
   String _fileName = '';
   String _terms = '';
   SortOrder? _sortBy;
@@ -56,6 +62,18 @@ class SongsState extends State<Songs> {
     adjustDebounceTime();
     _controller = TextEditingController()..addListener(_onTextChanged);
     _focusNode = FocusNode();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.songsSettingsMenu, _settingsMenuKey);
+    tour.registerAction(
+        TourIds.songsSettingsSheetAction, _openSettingsBottomSheet);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.songsScreen, context);
+      tour.shouldAutoStart().then((autoStart) {
+        if (autoStart && mounted) {
+          tour.start(context);
+        }
+      });
+    });
     SharedPreferences.getInstance().then((prefs) {
       final songBookSettings = context.read<SongBookSettings>();
       songBookSettings.setSongBookFile(prefs.getString('songBookFile') ??
@@ -95,11 +113,37 @@ class SongsState extends State<Songs> {
     });
   }
 
+  Future<void> _openSettingsBottomSheet() async {
+    BottomSheetSettings.show(
+      context,
+      csvData: _csvData,
+      sortBy: _sortBy,
+      searchBy: _searchBy,
+      customComparator: customComparator,
+      onCsvDataChanged: (newCsvData) {
+        setState(() {
+          _csvData = newCsvData;
+        });
+      },
+      onSearchByChanged: (newSearchBy) {
+        setState(() {
+          _searchBy = newSearchBy;
+        });
+      },
+      onSortByChanged: (newSortBy) {
+        setState(() {
+          _sortBy = newSortBy;
+        });
+      },
+    );
+  }
+
   @override
   void dispose() {
     _controller.removeListener(_onTextChanged);
     _focusNode.dispose();
     _controller.dispose();
+    _numericScrollController.dispose();
     super.dispose();
   }
 
@@ -124,10 +168,14 @@ class SongsState extends State<Songs> {
       }
     }
     _debounce = Timer(Duration(milliseconds: _debounceTime), () {
+      final query = _controller.text;
       setState(() {
-        _terms = _controller.text;
+        _terms = query;
         _loadingSongs = false;
       });
+      if (query.isNotEmpty) {
+        AnalyticsService.instance.trackSearch(searchTerm: query);
+      }
     });
   }
 
@@ -294,7 +342,11 @@ class SongsState extends State<Songs> {
 
     if (_searchBy == SearchBy.key) {
       for (var song in _csvData!) {
-        if (song.elementAt(2).toString().toLowerCase().contains(_terms.toLowerCase())) {
+        if (song
+            .elementAt(2)
+            .toString()
+            .toLowerCase()
+            .contains(_terms.toLowerCase())) {
           results.add(song);
         }
       }
@@ -355,31 +407,17 @@ class SongsState extends State<Songs> {
             // shadowColor: Styles.themeColor,
             scrolledUnderElevation: 4,
             actions: <Widget>[
+              const SyncStatusIcon(),
               IconButton(
+                  icon: const Icon(Icons.help_outline),
+                  onPressed: () {
+                    context.read<AppTourController>().start(context);
+                  }),
+              IconButton(
+                  key: _settingsMenuKey,
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    BottomSheetSettings.show(
-                      context,
-                      csvData: _csvData,
-                      sortBy: _sortBy,
-                      searchBy: _searchBy,
-                      customComparator: customComparator,
-                      onCsvDataChanged: (newCsvData){
-                        setState(() {
-                          _csvData = newCsvData;
-                        });
-                      },
-                      onSearchByChanged: (newSearchBy) {
-                        setState(() {
-                          _searchBy = newSearchBy;
-                        });
-                      },
-                      onSortByChanged: (newSortBy) {
-                        setState(() {
-                          _sortBy = newSortBy;
-                        });
-                      }
-                    );
+                    _openSettingsBottomSheet();
                   }),
             ]),
         body: DecoratedBox(
@@ -400,8 +438,6 @@ class SongsState extends State<Songs> {
       ),
     );
   }
-
-
 
   Expanded _buildAlphabeticList(results) {
     return Expanded(
@@ -446,21 +482,19 @@ class SongsState extends State<Songs> {
                           child: GestureDetector(
                             onTap: () {
                               _focusNode.unfocus();
+                              final songRow = results!.elementAt(index);
+                              final title = capitalizeFirstLetters(songRow.elementAt(1));
+                              AnalyticsService.instance.trackSongOpened(songTitle: title, source: 'songs_list');
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => Song(
                                           isCollectionSong: false,
-                                          songText: results!
-                                              .elementAt(index)
-                                              .elementAt(3),
-                                          songKey: results!
-                                              .elementAt(index)
-                                              .elementAt(2),
-                                          songTitle: capitalizeFirstLetters(
-                                              results!
-                                                  .elementAt(index)
-                                                  .elementAt(1)))));
+                                          songText:
+                                              songRow.elementAt(3),
+                                          songKey:
+                                              songRow.elementAt(2),
+                                          songTitle: title)));
                             },
                             child: Consumer<SongSettings>(
                                 builder: (context, songSettings, child) {
@@ -494,11 +528,13 @@ class SongsState extends State<Songs> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
         child: RawScrollbar(
+          controller: _numericScrollController,
           minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
           thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
           radius: const Radius.circular(5.0),
           thumbVisibility: true,
           child: ListView.builder(
+            controller: _numericScrollController,
             itemBuilder: (context, index) => Padding(
               padding: MediaQuery.of(context).size.width > 600
                   ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
@@ -508,18 +544,17 @@ class SongsState extends State<Songs> {
                   GestureDetector(
                     onTap: () {
                       _focusNode.unfocus();
+                      final songRow = results!.elementAt(index);
+                      final title = songNumAndTitle(songRow);
+                      AnalyticsService.instance.trackSongOpened(songTitle: title, source: 'songs_list');
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Song(
                                   isCollectionSong: false,
-                                  songText:
-                                      results!.elementAt(index).elementAt(3),
-                                  songKey:
-                                      results!.elementAt(index).elementAt(2),
-                                  songTitle: songNumAndTitle(
-                                    results!.elementAt(index),
-                                  ))));
+                                  songText: songRow.elementAt(3),
+                                  songKey: songRow.elementAt(2),
+                                  songTitle: title)));
                     },
                     child: Consumer<SongSettings>(
                         builder: (context, songSettings, child) {

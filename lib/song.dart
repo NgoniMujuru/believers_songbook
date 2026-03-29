@@ -1,15 +1,17 @@
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/main.dart';
 import 'package:believers_songbook/models/collection_song.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uuid/uuid.dart';
 import 'models/collection.dart';
 import 'styles.dart';
-import 'package:provider/provider.dart';
-import 'providers/song_settings.dart';
-import 'package:believers_songbook/l10n/app_localizations.dart';
 
 class Song extends StatefulWidget {
   final String songTitle;
@@ -33,8 +35,15 @@ class _SongState extends State<Song> {
   bool _isSelectingCollection = true;
   bool _isEditingSong = false;
   final _editSongFormKey = GlobalKey<FormState>();
+  final ScrollController _collectionsScrollController = ScrollController();
   late String _lyrics = widget.songText;
   late String _key = widget.songKey;
+
+  @override
+  void dispose() {
+    _collectionsScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +63,7 @@ class _SongState extends State<Song> {
               IconButton(
                   icon: const Icon(Icons.more_vert),
                   onPressed: () {
-                    settingsBottomSheet(context,screenSize);
+                    settingsBottomSheet(context, screenSize);
                   }),
             ]),
         // backgroundColor: Styles.scaffoldBackground,
@@ -110,7 +119,7 @@ class _SongState extends State<Song> {
                     //save form
                     _editSongFormKey.currentState!.save();
                     var collectionSongs = collectionsData.collectionSongs;
-                    List<int> collectionSongsIds = [];
+                    List<String> collectionSongsIds = [];
                     for (int i = 0; i < collectionSongs.length; i++) {
                       CollectionSong collectionSong = collectionSongs[i];
                       if (collectionSong.title == widget.songTitle) {
@@ -221,13 +230,14 @@ class _SongState extends State<Song> {
       ),
       builder: screenSize.screenWidth < 600
           ? (BuildContext context) => Scaffold(
-                body: collectionsModalContent(context,screenSize),
+                body: collectionsModalContent(context, screenSize),
               )
-          : (BuildContext context) => collectionsModalContent(context, screenSize),
+          : (BuildContext context) =>
+              collectionsModalContent(context, screenSize),
     );
   }
 
-  StatefulBuilder collectionsModalContent(context,screenSize) {
+  StatefulBuilder collectionsModalContent(context, screenSize) {
     return StatefulBuilder(
       builder: (BuildContext context, StateSetter setLocalState) {
         return Consumer<MainPageSettings>(
@@ -237,8 +247,7 @@ class _SongState extends State<Song> {
                     locale: Locale(mainPageSettings.getLocale),
                     child: Consumer<MainPageSettings>(
                         builder: (context, mainPageSettings, child) => (Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                               child: Consumer<CollectionsData>(
                                 builder: (context, collectionsData, child) =>
                                     Column(
@@ -270,7 +279,8 @@ class _SongState extends State<Song> {
                                         Text(
                                             AppLocalizations.of(context)!
                                                 .globalCollections,
-                                            style: const TextStyle(fontSize: 25)),
+                                            style:
+                                                const TextStyle(fontSize: 25)),
                                         TextButton(
                                           onPressed: () {
                                             if (!_isSelectingCollection) {
@@ -315,8 +325,13 @@ class _SongState extends State<Song> {
                                     const Divider(),
                                     Expanded(
                                       child: _isSelectingCollection
-                                          ? listCollections(collectionsData, setLocalState, context,screenSize)
-                                          : createNewCollection(context, collectionsData),
+                                          ? listCollections(
+                                              collectionsData,
+                                              setLocalState,
+                                              context,
+                                              screenSize)
+                                          : createNewCollection(
+                                              context, collectionsData),
                                     ),
                                   ],
                                 ),
@@ -327,8 +342,9 @@ class _SongState extends State<Song> {
   }
 
   RawScrollbar listCollections(CollectionsData collectionsData,
-      StateSetter setLocalState, BuildContext context,screenSize) {
+      StateSetter setLocalState, BuildContext context, screenSize) {
     return RawScrollbar(
+      controller: _collectionsScrollController,
       minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
       thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
       radius: const Radius.circular(5.0),
@@ -336,8 +352,8 @@ class _SongState extends State<Song> {
       trackVisibility: true,
       thumbColor: Colors.grey.withOpacity(0.5),
       trackColor: Colors.grey.withOpacity(0.1),
-       
       child: ListView.builder(
+        controller: _collectionsScrollController,
         padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
         shrinkWrap: true,
         itemCount: collectionsData.collections.length,
@@ -349,13 +365,15 @@ class _SongState extends State<Song> {
                 title: Text(collectionsData.collections[index].name),
                 value: _songPresentInCollection[index],
                 onChanged: (bool? value) {
-                  String collectionName = collectionsData.collections[index].name;
+                  String collectionName =
+                      collectionsData.collections[index].name;
                   if (value == true) {
                     createCollectionSnackBar(
                         AppLocalizations.of(context)!.songPageAddedToSnackbar,
-                        collectionName,screenSize);
+                        collectionName,
+                        screenSize);
                     CollectionSong collectionSong = CollectionSong(
-                      id: getAvailableId(collectionsData.collectionSongs),
+                      id: const Uuid().v4(),
                       collectionId: collectionsData.collections[index].id,
                       title: widget.songTitle,
                       key: widget.songKey,
@@ -365,9 +383,13 @@ class _SongState extends State<Song> {
                     collectionsData.addCollectionSong(
                       collectionSong,
                     );
+                    AnalyticsService.instance.trackSongAddedToCollection(
+                      songTitle: widget.songTitle,
+                    );
                   } else {
                     createCollectionSnackBar(
-                        AppLocalizations.of(context)!.songPageRemovedFromSnackbar,
+                        AppLocalizations.of(context)!
+                            .songPageRemovedFromSnackbar,
                         collectionName,
                         screenSize);
                     // get collectionSongId based on title and collectionId
@@ -377,9 +399,12 @@ class _SongState extends State<Song> {
                                 collectionsData.collections[index].id &&
                             collectionSong.title == widget.songTitle)
                         .id;
-      
+
                     collectionsData.deleteCollectionSong(
                       collectionSongId,
+                    );
+                    AnalyticsService.instance.trackSongRemovedFromCollection(
+                      songTitle: widget.songTitle,
                     );
                   }
                   setLocalState(() {
@@ -397,7 +422,7 @@ class _SongState extends State<Song> {
 
   Form createNewCollection(
       BuildContext context, CollectionsData collectionsData) {
-        final FocusNode focusNode = FocusNode();
+    final FocusNode focusNode = FocusNode();
 
     // Request focus after the widget tree has been built
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -409,8 +434,9 @@ class _SongState extends State<Song> {
       child: TextFormField(
         focusNode: focusNode,
         decoration: InputDecoration(
-            border: const UnderlineInputBorder(), labelText: AppLocalizations.of(context)!.songPageCollectionNameLabel,
-            ),
+          border: const UnderlineInputBorder(),
+          labelText: AppLocalizations.of(context)!.songPageCollectionNameLabel,
+        ),
         // The validator receives the text that the user has entered.
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -428,21 +454,21 @@ class _SongState extends State<Song> {
         },
         onSaved: (value) {
           _songPresentInCollection.add(false);
-          int nextId = getAvailableId(collectionsData.collections);
 
           var collection = Collection(
-            id: nextId,
+            id: const Uuid().v4(),
             name: value!,
             dateCreated: DateTime.now().toString(),
           );
           collectionsData.addCollection(collection);
+          AnalyticsService.instance.trackCollectionCreated();
           initializeSongCollections(collectionsData);
         },
       ),
     );
   }
 
-  void createCollectionSnackBar(String action, collectionName,screenSize) {
+  void createCollectionSnackBar(String action, collectionName, screenSize) {
     const Duration duration = Duration(seconds: 1);
     final snackBar = screenSize.screenWidth > 600
         ? SnackBar(
@@ -460,25 +486,6 @@ class _SongState extends State<Song> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  int getAvailableId(list) {
-    int nextId = 0;
-    if (list.isEmpty) {
-      nextId = 1;
-    } else {
-      // iterate through list ids and find the smallest available number
-      var ids = list.map((item) => item.id).toList();
-      ids.sort();
-      for (var i = 0; i < ids.length; i++) {
-        if (ids[i] != i + 1) {
-          nextId = i + 1;
-          break;
-        }
-        nextId = i + 2;
-      }
-    }
-    return nextId;
-  }
-
   void initializeSongCollections(collectionsData) {
     _songPresentInCollection.clear();
     var collectionSongs = collectionsData.collectionSongs;
@@ -494,7 +501,7 @@ class _SongState extends State<Song> {
     }
   }
 
-  Future<void> settingsBottomSheet(context,screenSize) {
+  Future<void> settingsBottomSheet(context, screenSize) {
     return showModalBottomSheet<void>(
       isScrollControlled: true,
       context: context,
@@ -629,12 +636,11 @@ class _SongState extends State<Song> {
                                           ElevatedButton(
                                             style: ButtonStyle(
                                               foregroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
-                                                          Colors.white),
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) => Colors.white),
                                               backgroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) =>
                                                           Styles.themeColor),
                                             ),
                                             onPressed: () {
@@ -648,6 +654,11 @@ class _SongState extends State<Song> {
                                                       text:
                                                           '$titleWithoutNumber\n\n${widget.songText}'))
                                                   .then((_) {});
+                                              AnalyticsService.instance
+                                                  .trackSongShared(
+                                                songTitle: titleWithoutNumber,
+                                                channel: 'copy',
+                                              );
                                             },
                                             child: Text(
                                                 AppLocalizations.of(context)!
@@ -657,12 +668,11 @@ class _SongState extends State<Song> {
                                           ElevatedButton(
                                             style: ButtonStyle(
                                               foregroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
-                                                          Colors.white),
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) => Colors.white),
                                               backgroundColor:
-                                                  WidgetStateColor
-                                                      .resolveWith((states) =>
+                                                  WidgetStateColor.resolveWith(
+                                                      (states) =>
                                                           Styles.themeColor),
                                             ),
                                             onPressed: () {
@@ -674,6 +684,11 @@ class _SongState extends State<Song> {
                                                   .trim();
                                               Share.share(
                                                   '$titleWithoutNumber\n\n${widget.songText}');
+                                              AnalyticsService.instance
+                                                  .trackSongShared(
+                                                songTitle: titleWithoutNumber,
+                                                channel: 'share',
+                                              );
                                             },
                                             child: Text(
                                                 AppLocalizations.of(context)!
