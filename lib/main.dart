@@ -59,7 +59,7 @@ class _ScreenSizeProviderState extends State<ScreenSizeProvider> {
 class MyApp extends StatefulWidget {
   MyApp({super.key});
 
-  static const String _title = 'Believers Songbook';
+  static const String _title = 'Songbook for Believers';
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -259,7 +259,7 @@ class _FirstInstallLoginScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Believers Songbook',
+                      MyApp._title,
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
