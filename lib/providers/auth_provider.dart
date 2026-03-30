@@ -19,7 +19,13 @@ class AuthProvider extends ChangeNotifier {
   String? get uid => _user?.uid;
 
   AuthProvider() {
-    // Listen to auth state changes
+    // Seed _user synchronously from currentUser so that code reading isSignedIn
+    // immediately after construction gets the correct value. This matters on iOS
+    // where the Keychain survives app deletion: Firebase restores the session
+    // asynchronously via authStateChanges(), but currentUser is available right
+    // away after Firebase.initializeApp() has completed.
+    _user = _auth.currentUser;
+    // Listen to subsequent auth state changes
     _auth.authStateChanges().listen((User? user) {
       _user = user;
       notifyListeners();
