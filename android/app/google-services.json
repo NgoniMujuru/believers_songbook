@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "767948267709-2onb17u06ialb3qujpccavp0qk5ri9oo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ngonimujuru.songbook_for_believers",
+            "certificate_hash": "96586a486e79adc4d7137c57f5792df3d13494a3"
+          }
+        },
+        {
           "client_id": "767948267709-lvteea6cnsjqvjdat7bs87qij5v0c8tk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
