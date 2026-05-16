@@ -258,4 +258,102 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get songPageOptionsShare => 'Partager';
+
+  @override
+  String get accountPageTitle => 'Compte';
+
+  @override
+  String get accountSignInTitle => 'Se connecter pour synchroniser';
+
+  @override
+  String get accountCreateAccountTitle => 'Créer un compte';
+
+  @override
+  String get accountSyncDescription =>
+      'Vos collections et paramètres seront sauvegardés dans le cloud afin qu\'ils restent avec vous sur tous vos appareils.';
+
+  @override
+  String get accountBackToSignInOptions => 'Retour aux options de connexion';
+
+  @override
+  String get accountContinueWithGoogle => 'Continuer avec Google';
+
+  @override
+  String get accountContinueWithApple => 'Continuer avec Apple';
+
+  @override
+  String get accountContinueWithEmail => 'Continuer avec l\'e-mail';
+
+  @override
+  String get accountSkipForNow => 'Ignorer pour l\'instant';
+
+  @override
+  String get accountNameLabel => 'Nom';
+
+  @override
+  String get accountEmailLabel => 'E-mail';
+
+  @override
+  String get accountEmailValidatorEmpty =>
+      'Veuillez entrer votre adresse e-mail';
+
+  @override
+  String get accountEmailValidatorInvalid =>
+      'Veuillez entrer une adresse e-mail valide';
+
+  @override
+  String get accountPasswordLabel => 'Mot de passe';
+
+  @override
+  String get accountPasswordValidatorEmpty =>
+      'Veuillez entrer votre mot de passe';
+
+  @override
+  String get accountPasswordValidatorTooShort =>
+      'Le mot de passe doit comporter au moins 6 caractères';
+
+  @override
+  String get accountForgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get accountSignIn => 'Se connecter';
+
+  @override
+  String get accountAlreadyHaveAccount => 'Vous avez déjà un compte ?';
+
+  @override
+  String get accountDontHaveAccount => 'Pas de compte ?';
+
+  @override
+  String get accountCreateOne => 'En créer un';
+
+  @override
+  String get accountForgotPasswordEnterEmailFirst =>
+      'Entrez d\'abord votre e-mail, puis appuyez sur \"Mot de passe oublié ?\"';
+
+  @override
+  String get accountPasswordResetEmailSentTo =>
+      'E-mail de réinitialisation du mot de passe envoyé à';
+
+  @override
+  String get accountPasswordResetFailed =>
+      'Impossible d\'envoyer l\'e-mail de réinitialisation';
+
+  @override
+  String get accountUserFallback => 'Utilisateur';
+
+  @override
+  String get accountSyncingEnabled => 'Synchronisation activée';
+
+  @override
+  String get accountSyncNow => 'Synchroniser';
+
+  @override
+  String get accountSignOut => 'Se déconnecter';
+
+  @override
+  String get accountSyncComplete => 'Synchronisation terminée';
+
+  @override
+  String get accountSyncFailed => 'Échec de la synchronisation';
 }

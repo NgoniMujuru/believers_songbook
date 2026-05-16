@@ -1,3 +1,4 @@
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
 import 'package:believers_songbook/widgets/google_logo.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
@@ -61,7 +62,7 @@ class _SignInViewState extends State<_SignInView> {
           locale: Locale(mainPageSettings.getLocale),
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Account'),
+              title: Text(AppLocalizations.of(context)!.accountPageTitle),
               scrolledUnderElevation: 4,
             ),
             body: SafeArea(
@@ -80,14 +81,15 @@ class _SignInViewState extends State<_SignInView> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        _isCreateAccount ? 'Create account' : 'Sign in to sync',
+                        _isCreateAccount
+                            ? AppLocalizations.of(context)!.accountCreateAccountTitle
+                            : AppLocalizations.of(context)!.accountSignInTitle,
                         style: Theme.of(context).textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Your collections and settings will be saved to the cloud '
-                        'so they stay with you across devices and reinstalls.',
+                        AppLocalizations.of(context)!.accountSyncDescription,
                         style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -128,7 +130,7 @@ class _SignInViewState extends State<_SignInView> {
                             });
                             auth.clearError();
                           },
-                          child: const Text('Back to all sign-in options'),
+                          child: Text(AppLocalizations.of(context)!.accountBackToSignInOptions),
                         ),
                       ] else ...[
                         // Google Sign-In button
@@ -140,7 +142,7 @@ class _SignInViewState extends State<_SignInView> {
                                 ? null
                                 : () => _handleGoogleSignIn(context),
                             icon: const GoogleLogo(size: 22),
-                            label: const Text('Continue with Google'),
+                            label: Text(AppLocalizations.of(context)!.accountContinueWithGoogle),
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -161,7 +163,7 @@ class _SignInViewState extends State<_SignInView> {
                                   ? null
                                   : () => _handleAppleSignIn(context),
                               icon: const Icon(Icons.apple, size: 28),
-                              label: const Text('Continue with Apple'),
+                              label: Text(AppLocalizations.of(context)!.accountContinueWithApple),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,
                                 foregroundColor: Colors.white,
@@ -188,7 +190,7 @@ class _SignInViewState extends State<_SignInView> {
                                     auth.clearError();
                                   },
                             icon: const Icon(Icons.email_outlined, size: 24),
-                            label: const Text('Continue with email'),
+                            label: Text(AppLocalizations.of(context)!.accountContinueWithEmail),
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -208,7 +210,7 @@ class _SignInViewState extends State<_SignInView> {
                           AnalyticsService.instance.trackSignInSkipped();
                           Navigator.of(context).pop();
                         },
-                        child: const Text('Skip for now'),
+                        child: Text(AppLocalizations.of(context)!.accountSkipForNow),
                       ),
                     ],
                   ),
@@ -222,6 +224,7 @@ class _SignInViewState extends State<_SignInView> {
   }
 
   Widget _buildEmailForm(BuildContext context, AuthProvider auth) {
+    final l10n = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
       child: Column(
@@ -231,7 +234,7 @@ class _SignInViewState extends State<_SignInView> {
             TextFormField(
               controller: _nameController,
               decoration: InputDecoration(
-                labelText: 'Name',
+                labelText: l10n.accountNameLabel,
                 prefixIcon: const Icon(Icons.person_outline),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -244,7 +247,7 @@ class _SignInViewState extends State<_SignInView> {
           TextFormField(
             controller: _emailController,
             decoration: InputDecoration(
-              labelText: 'Email',
+              labelText: l10n.accountEmailLabel,
               prefixIcon: const Icon(Icons.email_outlined),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -254,10 +257,10 @@ class _SignInViewState extends State<_SignInView> {
             textInputAction: TextInputAction.next,
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'Please enter your email';
+                return l10n.accountEmailValidatorEmpty;
               }
               if (!value.contains('@') || !value.contains('.')) {
-                return 'Please enter a valid email';
+                return l10n.accountEmailValidatorInvalid;
               }
               return null;
             },
@@ -266,7 +269,7 @@ class _SignInViewState extends State<_SignInView> {
           TextFormField(
             controller: _passwordController,
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: l10n.accountPasswordLabel,
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
                 icon: Icon(
@@ -282,10 +285,10 @@ class _SignInViewState extends State<_SignInView> {
             textInputAction: TextInputAction.done,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter your password';
+                return l10n.accountPasswordValidatorEmpty;
               }
               if (_isCreateAccount && value.length < 6) {
-                return 'Password must be at least 6 characters';
+                return l10n.accountPasswordValidatorTooShort;
               }
               return null;
             },
@@ -298,7 +301,7 @@ class _SignInViewState extends State<_SignInView> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => _handleForgotPassword(context),
-                child: const Text('Forgot password?'),
+                child: Text(l10n.accountForgotPassword),
               ),
             ),
           const SizedBox(height: 16),
@@ -313,7 +316,7 @@ class _SignInViewState extends State<_SignInView> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(_isCreateAccount ? 'Create account' : 'Sign in'),
+              child: Text(_isCreateAccount ? l10n.accountCreateAccountTitle : l10n.accountSignIn),
             ),
           ),
           const SizedBox(height: 12),
@@ -321,14 +324,14 @@ class _SignInViewState extends State<_SignInView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(_isCreateAccount
-                  ? 'Already have an account?'
-                  : "Don't have an account?"),
+                  ? l10n.accountAlreadyHaveAccount
+                  : l10n.accountDontHaveAccount),
               TextButton(
                 onPressed: () {
                   setState(() => _isCreateAccount = !_isCreateAccount);
                   auth.clearError();
                 },
-                child: Text(_isCreateAccount ? 'Sign in' : 'Create one'),
+                child: Text(_isCreateAccount ? l10n.accountSignIn : l10n.accountCreateOne),
               ),
             ],
           ),
@@ -381,12 +384,16 @@ class _SignInViewState extends State<_SignInView> {
   }
 
   Future<void> _handleForgotPassword(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final enterEmailFirst = l10n.accountForgotPasswordEnterEmailFirst;
+    final resetEmailSentTo = l10n.accountPasswordResetEmailSentTo;
+    final resetFailed = l10n.accountPasswordResetFailed;
     final email = _emailController.text.trim();
     if (email.isEmpty) {
       final auth = context.read<AuthProvider>();
       auth.clearError();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter your email first, then tap "Forgot password?"')),
+        SnackBar(content: Text(enterEmailFirst)),
       );
       return;
     }
@@ -397,8 +404,8 @@ class _SignInViewState extends State<_SignInView> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(sent
-              ? 'Password reset email sent to $email'
-              : auth.error ?? 'Could not send reset email'),
+              ? '$resetEmailSentTo $email'
+              : auth.error ?? resetFailed),
         ),
       );
     }
@@ -559,7 +566,7 @@ class _SignedInView extends StatelessWidget {
           locale: Locale(mainPageSettings.getLocale),
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Account'),
+              title: Text(AppLocalizations.of(context)!.accountPageTitle),
               scrolledUnderElevation: 4,
             ),
             body: SafeArea(
@@ -584,7 +591,7 @@ class _SignedInView extends StatelessWidget {
                         ),
                       const SizedBox(height: 16),
                       Text(
-                        auth.displayName ?? 'User',
+                        auth.displayName ?? AppLocalizations.of(context)!.accountUserFallback,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 4),
@@ -596,7 +603,7 @@ class _SignedInView extends StatelessWidget {
                       const Icon(Icons.cloud_done, color: Styles.themeColor, size: 28),
                       const SizedBox(height: 4),
                       Text(
-                        'Syncing enabled',
+                        AppLocalizations.of(context)!.accountSyncingEnabled,
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall
@@ -610,7 +617,7 @@ class _SignedInView extends StatelessWidget {
                         child: ElevatedButton.icon(
                           onPressed: () => _manualSync(context),
                           icon: const Icon(Icons.sync),
-                          label: const Text('Sync now'),
+                          label: Text(AppLocalizations.of(context)!.accountSyncNow),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Styles.themeColor,
                             foregroundColor: Colors.white,
@@ -627,7 +634,7 @@ class _SignedInView extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: () => _handleSignOut(context),
                           icon: const Icon(Icons.logout),
-                          label: const Text('Sign out'),
+                          label: Text(AppLocalizations.of(context)!.accountSignOut),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.red,
                             side: const BorderSide(color: Colors.red),
@@ -649,6 +656,9 @@ class _SignedInView extends StatelessWidget {
   }
 
   Future<void> _manualSync(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final syncComplete = l10n.accountSyncComplete;
+    final syncFailed = l10n.accountSyncFailed;
     final songSettings = context.read<SongSettings>();
     final themeSettings = context.read<ThemeSettings>();
     final mainPageSettings = context.read<MainPageSettings>();
@@ -716,7 +726,7 @@ class _SignedInView extends StatelessWidget {
 
     scaffold.showSnackBar(
       SnackBar(
-        content: Text(result != null ? 'Sync complete' : 'Sync failed'),
+        content: Text(result != null ? syncComplete : syncFailed),
         duration: const Duration(seconds: 2),
       ),
     );

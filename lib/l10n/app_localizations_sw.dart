@@ -257,4 +257,99 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get songPageOptionsShare => 'Shiriki';
+
+  @override
+  String get accountPageTitle => 'Akaunti';
+
+  @override
+  String get accountSignInTitle => 'Ingia ili kusawazisha';
+
+  @override
+  String get accountCreateAccountTitle => 'Unda akaunti';
+
+  @override
+  String get accountSyncDescription =>
+      'Makusanyo yako na mipangilio itahifadhiwa kwenye wingu ili ibaki nawe kwenye vifaa tofauti na ufungaji upya.';
+
+  @override
+  String get accountBackToSignInOptions => 'Rudi kwenye chaguo zote za kuingia';
+
+  @override
+  String get accountContinueWithGoogle => 'Endelea na Google';
+
+  @override
+  String get accountContinueWithApple => 'Endelea na Apple';
+
+  @override
+  String get accountContinueWithEmail => 'Endelea na barua pepe';
+
+  @override
+  String get accountSkipForNow => 'Ruka kwa sasa';
+
+  @override
+  String get accountNameLabel => 'Jina';
+
+  @override
+  String get accountEmailLabel => 'Barua pepe';
+
+  @override
+  String get accountEmailValidatorEmpty => 'Tafadhali weka barua pepe yako';
+
+  @override
+  String get accountEmailValidatorInvalid => 'Tafadhali weka barua pepe sahihi';
+
+  @override
+  String get accountPasswordLabel => 'Nywila';
+
+  @override
+  String get accountPasswordValidatorEmpty => 'Tafadhali weka nywila yako';
+
+  @override
+  String get accountPasswordValidatorTooShort =>
+      'Nywila lazima iwe na angalau herufi 6';
+
+  @override
+  String get accountForgotPassword => 'Umesahau nywila?';
+
+  @override
+  String get accountSignIn => 'Ingia';
+
+  @override
+  String get accountAlreadyHaveAccount => 'Una akaunti tayari?';
+
+  @override
+  String get accountDontHaveAccount => 'Huna akaunti?';
+
+  @override
+  String get accountCreateOne => 'Unda';
+
+  @override
+  String get accountForgotPasswordEnterEmailFirst =>
+      'Weka barua pepe yako kwanza, kisha bonyeza \"Umesahau nywila?\"';
+
+  @override
+  String get accountPasswordResetEmailSentTo =>
+      'Barua pepe ya kuweka upya nywila imetumwa kwa';
+
+  @override
+  String get accountPasswordResetFailed =>
+      'Imeshindwa kutuma barua pepe ya kuweka upya';
+
+  @override
+  String get accountUserFallback => 'Mtumiaji';
+
+  @override
+  String get accountSyncingEnabled => 'Usawazishaji umewashwa';
+
+  @override
+  String get accountSyncNow => 'Sawazisha sasa';
+
+  @override
+  String get accountSignOut => 'Toka';
+
+  @override
+  String get accountSyncComplete => 'Usawazishaji umekamilika';
+
+  @override
+  String get accountSyncFailed => 'Usawazishaji umeshindwa';
 }
