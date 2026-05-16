@@ -741,6 +741,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync failed'**
   String get accountSyncFailed;
+
+  /// No description provided for @syncExplainerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new'**
+  String get syncExplainerTitle;
+
+  /// No description provided for @syncExplainerBody1.
+  ///
+  /// In en, this message translates to:
+  /// **'You can now sign in to back up your collections and settings to the cloud.'**
+  String get syncExplainerBody1;
+
+  /// No description provided for @syncExplainerBody2.
+  ///
+  /// In en, this message translates to:
+  /// **'If you reinstall the app or switch to a new device, just sign in again and everything will be restored automatically.'**
+  String get syncExplainerBody2;
+
+  /// No description provided for @syncExplainerBody3.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use Google, Apple, or email to create an account.'**
+  String get syncExplainerBody3;
+
+  /// No description provided for @syncExplainerMaybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get syncExplainerMaybeLater;
+
+  /// No description provided for @syncExplainerSignInNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in now'**
+  String get syncExplainerSignInNow;
 }
 
 class _AppLocalizationsDelegate

@@ -352,4 +352,25 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get accountSyncFailed => 'Usawazishaji umeshindwa';
+
+  @override
+  String get syncExplainerTitle => 'Nini kipya';
+
+  @override
+  String get syncExplainerBody1 =>
+      'Sasa unaweza kuingia ili kuhifadhi makusanyo yako na mipangilio kwenye wingu.';
+
+  @override
+  String get syncExplainerBody2 =>
+      'Ukifunga programu upya au kubadilisha kifaa kipya, ingia tena na kila kitu kitarudishwa moja kwa moja.';
+
+  @override
+  String get syncExplainerBody3 =>
+      'Unaweza kutumia Google, Apple, au barua pepe kuunda akaunti.';
+
+  @override
+  String get syncExplainerMaybeLater => 'Labda baadaye';
+
+  @override
+  String get syncExplainerSignInNow => 'Ingia sasa';
 }

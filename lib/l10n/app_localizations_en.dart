@@ -348,4 +348,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountSyncFailed => 'Sync failed';
+
+  @override
+  String get syncExplainerTitle => 'What\'s new';
+
+  @override
+  String get syncExplainerBody1 =>
+      'You can now sign in to back up your collections and settings to the cloud.';
+
+  @override
+  String get syncExplainerBody2 =>
+      'If you reinstall the app or switch to a new device, just sign in again and everything will be restored automatically.';
+
+  @override
+  String get syncExplainerBody3 =>
+      'You can use Google, Apple, or email to create an account.';
+
+  @override
+  String get syncExplainerMaybeLater => 'Maybe later';
+
+  @override
+  String get syncExplainerSignInNow => 'Sign in now';
 }

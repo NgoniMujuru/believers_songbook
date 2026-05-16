@@ -356,4 +356,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountSyncFailed => 'Échec de la synchronisation';
+
+  @override
+  String get syncExplainerTitle => 'Quoi de neuf';
+
+  @override
+  String get syncExplainerBody1 =>
+      'Vous pouvez maintenant vous connecter pour sauvegarder vos collections et paramètres dans le cloud.';
+
+  @override
+  String get syncExplainerBody2 =>
+      'Si vous réinstallez l\'application ou changez d\'appareil, reconnectez-vous simplement et tout sera restauré automatiquement.';
+
+  @override
+  String get syncExplainerBody3 =>
+      'Vous pouvez utiliser Google, Apple ou votre adresse e-mail pour créer un compte.';
+
+  @override
+  String get syncExplainerMaybeLater => 'Peut-être plus tard';
+
+  @override
+  String get syncExplainerSignInNow => 'Se connecter';
 }
