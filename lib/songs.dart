@@ -263,8 +263,15 @@ class SongsState extends State<Songs> {
           processedNextSongTitle.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
       searchScore =
           ratio(processedSongTitle, processedNextSongTitle).toDouble();
+
       if (searchScore > maxSimilarityScore) {
-        _csvData?.removeAt(i);
+        // keep the song with more lyrics (assuming it has more data and is less likely to be a duplicate)
+        if (currentSong.elementAt(3).toString().length >=
+            nextSong.elementAt(3).toString().length) {
+          _csvData?.removeAt(i + 1);
+        } else {  
+          _csvData?.removeAt(i);
+        }
         i--;
       }
     }
