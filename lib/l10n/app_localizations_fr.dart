@@ -122,6 +122,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aboutLanguageSettingSwahili => 'Swahili';
 
   @override
+  String get collectionsNewCollection => 'Nouvelle collection';
+
+  @override
   String get collectionsEmptyStateText =>
       'Créez vos propres collections de chansons. Ouvrez une chanson et sélectionnez l\'icône de menu des collections en haut à droite.';
 
@@ -258,4 +261,193 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get songPageOptionsShare => 'Partager';
+
+  @override
+  String get accountPageTitle => 'Compte';
+
+  @override
+  String get accountSignInTitle => 'Se connecter pour synchroniser';
+
+  @override
+  String get accountCreateAccountTitle => 'Créer un compte';
+
+  @override
+  String get accountSyncDescription =>
+      'Vos collections et paramètres seront sauvegardés dans le cloud afin qu\'ils restent avec vous sur tous vos appareils.';
+
+  @override
+  String get accountBackToSignInOptions => 'Retour aux options de connexion';
+
+  @override
+  String get accountContinueWithGoogle => 'Continuer avec Google';
+
+  @override
+  String get accountContinueWithApple => 'Continuer avec Apple';
+
+  @override
+  String get accountContinueWithEmail => 'Continuer avec l\'e-mail';
+
+  @override
+  String get accountSkipForNow => 'Ignorer pour l\'instant';
+
+  @override
+  String get accountNameLabel => 'Nom';
+
+  @override
+  String get accountEmailLabel => 'E-mail';
+
+  @override
+  String get accountEmailValidatorEmpty =>
+      'Veuillez entrer votre adresse e-mail';
+
+  @override
+  String get accountEmailValidatorInvalid =>
+      'Veuillez entrer une adresse e-mail valide';
+
+  @override
+  String get accountPasswordLabel => 'Mot de passe';
+
+  @override
+  String get accountPasswordValidatorEmpty =>
+      'Veuillez entrer votre mot de passe';
+
+  @override
+  String get accountPasswordValidatorTooShort =>
+      'Le mot de passe doit comporter au moins 6 caractères';
+
+  @override
+  String get accountForgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get accountSignIn => 'Se connecter';
+
+  @override
+  String get accountAlreadyHaveAccount => 'Vous avez déjà un compte ?';
+
+  @override
+  String get accountDontHaveAccount => 'Pas de compte ?';
+
+  @override
+  String get accountCreateOne => 'En créer un';
+
+  @override
+  String get accountForgotPasswordEnterEmailFirst =>
+      'Entrez d\'abord votre e-mail, puis appuyez sur \"Mot de passe oublié ?\"';
+
+  @override
+  String get accountPasswordResetEmailSentTo =>
+      'E-mail de réinitialisation du mot de passe envoyé à';
+
+  @override
+  String get accountPasswordResetFailed =>
+      'Impossible d\'envoyer l\'e-mail de réinitialisation';
+
+  @override
+  String get accountUserFallback => 'Utilisateur';
+
+  @override
+  String get accountSyncingEnabled => 'Synchronisation activée';
+
+  @override
+  String get accountSyncNow => 'Synchroniser';
+
+  @override
+  String get accountSignOut => 'Se déconnecter';
+
+  @override
+  String get accountSyncComplete => 'Synchronisation terminée';
+
+  @override
+  String get accountSyncFailed => 'Échec de la synchronisation';
+
+  @override
+  String get accountSignedIn => 'Connecté';
+
+  @override
+  String get syncExplainerTitle => 'Quoi de neuf';
+
+  @override
+  String get syncExplainerBody1 =>
+      'Vous pouvez maintenant vous connecter pour sauvegarder vos collections et paramètres dans le cloud.';
+
+  @override
+  String get syncExplainerBody2 =>
+      'Si vous réinstallez l\'application ou changez d\'appareil, reconnectez-vous simplement et tout sera restauré automatiquement.';
+
+  @override
+  String get syncExplainerBody3 =>
+      'Vous pouvez utiliser Google, Apple ou votre adresse e-mail pour créer un compte.';
+
+  @override
+  String get syncExplainerMaybeLater => 'Peut-être plus tard';
+
+  @override
+  String get syncExplainerSignInNow => 'Se connecter';
+
+  @override
+  String get tourStep1Title => 'Options des chansons';
+
+  @override
+  String get tourStep1Description =>
+      'Ouvrez les paramètres de l\'écran des chansons.';
+
+  @override
+  String get tourStep2Title => 'Trier et rechercher';
+
+  @override
+  String get tourStep2Description =>
+      'Utilisez ces options pour personnaliser l\'apparence et le comportement de l\'écran des chansons.';
+
+  @override
+  String get tourStep3Title => 'Congrégations';
+
+  @override
+  String get tourStep3Description =>
+      'Choisissez n\'importe quel recueil de chants des églises du monde entier';
+
+  @override
+  String get tourStep4Title => 'Collections';
+
+  @override
+  String get tourStep4Description =>
+      'Créez votre propre collection de chansons.';
+
+  @override
+  String get tourStep5Title => 'Paramètres';
+
+  @override
+  String get tourStep5Description =>
+      'Ajustez les paramètres de l\'application ici.';
+
+  @override
+  String get tourStep6Title => 'Langue et thème';
+
+  @override
+  String get tourStep6Description =>
+      'Modifiez la langue et le thème de l\'application ici.';
+
+  @override
+  String get tourContinue => 'Continuer';
+
+  @override
+  String get tourDone => 'Terminer';
+
+  @override
+  String get onboardingDescription =>
+      'Connectez-vous pour sauvegarder vos collections et paramètres dans le cloud afin qu\'ils restent avec vous sur tous vos appareils.';
+
+  @override
+  String get onboardingSignInButton => 'Se connecter ou créer un compte';
+
+  @override
+  String get collectionSongRemoved => 'supprimé';
+
+  @override
+  String get collectionSongUndo => 'Annuler';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutBuildDate => 'Date de compilation';
 }

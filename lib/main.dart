@@ -267,8 +267,7 @@ class _FirstInstallLoginScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Sign in to back up your collections and settings '
-                      'to the cloud so they stay with you across devices.',
+                      AppLocalizations.of(context)!.onboardingDescription,
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -299,7 +298,7 @@ class _FirstInstallLoginScreen extends StatelessWidget {
                           }
                         },
                         icon: const Icon(Icons.cloud_sync),
-                        label: const Text('Sign in or create account'),
+                        label: Text(AppLocalizations.of(context)!.onboardingSignInButton),
                         style: FilledButton.styleFrom(
                           backgroundColor: Styles.themeColor,
                           shape: RoundedRectangleBorder(
@@ -311,7 +310,7 @@ class _FirstInstallLoginScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     TextButton(
                       onPressed: onComplete,
-                      child: const Text('Skip for now'),
+                      child: Text(AppLocalizations.of(context)!.accountSkipForNow),
                     ),
                   ],
                 ),

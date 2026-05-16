@@ -304,6 +304,12 @@ abstract class AppLocalizations {
   /// **'Swahili'**
   String get aboutLanguageSettingSwahili;
 
+  /// No description provided for @collectionsNewCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'New collection'**
+  String get collectionsNewCollection;
+
   /// No description provided for @collectionsEmptyStateText.
   ///
   /// In en, this message translates to:
@@ -561,6 +567,348 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share'**
   String get songPageOptionsShare;
+
+  /// No description provided for @accountPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountPageTitle;
+
+  /// No description provided for @accountSignInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to sync'**
+  String get accountSignInTitle;
+
+  /// No description provided for @accountCreateAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get accountCreateAccountTitle;
+
+  /// No description provided for @accountSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your collections and settings will be saved to the cloud so they stay with you across devices and reinstalls.'**
+  String get accountSyncDescription;
+
+  /// No description provided for @accountBackToSignInOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to all sign-in options'**
+  String get accountBackToSignInOptions;
+
+  /// No description provided for @accountContinueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get accountContinueWithGoogle;
+
+  /// No description provided for @accountContinueWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get accountContinueWithApple;
+
+  /// No description provided for @accountContinueWithEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with email'**
+  String get accountContinueWithEmail;
+
+  /// No description provided for @accountSkipForNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get accountSkipForNow;
+
+  /// No description provided for @accountNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get accountNameLabel;
+
+  /// No description provided for @accountEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get accountEmailLabel;
+
+  /// No description provided for @accountEmailValidatorEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email'**
+  String get accountEmailValidatorEmpty;
+
+  /// No description provided for @accountEmailValidatorInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email'**
+  String get accountEmailValidatorInvalid;
+
+  /// No description provided for @accountPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get accountPasswordLabel;
+
+  /// No description provided for @accountPasswordValidatorEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get accountPasswordValidatorEmpty;
+
+  /// No description provided for @accountPasswordValidatorTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get accountPasswordValidatorTooShort;
+
+  /// No description provided for @accountForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get accountForgotPassword;
+
+  /// No description provided for @accountSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get accountSignIn;
+
+  /// No description provided for @accountAlreadyHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get accountAlreadyHaveAccount;
+
+  /// No description provided for @accountDontHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get accountDontHaveAccount;
+
+  /// No description provided for @accountCreateOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Create one'**
+  String get accountCreateOne;
+
+  /// No description provided for @accountForgotPasswordEnterEmailFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email first, then tap \"Forgot password?\"'**
+  String get accountForgotPasswordEnterEmailFirst;
+
+  /// No description provided for @accountPasswordResetEmailSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent to'**
+  String get accountPasswordResetEmailSentTo;
+
+  /// No description provided for @accountPasswordResetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send reset email'**
+  String get accountPasswordResetFailed;
+
+  /// No description provided for @accountUserFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get accountUserFallback;
+
+  /// No description provided for @accountSyncingEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing enabled'**
+  String get accountSyncingEnabled;
+
+  /// No description provided for @accountSyncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get accountSyncNow;
+
+  /// No description provided for @accountSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get accountSignOut;
+
+  /// No description provided for @accountSyncComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync complete'**
+  String get accountSyncComplete;
+
+  /// No description provided for @accountSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed'**
+  String get accountSyncFailed;
+
+  /// No description provided for @accountSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in'**
+  String get accountSignedIn;
+
+  /// No description provided for @syncExplainerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new'**
+  String get syncExplainerTitle;
+
+  /// No description provided for @syncExplainerBody1.
+  ///
+  /// In en, this message translates to:
+  /// **'You can now sign in to back up your collections and settings to the cloud.'**
+  String get syncExplainerBody1;
+
+  /// No description provided for @syncExplainerBody2.
+  ///
+  /// In en, this message translates to:
+  /// **'If you reinstall the app or switch to a new device, just sign in again and everything will be restored automatically.'**
+  String get syncExplainerBody2;
+
+  /// No description provided for @syncExplainerBody3.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use Google, Apple, or email to create an account.'**
+  String get syncExplainerBody3;
+
+  /// No description provided for @syncExplainerMaybeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe later'**
+  String get syncExplainerMaybeLater;
+
+  /// No description provided for @syncExplainerSignInNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in now'**
+  String get syncExplainerSignInNow;
+
+  /// No description provided for @tourStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Songs Options'**
+  String get tourStep1Title;
+
+  /// No description provided for @tourStep1Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the song screen settings.'**
+  String get tourStep1Description;
+
+  /// No description provided for @tourStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort & Search'**
+  String get tourStep2Title;
+
+  /// No description provided for @tourStep2Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Use these options to customize how the song screen looks and behaves.'**
+  String get tourStep2Description;
+
+  /// No description provided for @tourStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Songbooks'**
+  String get tourStep3Title;
+
+  /// No description provided for @tourStep3Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose any songbook from churches around the world'**
+  String get tourStep3Description;
+
+  /// No description provided for @tourStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections'**
+  String get tourStep4Title;
+
+  /// No description provided for @tourStep4Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your own collection of songs.'**
+  String get tourStep4Description;
+
+  /// No description provided for @tourStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'About Settings'**
+  String get tourStep5Title;
+
+  /// No description provided for @tourStep5Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust app settings here.'**
+  String get tourStep5Description;
+
+  /// No description provided for @tourStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Language and Theme'**
+  String get tourStep6Title;
+
+  /// No description provided for @tourStep6Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Change app language and theme here.'**
+  String get tourStep6Description;
+
+  /// No description provided for @tourContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get tourContinue;
+
+  /// No description provided for @tourDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get tourDone;
+
+  /// No description provided for @onboardingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to back up your collections and settings to the cloud so they stay with you across devices.'**
+  String get onboardingDescription;
+
+  /// No description provided for @onboardingSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in or create account'**
+  String get onboardingSignInButton;
+
+  /// No description provided for @collectionSongRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'removed'**
+  String get collectionSongRemoved;
+
+  /// No description provided for @collectionSongUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get collectionSongUndo;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get aboutVersion;
+
+  /// No description provided for @aboutBuildDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Build date'**
+  String get aboutBuildDate;
 }
 
 class _AppLocalizationsDelegate

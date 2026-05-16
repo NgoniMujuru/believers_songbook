@@ -7,6 +7,7 @@ import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/app_localizations.dart';
 import '../providers/main_page_settings.dart';
 import 'tour_ids.dart';
 
@@ -21,61 +22,62 @@ class AppTourController extends ChangeNotifier {
   final int _maxWaitAttempts = 20;
   final Duration _pageSwitchDelay = const Duration(milliseconds: 500);
 
-  final List<_TourStepSpec> _steps = <_TourStepSpec>[
-    const _TourStepSpec(
+  List<_TourStepSpec> _steps = [];
+
+  List<_TourStepSpec> _buildSteps(AppLocalizations l10n) => [
+    _TourStepSpec(
       screenId: TourIds.songsScreen,
       targetId: TourIds.songsSettingsMenu,
-      title: 'Songs Options',
-      description: 'Open the song screen settings.',
+      title: l10n.tourStep1Title,
+      description: l10n.tourStep1Description,
       allowTargetTap: true,
       backgroundColor: AppTourController._defaultTourCardColor,
       showProgress: true,
       isLast: false,
-      buttonLabel: 'Continue',
+      buttonLabel: l10n.tourContinue,
     ),
-    const _TourStepSpec(
+    _TourStepSpec(
       screenId: TourIds.songsSettingsSheetScreen,
       targetId: TourIds.songsSettingsSortChip,
-      title: 'Sort & Search',
-      description:
-          'Use these options to customize how the song screen looks and behaves.',
+      title: l10n.tourStep2Title,
+      description: l10n.tourStep2Description,
       beforeShowActionId: TourIds.songsSettingsSheetAction,
       isLast: false,
-      buttonLabel: 'Continue',
+      buttonLabel: l10n.tourContinue,
     ),
-    const _TourStepSpec(
+    _TourStepSpec(
       screenId: TourIds.songBooksScreen,
       targetId: TourIds.songBooksFirstCard,
-      title: 'Songbooks',
-      description: 'Choose any songbook from churches around the world',
+      title: l10n.tourStep3Title,
+      description: l10n.tourStep3Description,
       isLast: false,
-      buttonLabel: 'Continue',
+      buttonLabel: l10n.tourContinue,
     ),
-    const _TourStepSpec(
+    _TourStepSpec(
       screenId: TourIds.collectionsScreen,
       targetId: TourIds.collectionsAddFab,
-      title: 'Collections',
-      description: 'Create your own collection of songs.',
+      title: l10n.tourStep4Title,
+      description: l10n.tourStep4Description,
       isLast: false,
-      buttonLabel: 'Continue',
+      buttonLabel: l10n.tourContinue,
     ),
-    const _TourStepSpec(
+    _TourStepSpec(
       screenId: TourIds.aboutScreen,
       targetId: TourIds.aboutSettingsCog,
-      title: 'About Settings',
-      description: 'Adjust app settings here.',
+      title: l10n.tourStep5Title,
+      description: l10n.tourStep5Description,
       allowTargetTap: true,
       isLast: false,
-      buttonLabel: 'Continue',
+      buttonLabel: l10n.tourContinue,
     ),
-    const _TourStepSpec(
+    _TourStepSpec(
       screenId: TourIds.aboutScreen,
       targetId: TourIds.aboutSettingsSheet,
-      title: 'Language and Theme',
-      description: 'Change app language and theme here.',
+      title: l10n.tourStep6Title,
+      description: l10n.tourStep6Description,
       beforeShowActionId: TourIds.aboutSettingsSheetAction,
       isLast: true,
-      buttonLabel: 'Done',
+      buttonLabel: l10n.tourDone,
     ),
   ];
 
@@ -123,6 +125,8 @@ class AppTourController extends ChangeNotifier {
     _rootContext = context;
     _currentIndex = 0;
     _isRunning = true;
+    final locale = context.read<MainPageSettings>().getLocale;
+    _steps = _buildSteps(lookupAppLocalizations(Locale(locale)));
     await _showCurrentStep();
   }
 

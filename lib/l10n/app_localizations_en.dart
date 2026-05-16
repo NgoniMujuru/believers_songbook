@@ -122,6 +122,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutLanguageSettingSwahili => 'Swahili';
 
   @override
+  String get collectionsNewCollection => 'New collection';
+
+  @override
   String get collectionsEmptyStateText =>
       'Create your own song collections. Open a song and select the collections menu icon on the top right corner.';
 
@@ -255,4 +258,184 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songPageOptionsShare => 'Share';
+
+  @override
+  String get accountPageTitle => 'Account';
+
+  @override
+  String get accountSignInTitle => 'Sign in to sync';
+
+  @override
+  String get accountCreateAccountTitle => 'Create account';
+
+  @override
+  String get accountSyncDescription =>
+      'Your collections and settings will be saved to the cloud so they stay with you across devices and reinstalls.';
+
+  @override
+  String get accountBackToSignInOptions => 'Back to all sign-in options';
+
+  @override
+  String get accountContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String get accountContinueWithApple => 'Continue with Apple';
+
+  @override
+  String get accountContinueWithEmail => 'Continue with email';
+
+  @override
+  String get accountSkipForNow => 'Skip for now';
+
+  @override
+  String get accountNameLabel => 'Name';
+
+  @override
+  String get accountEmailLabel => 'Email';
+
+  @override
+  String get accountEmailValidatorEmpty => 'Please enter your email';
+
+  @override
+  String get accountEmailValidatorInvalid => 'Please enter a valid email';
+
+  @override
+  String get accountPasswordLabel => 'Password';
+
+  @override
+  String get accountPasswordValidatorEmpty => 'Please enter your password';
+
+  @override
+  String get accountPasswordValidatorTooShort =>
+      'Password must be at least 6 characters';
+
+  @override
+  String get accountForgotPassword => 'Forgot password?';
+
+  @override
+  String get accountSignIn => 'Sign in';
+
+  @override
+  String get accountAlreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get accountDontHaveAccount => 'Don\'t have an account?';
+
+  @override
+  String get accountCreateOne => 'Create one';
+
+  @override
+  String get accountForgotPasswordEnterEmailFirst =>
+      'Enter your email first, then tap \"Forgot password?\"';
+
+  @override
+  String get accountPasswordResetEmailSentTo => 'Password reset email sent to';
+
+  @override
+  String get accountPasswordResetFailed => 'Could not send reset email';
+
+  @override
+  String get accountUserFallback => 'User';
+
+  @override
+  String get accountSyncingEnabled => 'Syncing enabled';
+
+  @override
+  String get accountSyncNow => 'Sync now';
+
+  @override
+  String get accountSignOut => 'Sign out';
+
+  @override
+  String get accountSyncComplete => 'Sync complete';
+
+  @override
+  String get accountSyncFailed => 'Sync failed';
+
+  @override
+  String get accountSignedIn => 'Signed in';
+
+  @override
+  String get syncExplainerTitle => 'What\'s new';
+
+  @override
+  String get syncExplainerBody1 =>
+      'You can now sign in to back up your collections and settings to the cloud.';
+
+  @override
+  String get syncExplainerBody2 =>
+      'If you reinstall the app or switch to a new device, just sign in again and everything will be restored automatically.';
+
+  @override
+  String get syncExplainerBody3 =>
+      'You can use Google, Apple, or email to create an account.';
+
+  @override
+  String get syncExplainerMaybeLater => 'Maybe later';
+
+  @override
+  String get syncExplainerSignInNow => 'Sign in now';
+
+  @override
+  String get tourStep1Title => 'Songs Options';
+
+  @override
+  String get tourStep1Description => 'Open the song screen settings.';
+
+  @override
+  String get tourStep2Title => 'Sort & Search';
+
+  @override
+  String get tourStep2Description =>
+      'Use these options to customize how the song screen looks and behaves.';
+
+  @override
+  String get tourStep3Title => 'Songbooks';
+
+  @override
+  String get tourStep3Description =>
+      'Choose any songbook from churches around the world';
+
+  @override
+  String get tourStep4Title => 'Collections';
+
+  @override
+  String get tourStep4Description => 'Create your own collection of songs.';
+
+  @override
+  String get tourStep5Title => 'About Settings';
+
+  @override
+  String get tourStep5Description => 'Adjust app settings here.';
+
+  @override
+  String get tourStep6Title => 'Language and Theme';
+
+  @override
+  String get tourStep6Description => 'Change app language and theme here.';
+
+  @override
+  String get tourContinue => 'Continue';
+
+  @override
+  String get tourDone => 'Done';
+
+  @override
+  String get onboardingDescription =>
+      'Sign in to back up your collections and settings to the cloud so they stay with you across devices.';
+
+  @override
+  String get onboardingSignInButton => 'Sign in or create account';
+
+  @override
+  String get collectionSongRemoved => 'removed';
+
+  @override
+  String get collectionSongUndo => 'Undo';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutBuildDate => 'Build date';
 }

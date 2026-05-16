@@ -1,5 +1,6 @@
 import 'package:believers_songbook/account_page.dart';
 import 'package:believers_songbook/collections.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
@@ -136,38 +137,37 @@ class _AppPagesState extends State<AppPages> {
     final auth = context.read<AuthProvider>();
     if (auth.isSignedIn) return; // Already signed in, no need for explainer
 
+    final l10n = lookupAppLocalizations(Locale(context.read<MainPageSettings>().getLocale));
     AnalyticsService.instance.trackSyncExplainerShown();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         icon: const Icon(Icons.cloud_sync, size: 48, color: Styles.themeColor),
-        title: const Text("What's new"),
-        content: const Column(
+        title: Text(l10n.syncExplainerTitle),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'You can now sign in to back up your collections and settings '
-              'to the cloud.',
+              l10n.syncExplainerBody1,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
-              'If you reinstall the app or switch to a new device, just sign '
-              'in again and everything will be restored automatically.',
+              l10n.syncExplainerBody2,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
-              'You can use Google, Apple, or email to create an account.',
+              l10n.syncExplainerBody3,
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.w500),
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Maybe later'),
+            child: Text(l10n.syncExplainerMaybeLater),
           ),
           FilledButton(
             onPressed: () {
@@ -180,7 +180,7 @@ class _AppPagesState extends State<AppPages> {
             style: FilledButton.styleFrom(
               backgroundColor: Styles.themeColor,
             ),
-            child: const Text('Sign in now'),
+            child: Text(l10n.syncExplainerSignInNow),
           ),
         ],
       ),
