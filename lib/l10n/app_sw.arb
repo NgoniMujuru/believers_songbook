@@ -106,5 +106,12 @@
   "accountSyncNow": "Sawazisha sasa",
   "accountSignOut": "Toka",
   "accountSyncComplete": "Usawazishaji umekamilika",
-  "accountSyncFailed": "Usawazishaji umeshindwa"
+  "accountSyncFailed": "Usawazishaji umeshindwa",
+
+  "syncExplainerTitle": "Nini kipya",
+  "syncExplainerBody1": "Sasa unaweza kuingia ili kuhifadhi makusanyo yako na mipangilio kwenye wingu.",
+  "syncExplainerBody2": "Ukifunga programu upya au kubadilisha kifaa kipya, ingia tena na kila kitu kitarudishwa moja kwa moja.",
+  "syncExplainerBody3": "Unaweza kutumia Google, Apple, au barua pepe kuunda akaunti.",
+  "syncExplainerMaybeLater": "Labda baadaye",
+  "syncExplainerSignInNow": "Ingia sasa"
 }

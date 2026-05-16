@@ -106,5 +106,12 @@
   "accountSyncNow": "Synchroniser",
   "accountSignOut": "Se déconnecter",
   "accountSyncComplete": "Synchronisation terminée",
-  "accountSyncFailed": "Échec de la synchronisation"
+  "accountSyncFailed": "Échec de la synchronisation",
+
+  "syncExplainerTitle": "Quoi de neuf",
+  "syncExplainerBody1": "Vous pouvez maintenant vous connecter pour sauvegarder vos collections et paramètres dans le cloud.",
+  "syncExplainerBody2": "Si vous réinstallez l'application ou changez d'appareil, reconnectez-vous simplement et tout sera restauré automatiquement.",
+  "syncExplainerBody3": "Vous pouvez utiliser Google, Apple ou votre adresse e-mail pour créer un compte.",
+  "syncExplainerMaybeLater": "Peut-être plus tard",
+  "syncExplainerSignInNow": "Se connecter"
 }
