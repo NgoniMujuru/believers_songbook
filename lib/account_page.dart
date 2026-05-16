@@ -57,42 +57,44 @@ class _SignInViewState extends State<_SignInView> {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, auth, child) => Consumer<MainPageSettings>(
-        builder: (context, mainPageSettings, child) => Localizations.override(
-          context: context,
-          locale: Locale(mainPageSettings.getLocale),
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.accountPageTitle),
-              scrolledUnderElevation: 4,
-            ),
-            body: SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: MediaQuery.of(context).size.width > 600
-                      ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
-                      : const EdgeInsets.all(30.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.cloud_sync,
-                        size: 80,
-                        color: Styles.themeColor,
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        _isCreateAccount
-                            ? AppLocalizations.of(context)!.accountCreateAccountTitle
-                            : AppLocalizations.of(context)!.accountSignInTitle,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        AppLocalizations.of(context)!.accountSyncDescription,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
+        builder: (context, mainPageSettings, child) {
+          final l10n = lookupAppLocalizations(Locale(mainPageSettings.getLocale));
+          return Localizations.override(
+            context: context,
+            locale: Locale(mainPageSettings.getLocale),
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(l10n.accountPageTitle),
+                scrolledUnderElevation: 4,
+              ),
+              body: SafeArea(
+                child: Center(
+                  child: SingleChildScrollView(
+                    padding: MediaQuery.of(context).size.width > 600
+                        ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
+                        : const EdgeInsets.all(30.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.cloud_sync,
+                          size: 80,
+                          color: Styles.themeColor,
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          _isCreateAccount
+                              ? l10n.accountCreateAccountTitle
+                              : l10n.accountSignInTitle,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          l10n.accountSyncDescription,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
                       const SizedBox(height: 32),
                       if (auth.error != null) ...[
                         Container(
@@ -130,7 +132,7 @@ class _SignInViewState extends State<_SignInView> {
                             });
                             auth.clearError();
                           },
-                          child: Text(AppLocalizations.of(context)!.accountBackToSignInOptions),
+                          child: Text(l10n.accountBackToSignInOptions),
                         ),
                       ] else ...[
                         // Google Sign-In button
@@ -142,7 +144,7 @@ class _SignInViewState extends State<_SignInView> {
                                 ? null
                                 : () => _handleGoogleSignIn(context),
                             icon: const GoogleLogo(size: 22),
-                            label: Text(AppLocalizations.of(context)!.accountContinueWithGoogle),
+                            label: Text(l10n.accountContinueWithGoogle),
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -163,7 +165,7 @@ class _SignInViewState extends State<_SignInView> {
                                   ? null
                                   : () => _handleAppleSignIn(context),
                               icon: const Icon(Icons.apple, size: 28),
-                              label: Text(AppLocalizations.of(context)!.accountContinueWithApple),
+                              label: Text(l10n.accountContinueWithApple),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,
                                 foregroundColor: Colors.white,
@@ -190,7 +192,7 @@ class _SignInViewState extends State<_SignInView> {
                                     auth.clearError();
                                   },
                             icon: const Icon(Icons.email_outlined, size: 24),
-                            label: Text(AppLocalizations.of(context)!.accountContinueWithEmail),
+                            label: Text(l10n.accountContinueWithEmail),
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -210,7 +212,7 @@ class _SignInViewState extends State<_SignInView> {
                           AnalyticsService.instance.trackSignInSkipped();
                           Navigator.of(context).pop();
                         },
-                        child: Text(AppLocalizations.of(context)!.accountSkipForNow),
+                        child: Text(l10n.accountSkipForNow),
                       ),
                     ],
                   ),
@@ -218,13 +220,14 @@ class _SignInViewState extends State<_SignInView> {
               ),
             ),
           ),
-        ),
+        );
+      },
       ),
     );
   }
 
   Widget _buildEmailForm(BuildContext context, AuthProvider auth) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = lookupAppLocalizations(Locale(context.read<MainPageSettings>().getLocale));
     return Form(
       key: _formKey,
       child: Column(
@@ -384,7 +387,7 @@ class _SignInViewState extends State<_SignInView> {
   }
 
   Future<void> _handleForgotPassword(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = lookupAppLocalizations(Locale(context.read<MainPageSettings>().getLocale));
     final enterEmailFirst = l10n.accountForgotPasswordEnterEmailFirst;
     final resetEmailSentTo = l10n.accountPasswordResetEmailSentTo;
     final resetFailed = l10n.accountPasswordResetFailed;
@@ -561,23 +564,25 @@ class _SignedInView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, auth, child) => Consumer<MainPageSettings>(
-        builder: (context, mainPageSettings, child) => Localizations.override(
-          context: context,
-          locale: Locale(mainPageSettings.getLocale),
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.accountPageTitle),
-              scrolledUnderElevation: 4,
-            ),
-            body: SafeArea(
-              child: Center(
-                child: Padding(
-                  padding: MediaQuery.of(context).size.width > 600
-                      ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
-                      : const EdgeInsets.all(30.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+        builder: (context, mainPageSettings, child) {
+          final l10n = lookupAppLocalizations(Locale(mainPageSettings.getLocale));
+          return Localizations.override(
+            context: context,
+            locale: Locale(mainPageSettings.getLocale),
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(l10n.accountPageTitle),
+                scrolledUnderElevation: 4,
+              ),
+              body: SafeArea(
+                child: Center(
+                  child: Padding(
+                    padding: MediaQuery.of(context).size.width > 600
+                        ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
+                        : const EdgeInsets.all(30.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                       if (auth.photoUrl != null)
                         CircleAvatar(
                           radius: 40,
@@ -591,7 +596,7 @@ class _SignedInView extends StatelessWidget {
                         ),
                       const SizedBox(height: 16),
                       Text(
-                        auth.displayName ?? AppLocalizations.of(context)!.accountUserFallback,
+                        auth.displayName ?? l10n.accountUserFallback,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 4),
@@ -603,7 +608,7 @@ class _SignedInView extends StatelessWidget {
                       const Icon(Icons.cloud_done, color: Styles.themeColor, size: 28),
                       const SizedBox(height: 4),
                       Text(
-                        AppLocalizations.of(context)!.accountSyncingEnabled,
+                        l10n.accountSyncingEnabled,
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall
@@ -617,7 +622,7 @@ class _SignedInView extends StatelessWidget {
                         child: ElevatedButton.icon(
                           onPressed: () => _manualSync(context),
                           icon: const Icon(Icons.sync),
-                          label: Text(AppLocalizations.of(context)!.accountSyncNow),
+                          label: Text(l10n.accountSyncNow),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Styles.themeColor,
                             foregroundColor: Colors.white,
@@ -634,7 +639,7 @@ class _SignedInView extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: () => _handleSignOut(context),
                           icon: const Icon(Icons.logout),
-                          label: Text(AppLocalizations.of(context)!.accountSignOut),
+                          label: Text(l10n.accountSignOut),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.red,
                             side: const BorderSide(color: Colors.red),
@@ -650,13 +655,14 @@ class _SignedInView extends StatelessWidget {
               ),
             ),
           ),
-        ),
+        );
+      },
       ),
     );
   }
 
   Future<void> _manualSync(BuildContext context) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = lookupAppLocalizations(Locale(context.read<MainPageSettings>().getLocale));
     final syncComplete = l10n.accountSyncComplete;
     final syncFailed = l10n.accountSyncFailed;
     final songSettings = context.read<SongSettings>();
