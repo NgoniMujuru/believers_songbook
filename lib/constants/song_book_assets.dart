@@ -1,9 +1,9 @@
 class SongBookAssets {
   static List songList = [
     {
-      'Title': 'All Songs (Experimental Feature)',
+      'Title': 'All Songs',
       'Location': 'Global',
-      'Songs': '9076',
+      'Songs': '9768',
       'FileName': 'All',
       'Last Updated': '2026-02-02',
       'Languages': [
