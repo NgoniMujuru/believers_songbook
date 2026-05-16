@@ -33,6 +33,7 @@
   "aboutLanguageSettingFrench": "Français",
   "aboutLanguageSettingEnglish": "Anglais",
   "aboutLanguageSettingSwahili": "Swahili",
+  "collectionsNewCollection": "Nouvelle collection",
   "collectionsEmptyStateText": "Créez vos propres collections de chansons. Ouvrez une chanson et sélectionnez l'icône de menu des collections en haut à droite.",
   "collectionsSongs": "Chansons",
   "collectionsCreated": "Créées",
@@ -107,11 +108,34 @@
   "accountSignOut": "Se déconnecter",
   "accountSyncComplete": "Synchronisation terminée",
   "accountSyncFailed": "Échec de la synchronisation",
+  "accountSignedIn": "Connecté",
 
   "syncExplainerTitle": "Quoi de neuf",
   "syncExplainerBody1": "Vous pouvez maintenant vous connecter pour sauvegarder vos collections et paramètres dans le cloud.",
   "syncExplainerBody2": "Si vous réinstallez l'application ou changez d'appareil, reconnectez-vous simplement et tout sera restauré automatiquement.",
   "syncExplainerBody3": "Vous pouvez utiliser Google, Apple ou votre adresse e-mail pour créer un compte.",
   "syncExplainerMaybeLater": "Peut-être plus tard",
-  "syncExplainerSignInNow": "Se connecter"
+  "syncExplainerSignInNow": "Se connecter",
+
+  "tourStep1Title": "Options des chansons",
+  "tourStep1Description": "Ouvrez les paramètres de l'écran des chansons.",
+  "tourStep2Title": "Trier et rechercher",
+  "tourStep2Description": "Utilisez ces options pour personnaliser l'apparence et le comportement de l'écran des chansons.",
+  "tourStep3Title": "Congrégations",
+  "tourStep3Description": "Choisissez n'importe quel recueil de chants des églises du monde entier",
+  "tourStep4Title": "Collections",
+  "tourStep4Description": "Créez votre propre collection de chansons.",
+  "tourStep5Title": "Paramètres",
+  "tourStep5Description": "Ajustez les paramètres de l'application ici.",
+  "tourStep6Title": "Langue et thème",
+  "tourStep6Description": "Modifiez la langue et le thème de l'application ici.",
+  "tourContinue": "Continuer",
+  "tourDone": "Terminer",
+
+  "onboardingDescription": "Connectez-vous pour sauvegarder vos collections et paramètres dans le cloud afin qu'ils restent avec vous sur tous vos appareils.",
+  "onboardingSignInButton": "Se connecter ou créer un compte",
+  "collectionSongRemoved": "supprimé",
+  "collectionSongUndo": "Annuler",
+  "aboutVersion": "Version",
+  "aboutBuildDate": "Date de compilation"
 }

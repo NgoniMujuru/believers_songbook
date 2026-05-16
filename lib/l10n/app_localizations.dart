@@ -304,6 +304,12 @@ abstract class AppLocalizations {
   /// **'Swahili'**
   String get aboutLanguageSettingSwahili;
 
+  /// No description provided for @collectionsNewCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'New collection'**
+  String get collectionsNewCollection;
+
   /// No description provided for @collectionsEmptyStateText.
   ///
   /// In en, this message translates to:
@@ -742,6 +748,12 @@ abstract class AppLocalizations {
   /// **'Sync failed'**
   String get accountSyncFailed;
 
+  /// No description provided for @accountSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in'**
+  String get accountSignedIn;
+
   /// No description provided for @syncExplainerTitle.
   ///
   /// In en, this message translates to:
@@ -777,6 +789,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in now'**
   String get syncExplainerSignInNow;
+
+  /// No description provided for @tourStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Songs Options'**
+  String get tourStep1Title;
+
+  /// No description provided for @tourStep1Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the song screen settings.'**
+  String get tourStep1Description;
+
+  /// No description provided for @tourStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort & Search'**
+  String get tourStep2Title;
+
+  /// No description provided for @tourStep2Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Use these options to customize how the song screen looks and behaves.'**
+  String get tourStep2Description;
+
+  /// No description provided for @tourStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Songbooks'**
+  String get tourStep3Title;
+
+  /// No description provided for @tourStep3Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose any songbook from churches around the world'**
+  String get tourStep3Description;
+
+  /// No description provided for @tourStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Collections'**
+  String get tourStep4Title;
+
+  /// No description provided for @tourStep4Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your own collection of songs.'**
+  String get tourStep4Description;
+
+  /// No description provided for @tourStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'About Settings'**
+  String get tourStep5Title;
+
+  /// No description provided for @tourStep5Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust app settings here.'**
+  String get tourStep5Description;
+
+  /// No description provided for @tourStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Language and Theme'**
+  String get tourStep6Title;
+
+  /// No description provided for @tourStep6Description.
+  ///
+  /// In en, this message translates to:
+  /// **'Change app language and theme here.'**
+  String get tourStep6Description;
+
+  /// No description provided for @tourContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get tourContinue;
+
+  /// No description provided for @tourDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get tourDone;
+
+  /// No description provided for @onboardingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to back up your collections and settings to the cloud so they stay with you across devices.'**
+  String get onboardingDescription;
+
+  /// No description provided for @onboardingSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in or create account'**
+  String get onboardingSignInButton;
+
+  /// No description provided for @collectionSongRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'removed'**
+  String get collectionSongRemoved;
+
+  /// No description provided for @collectionSongUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get collectionSongUndo;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get aboutVersion;
+
+  /// No description provided for @aboutBuildDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Build date'**
+  String get aboutBuildDate;
 }
 
 class _AppLocalizationsDelegate

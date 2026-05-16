@@ -122,6 +122,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutLanguageSettingSwahili => 'Swahili';
 
   @override
+  String get collectionsNewCollection => 'New collection';
+
+  @override
   String get collectionsEmptyStateText =>
       'Create your own song collections. Open a song and select the collections menu icon on the top right corner.';
 
@@ -350,6 +353,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountSyncFailed => 'Sync failed';
 
   @override
+  String get accountSignedIn => 'Signed in';
+
+  @override
   String get syncExplainerTitle => 'What\'s new';
 
   @override
@@ -369,4 +375,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncExplainerSignInNow => 'Sign in now';
+
+  @override
+  String get tourStep1Title => 'Songs Options';
+
+  @override
+  String get tourStep1Description => 'Open the song screen settings.';
+
+  @override
+  String get tourStep2Title => 'Sort & Search';
+
+  @override
+  String get tourStep2Description =>
+      'Use these options to customize how the song screen looks and behaves.';
+
+  @override
+  String get tourStep3Title => 'Songbooks';
+
+  @override
+  String get tourStep3Description =>
+      'Choose any songbook from churches around the world';
+
+  @override
+  String get tourStep4Title => 'Collections';
+
+  @override
+  String get tourStep4Description => 'Create your own collection of songs.';
+
+  @override
+  String get tourStep5Title => 'About Settings';
+
+  @override
+  String get tourStep5Description => 'Adjust app settings here.';
+
+  @override
+  String get tourStep6Title => 'Language and Theme';
+
+  @override
+  String get tourStep6Description => 'Change app language and theme here.';
+
+  @override
+  String get tourContinue => 'Continue';
+
+  @override
+  String get tourDone => 'Done';
+
+  @override
+  String get onboardingDescription =>
+      'Sign in to back up your collections and settings to the cloud so they stay with you across devices.';
+
+  @override
+  String get onboardingSignInButton => 'Sign in or create account';
+
+  @override
+  String get collectionSongRemoved => 'removed';
+
+  @override
+  String get collectionSongUndo => 'Undo';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutBuildDate => 'Build date';
 }

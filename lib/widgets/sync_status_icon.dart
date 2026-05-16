@@ -1,4 +1,5 @@
 import 'package:believers_songbook/account_page.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class SyncStatusIcon extends StatelessWidget {
         final bool signedIn = auth.isSignedIn;
 
         return IconButton(
-          tooltip: signedIn ? 'Sync enabled' : 'Sign in to sync',
+          tooltip: signedIn ? AppLocalizations.of(context)!.accountSyncingEnabled : AppLocalizations.of(context)!.accountSignInTitle,
           icon: Icon(
             signedIn ? Icons.cloud_done_outlined : Icons.cloud_off_outlined,
             size: 22,

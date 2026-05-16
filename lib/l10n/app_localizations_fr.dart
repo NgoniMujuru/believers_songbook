@@ -122,6 +122,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aboutLanguageSettingSwahili => 'Swahili';
 
   @override
+  String get collectionsNewCollection => 'Nouvelle collection';
+
+  @override
   String get collectionsEmptyStateText =>
       'Créez vos propres collections de chansons. Ouvrez une chanson et sélectionnez l\'icône de menu des collections en haut à droite.';
 
@@ -358,6 +361,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accountSyncFailed => 'Échec de la synchronisation';
 
   @override
+  String get accountSignedIn => 'Connecté';
+
+  @override
   String get syncExplainerTitle => 'Quoi de neuf';
 
   @override
@@ -377,4 +383,71 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncExplainerSignInNow => 'Se connecter';
+
+  @override
+  String get tourStep1Title => 'Options des chansons';
+
+  @override
+  String get tourStep1Description =>
+      'Ouvrez les paramètres de l\'écran des chansons.';
+
+  @override
+  String get tourStep2Title => 'Trier et rechercher';
+
+  @override
+  String get tourStep2Description =>
+      'Utilisez ces options pour personnaliser l\'apparence et le comportement de l\'écran des chansons.';
+
+  @override
+  String get tourStep3Title => 'Congrégations';
+
+  @override
+  String get tourStep3Description =>
+      'Choisissez n\'importe quel recueil de chants des églises du monde entier';
+
+  @override
+  String get tourStep4Title => 'Collections';
+
+  @override
+  String get tourStep4Description =>
+      'Créez votre propre collection de chansons.';
+
+  @override
+  String get tourStep5Title => 'Paramètres';
+
+  @override
+  String get tourStep5Description =>
+      'Ajustez les paramètres de l\'application ici.';
+
+  @override
+  String get tourStep6Title => 'Langue et thème';
+
+  @override
+  String get tourStep6Description =>
+      'Modifiez la langue et le thème de l\'application ici.';
+
+  @override
+  String get tourContinue => 'Continuer';
+
+  @override
+  String get tourDone => 'Terminer';
+
+  @override
+  String get onboardingDescription =>
+      'Connectez-vous pour sauvegarder vos collections et paramètres dans le cloud afin qu\'ils restent avec vous sur tous vos appareils.';
+
+  @override
+  String get onboardingSignInButton => 'Se connecter ou créer un compte';
+
+  @override
+  String get collectionSongRemoved => 'supprimé';
+
+  @override
+  String get collectionSongUndo => 'Annuler';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutBuildDate => 'Date de compilation';
 }

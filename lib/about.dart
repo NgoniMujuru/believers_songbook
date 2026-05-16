@@ -266,8 +266,8 @@ class _AboutPageState extends State<AboutPage> {
                       const Card(
                           child: Icon(Icons.handshake,
                               color: Styles.themeColor, size: 50.0)),
-                      Text('Version: $_version'),
-                      Text('Build date: $_formattedDate'),
+                      Text('${AppLocalizations.of(context)!.aboutVersion}: $_version'),
+                      Text('${AppLocalizations.of(context)!.aboutBuildDate}: $_formattedDate'),
                     ],
                   )),
                 ),
@@ -479,7 +479,7 @@ class _AboutPageState extends State<AboutPage> {
                                           const SizedBox(width: 8),
                                           Expanded(
                                             child: Text(
-                                              auth.displayName ?? auth.email ?? 'Signed in',
+                                              auth.displayName ?? auth.email ?? AppLocalizations.of(context)!.accountSignedIn,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
@@ -494,7 +494,7 @@ class _AboutPageState extends State<AboutPage> {
                                                 ),
                                               );
                                             },
-                                            child: const Text('Account'),
+                                            child: Text(AppLocalizations.of(context)!.accountPageTitle),
                                           ),
                                         ] else ...[
                                           Expanded(
@@ -510,8 +510,8 @@ class _AboutPageState extends State<AboutPage> {
                                                 );
                                               },
                                               icon: const Icon(Icons.cloud_sync),
-                                              label: const Text(
-                                                  'Sign in to sync'),
+                                              label: Text(
+                                                  AppLocalizations.of(context)!.accountSignInTitle),
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor:
                                                     Styles.themeColor,

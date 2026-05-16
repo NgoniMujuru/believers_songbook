@@ -121,6 +121,9 @@ class AppLocalizationsSw extends AppLocalizations {
   String get aboutLanguageSettingSwahili => 'Kiswahili';
 
   @override
+  String get collectionsNewCollection => 'Kusanyo jipya';
+
+  @override
   String get collectionsEmptyStateText =>
       'Jenga makusanyo yako ya nyimbo. Fungua wimbo na chagua kiashiria cha makusanyo kwenye kinachopatikana kona ya juu upande wa kulia.';
 
@@ -354,6 +357,9 @@ class AppLocalizationsSw extends AppLocalizations {
   String get accountSyncFailed => 'Usawazishaji umeshindwa';
 
   @override
+  String get accountSignedIn => 'Umeingia';
+
+  @override
   String get syncExplainerTitle => 'Nini kipya';
 
   @override
@@ -373,4 +379,68 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get syncExplainerSignInNow => 'Ingia sasa';
+
+  @override
+  String get tourStep1Title => 'Mipangilio ya Nyimbo';
+
+  @override
+  String get tourStep1Description => 'Fungua mipangilio ya skrini ya nyimbo.';
+
+  @override
+  String get tourStep2Title => 'Panga na Tafuta';
+
+  @override
+  String get tourStep2Description =>
+      'Tumia chaguo hizi kubadilisha jinsi skrini ya nyimbo inavyoonekana na kufanya kazi.';
+
+  @override
+  String get tourStep3Title => 'Vitabu vya nyimbo';
+
+  @override
+  String get tourStep3Description =>
+      'Chagua kitabu chochote cha nyimbo kutoka makanisa ulimwenguni';
+
+  @override
+  String get tourStep4Title => 'Makusanyo';
+
+  @override
+  String get tourStep4Description => 'Jenga mkusanyo wako wa nyimbo.';
+
+  @override
+  String get tourStep5Title => 'Mipangilio';
+
+  @override
+  String get tourStep5Description => 'Rekebisha mipangilio ya programu hapa.';
+
+  @override
+  String get tourStep6Title => 'Lugha na Mandhari';
+
+  @override
+  String get tourStep6Description =>
+      'Badilisha lugha na mandhari ya programu hapa.';
+
+  @override
+  String get tourContinue => 'Endelea';
+
+  @override
+  String get tourDone => 'Maliza';
+
+  @override
+  String get onboardingDescription =>
+      'Ingia ili kuhifadhi makusanyo yako na mipangilio kwenye wingu ili ibaki nawe kwenye vifaa tofauti.';
+
+  @override
+  String get onboardingSignInButton => 'Ingia au unda akaunti';
+
+  @override
+  String get collectionSongRemoved => 'imeondolewa';
+
+  @override
+  String get collectionSongUndo => 'Tendua';
+
+  @override
+  String get aboutVersion => 'Toleo';
+
+  @override
+  String get aboutBuildDate => 'Tarehe ya ujenzi';
 }
