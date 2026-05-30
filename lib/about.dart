@@ -249,7 +249,7 @@ class _AboutPageState extends State<AboutPage> {
                             ),
                             onPressed: () {
                               Share.share(
-                                  '${AppLocalizations.of(context)!.aboutShareText} https://onelink.to/songbook');
+                                  '${AppLocalizations.of(context)!.aboutShareText} https://songbookforbelievers.org/app');
                               AnalyticsService.instance.trackAppShared();
                             },
                             child: Text(
