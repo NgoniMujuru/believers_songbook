@@ -1,4 +1,33 @@
 class SongBookAssets {
+  static List languageList = [
+    {
+      'Title': 'All Songs',
+      'Location': 'Global',
+      'FileName': 'All',
+      'Languages': [
+        'Afrikaans', 'Bemba', 'Changana', 'English', 'French', 'German',
+        'Kalenjin', 'Lingala', 'Ndebele', 'Nyanja', 'Português', 'Shona',
+        'Swahili', 'Tagalog', 'Tswana', 'Zulu',
+      ],
+    },
+    {'Title': 'Afrikaans',   'Location': '230 songs',  'FileName': 'languages/Afrikaans',  'Languages': <String>[]},
+    {'Title': 'Bemba',       'Location': '68 songs',   'FileName': 'languages/Bemba',       'Languages': <String>[]},
+    {'Title': 'Changana',    'Location': '137 songs',  'FileName': 'languages/Changana',    'Languages': <String>[]},
+    {'Title': 'English',     'Location': '6,281 songs','FileName': 'languages/English',     'Languages': <String>[]},
+    {'Title': 'French',      'Location': '604 songs',  'FileName': 'languages/French',      'Languages': <String>[]},
+    {'Title': 'German',      'Location': '424 songs',  'FileName': 'languages/German',      'Languages': <String>[]},
+    {'Title': 'Kalenjin',    'Location': '44 songs',   'FileName': 'languages/Kalenjin',    'Languages': <String>[]},
+    {'Title': 'Lingala',     'Location': '206 songs',  'FileName': 'languages/Lingala',     'Languages': <String>[]},
+    {'Title': 'Ndebele',     'Location': '38 songs',   'FileName': 'languages/Ndebele',     'Languages': <String>[]},
+    {'Title': 'Nyanja',      'Location': '85 songs',   'FileName': 'languages/Nyanja',      'Languages': <String>[]},
+    {'Title': 'Português',   'Location': '334 songs',  'FileName': 'languages/Português',   'Languages': <String>[]},
+    {'Title': 'Shona',       'Location': '697 songs',  'FileName': 'languages/Shona',       'Languages': <String>[]},
+    {'Title': 'Swahili',     'Location': '277 songs',  'FileName': 'languages/Swahili',     'Languages': <String>[]},
+    {'Title': 'Tagalog',     'Location': '91 songs',   'FileName': 'languages/Tagalog',     'Languages': <String>[]},
+    {'Title': 'Tswana',      'Location': '85 songs',   'FileName': 'languages/Tswana',      'Languages': <String>[]},
+    {'Title': 'Zulu',        'Location': '77 songs',   'FileName': 'languages/Zulu',        'Languages': <String>[]},
+  ];
+
   static List songList = [
     {
       'Title': 'All Songs',

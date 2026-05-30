@@ -19,7 +19,8 @@ class SongBooks extends StatefulWidget {
 }
 
 class _SongBooksState extends State<SongBooks> {
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _congregationsScrollController = ScrollController();
+  final ScrollController _languagesScrollController = ScrollController();
   final GlobalKey _firstCardKey = GlobalKey();
 
   @override
@@ -34,115 +35,154 @@ class _SongBooksState extends State<SongBooks> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _congregationsScrollController.dispose();
+    _languagesScrollController.dispose();
     super.dispose();
+  }
+
+  Widget _buildList(
+    List songList,
+    ScrollController scrollController,
+    bool isWideScreen,
+    SongBookSettings songBookSettings,
+    ThemeSettings themeSettings, {
+    bool attachFirstCardKey = false,
+  }) {
+    return RawScrollbar(
+      controller: scrollController,
+      minThumbLength: isWideScreen ? 100 : 40,
+      thickness: isWideScreen ? 20 : 10.0,
+      radius: const Radius.circular(5.0),
+      thumbVisibility: true,
+      child: ListView.builder(
+        controller: scrollController,
+        itemCount: songList.length,
+        itemBuilder: (context, index) {
+          final songBook = songList[index];
+          final isSelected =
+              songBookSettings.songBookFile == songBook['FileName'];
+
+          final cardColor = isSelected
+              ? (themeSettings.isDarkMode
+                  ? Styles.selectedSongBookBackgroundDark
+                  : Styles.selectedSongBookBackground)
+              : (themeSettings.isDarkMode
+                  ? Styles.songBookBackgroundDark
+                  : Styles.songBookBackground);
+
+          return Padding(
+            padding: isWideScreen
+                ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
+                : const EdgeInsets.fromLTRB(0, 0, 15, 0),
+            child: Card(
+              key: attachFirstCardKey && index == 1 ? _firstCardKey : null,
+              clipBehavior: Clip.hardEdge,
+              color: cardColor,
+              child: InkWell(
+                splashColor: Styles.themeColor.withAlpha(30),
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        '${AppLocalizations.of(context)!.songBooksChangeSnackBarText} ${songBook['Title']}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: themeSettings.isDarkMode
+                          ? Styles.searchBackgroundDark
+                          : Styles.themeColor,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+
+                  Provider.of<MainPageSettings>(context, listen: false)
+                      .setOpenPageIndex(0);
+
+                  songBookSettings.setSongBookFile(songBook['FileName']);
+                  AnalyticsService.instance.trackSongbookChanged(
+                    songbookName: songBook['Title'],
+                  );
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Text(songBook['Title']),
+                      textColor: themeSettings.isDarkMode
+                          ? Styles.songBookTextDark
+                          : Styles.songBookText,
+                      subtitle: (songBook['Location'] as String).isNotEmpty
+                          ? Text(songBook['Location'])
+                          : null,
+                    ),
+                    if ((songBook['Languages'] as List<dynamic>).isNotEmpty)
+                      Padding(
+                        padding:
+                            const EdgeInsets.fromLTRB(16.0, 0, 8.0, 8.0),
+                        child: Text(
+                          (songBook['Languages'] as List<dynamic>).join(', '),
+                          style: TextStyle(
+                            color: themeSettings.isDarkMode
+                                ? Styles.songBookLanguagesDark
+                                : Styles.songBookLanguages,
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final isWideScreen = MediaQuery.of(context).size.width > 600;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.songBooksPageTitle),
-        actions: const [SyncStatusIcon()],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: isWideScreen
-              ? const EdgeInsets.fromLTRB(80, 0, 80, 0)
-              : const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Consumer2<SongBookSettings, ThemeSettings>(
-            builder: (context, songBookSettings, themeSettings, child) {
-              return RawScrollbar(
-                controller: _scrollController,
-                minThumbLength: isWideScreen ? 100 : 40,
-                thickness: isWideScreen ? 20 : 10.0,
-                radius: const Radius.circular(5.0),
-                thumbVisibility: true,
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: SongBookAssets.songList.length,
-                  itemBuilder: (context, index) {
-                    final songBook = SongBookAssets.songList[index];
-                    final isSelected =
-                        songBookSettings.songBookFile == songBook['FileName'];
-
-                    final cardColor = isSelected
-                        ? (themeSettings.isDarkMode
-                            ? Styles.selectedSongBookBackgroundDark
-                            : Styles.selectedSongBookBackground)
-                        : (themeSettings.isDarkMode
-                            ? Styles.songBookBackgroundDark
-                            : Styles.songBookBackground);
-
-                    return Padding(
-                      padding: isWideScreen
-                          ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
-                          : const EdgeInsets.fromLTRB(0, 0, 15, 0),
-                      child: Card(
-                        key: index == 1 ? _firstCardKey : null,
-                        clipBehavior: Clip.hardEdge,
-                        color: cardColor,
-                        child: InkWell(
-                          splashColor: Styles.themeColor.withAlpha(30),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${AppLocalizations.of(context)!.songBooksChangeSnackBarText} ${songBook['Title']}',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: themeSettings.isDarkMode
-                                    ? Styles.searchBackgroundDark
-                                    : Styles.themeColor,
-                                duration: const Duration(seconds: 3),
-                              ),
-                            );
-
-                            Provider.of<MainPageSettings>(context,
-                                    listen: false)
-                                .setOpenPageIndex(0);
-
-                            songBookSettings
-                                .setSongBookFile(songBook['FileName']);
-                            AnalyticsService.instance.trackSongbookChanged(
-                              songbookName: songBook['Title'],
-                            );
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ListTile(
-                                title: Text(songBook['Title']),
-                                textColor: themeSettings.isDarkMode
-                                    ? Styles.songBookTextDark
-                                    : Styles.songBookText,
-                                subtitle: Text(songBook['Location']),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    16.0, 0, 8.0, 8.0),
-                                child: Text(
-                                  (songBook['Languages'] as List<dynamic>)
-                                      .join(', '),
-                                  style: TextStyle(
-                                    color: themeSettings.isDarkMode
-                                        ? Styles.songBookLanguagesDark
-                                        : Styles.songBookLanguages,
-                                  ),
-                                  softWrap: true,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.songBooksPageTitle),
+          actions: const [SyncStatusIcon()],
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Congregations'),
+              Tab(text: 'Languages'),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: isWideScreen
+                ? const EdgeInsets.fromLTRB(80, 0, 80, 0)
+                : const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Consumer2<SongBookSettings, ThemeSettings>(
+              builder: (context, songBookSettings, themeSettings, child) {
+                return TabBarView(
+                  children: [
+                    _buildList(
+                      SongBookAssets.songList,
+                      _congregationsScrollController,
+                      isWideScreen,
+                      songBookSettings,
+                      themeSettings,
+                      attachFirstCardKey: true,
+                    ),
+                    _buildList(
+                      SongBookAssets.languageList,
+                      _languagesScrollController,
+                      isWideScreen,
+                      songBookSettings,
+                      themeSettings,
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
