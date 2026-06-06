@@ -314,20 +314,15 @@ class SongsState extends State<Songs> {
   }
 
   List<List> createSongList(String fileName, String fileData) {
-    // if more examples exist, map for each file
-    String eol = fileName == 'ThirdExodusAssembly_Trinidad' ||
-            fileName == 'KenyaLocalBelievers_Nairobi_Kenya' ||
-            fileName == 'BibleTabernacle_CapeTown_SA' ||
-            fileName == 'HebronTabernacle_Lusaka_Zambia' ||
-            fileName == "TokenTabernacle_Soweto_SA" ||
-            fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe' ||
-            fileName == 'CityTabernacleBulawayo_Bulawayo_Zimbabwe' ||
-            fileName == 'ChesilyotWordOfLifeTabernacle_BometCounty_Kenya' ||
-            fileName == 'SpokenWordChristianAssembly_QuezonCity_Philippines'
-        ? '\r\n'
-        : '\n';
+    // Normalise line endings / BOM so any songbook file parses the same way,
+    // regardless of how it was authored (LF, CRLF, or with a UTF-8 BOM).
+    var data = fileData;
+    if (data.isNotEmpty && data.codeUnitAt(0) == 0xFEFF) {
+      data = data.substring(1);
+    }
+    data = data.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
     return const CsvToListConverter()
-        .convert(fileData, fieldDelimiter: ';', eol: eol);
+        .convert(data, fieldDelimiter: ';', eol: '\n');
   }
 
   final int _songSearchThreshold = 70;
@@ -440,10 +435,20 @@ class SongsState extends State<Songs> {
   }
 
   Expanded _buildAlphabeticList(results) {
+    // AlphabetScrollView re-sorts its list case-insensitively by title and
+    // passes that sorted index to itemBuilder. Sort our data the same way so
+    // the index lines up; otherwise rows (and their numbers) mismatch at
+    // non-alphanumeric/accented titles — e.g. the very last entry.
+    final sorted = List.from(results)
+      ..sort((a, b) => a
+          .elementAt(1)
+          .toString()
+          .toLowerCase()
+          .compareTo(b.elementAt(1).toString().toLowerCase()));
     return Expanded(
       child: Consumer<ThemeSettings>(
           builder: (context, themeSettings, child) => ((AlphabetScrollView(
-                list: results
+                list: sorted
                     .map<AlphaModel>((e) => AlphaModel(e.elementAt(1)))
                     .toList(),
                 alignment: LetterAlignment.right,
@@ -482,7 +487,7 @@ class SongsState extends State<Songs> {
                           child: GestureDetector(
                             onTap: () {
                               _focusNode.unfocus();
-                              final songRow = results!.elementAt(index);
+                              final songRow = sorted.elementAt(index);
                               final title = capitalizeFirstLetters(songRow.elementAt(1));
                               AnalyticsService.instance.trackSongOpened(songTitle: title, source: 'songs_list');
                               Navigator.push(
@@ -503,10 +508,10 @@ class SongsState extends State<Songs> {
                                     ? AppLocalizations.of(context)!
                                         .songsPageLoading
                                     : songNumAndTitle(
-                                        results!.elementAt(index))),
+                                        sorted.elementAt(index))),
                                 trailing: songSettings.displayKey
                                     ? Text(
-                                        results!.elementAt(index).elementAt(2))
+                                        sorted.elementAt(index).elementAt(2))
                                     : null,
                               );
                             }),
