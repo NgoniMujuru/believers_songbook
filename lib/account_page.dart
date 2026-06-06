@@ -6,12 +6,17 @@ import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/services/analytics_service.dart';
+import 'package:believers_songbook/services/sync_runner.dart';
 import 'package:believers_songbook/services/sync_service.dart';
 import 'package:believers_songbook/styles.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+String _formatSynced(DateTime dt) =>
+    DateFormat('MMM d, y • h:mm a').format(dt.toLocal());
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -371,6 +376,7 @@ class _SignInViewState extends State<_SignInView> {
       await AnalyticsService.instance.trackLogin(method: 'email');
     }
     await _syncAfterSignIn(
+      auth: auth,
       songSettings: songSettings,
       themeSettings: themeSettings,
       mainPageSettings: mainPageSettings,
@@ -421,6 +427,7 @@ class _SignInViewState extends State<_SignInView> {
     await AnalyticsService.instance.trackLogin(method: 'google');
     debugPrint('[HANDLER] Calling _syncAfterSignIn...');
     await _syncAfterSignIn(
+      auth: auth,
       songSettings: songSettings,
       themeSettings: themeSettings,
       mainPageSettings: mainPageSettings,
@@ -446,6 +453,7 @@ class _SignInViewState extends State<_SignInView> {
 
     await AnalyticsService.instance.trackLogin(method: 'apple');
     await _syncAfterSignIn(
+      auth: auth,
       songSettings: songSettings,
       themeSettings: themeSettings,
       mainPageSettings: mainPageSettings,
@@ -459,6 +467,7 @@ class _SignInViewState extends State<_SignInView> {
   /// Accepts providers directly because the calling widget may be disposed
   /// by AccountPage's Consumer rebuild before this method runs.
   static Future<void> _syncAfterSignIn({
+    required AuthProvider auth,
     required SongSettings songSettings,
     required ThemeSettings themeSettings,
     required MainPageSettings mainPageSettings,
@@ -545,6 +554,7 @@ class _SignInViewState extends State<_SignInView> {
       collectionsData.collections,
       collectionsData.collectionSongs,
     );
+    await auth.markSynced();
     debugPrint('[SYNC] _syncAfterSignIn END');
   }
 }
@@ -602,6 +612,14 @@ class _SignedInView extends StatelessWidget {
                             .bodySmall
                             ?.copyWith(color: Styles.themeColor),
                       ),
+                      const SizedBox(height: 4),
+                      Text(
+                        auth.lastSyncedAt != null
+                            ? 'Last synced: ${_formatSynced(auth.lastSyncedAt!)}'
+                            : 'Not synced yet',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                       const SizedBox(height: 32),
                       // Manual sync button
                       SizedBox(
@@ -649,74 +667,11 @@ class _SignedInView extends StatelessWidget {
   }
 
   Future<void> _manualSync(BuildContext context) async {
-    final songSettings = context.read<SongSettings>();
-    final themeSettings = context.read<ThemeSettings>();
-    final mainPageSettings = context.read<MainPageSettings>();
-    final collectionsData = context.read<CollectionsData>();
-    final prefs = await SharedPreferences.getInstance();
     final scaffold = ScaffoldMessenger.of(context);
-
-    String songBookFile = prefs.getString('songBookFile') ??
-        'CityTabernacleBulawayo_Bulawayo_Zimbabwe';
-
-    AnalyticsService.instance.trackManualSync();
-    final result = await SyncService.fullSync(
-      fontSize: songSettings.fontSize,
-      displayKey: songSettings.displayKey,
-      displaySongNumber: songSettings.displaySongNumber,
-      isDarkMode: themeSettings.isDarkMode,
-      songBookFile: songBookFile,
-      locale: mainPageSettings.getLocale,
-      sortOrder: prefs.getString('sortOrder'),
-      searchBy: prefs.getString('searchBy'),
-      collections: collectionsData.collections,
-      collectionSongs: collectionsData.collectionSongs,
-    );
-
-    if (result != null) {
-      final settings = result['settings'] as Map<String, dynamic>?;
-      if (settings != null) {
-        if (settings['fontSize'] != null) {
-          songSettings.setFontSize((settings['fontSize'] as num).toDouble());
-        }
-        if (settings['displayKey'] != null) {
-          songSettings.setDisplayKey(settings['displayKey'] as bool);
-        }
-        if (settings['displaySongNumber'] != null) {
-          songSettings.setDisplaySongNumber(settings['displaySongNumber'] as bool);
-        }
-        if (settings['isDarkMode'] != null) {
-          themeSettings.setIsDarkMode(settings['isDarkMode'] as bool);
-        }
-        if (settings['locale'] != null) {
-          mainPageSettings.setLocale(settings['locale'] as String);
-        }
-        if (settings['songBookFile'] != null) {
-          prefs.setString('songBookFile', settings['songBookFile'] as String);
-        }
-      }
-
-      final pulledCollections = result['collections'];
-      final pulledSongs = result['collectionSongs'];
-      if (pulledCollections != null) {
-        for (var collection in pulledCollections) {
-          if (!collectionsData.collections.any((c) => c.id == collection.id)) {
-            await collectionsData.addCollection(collection);
-          }
-        }
-      }
-      if (pulledSongs != null) {
-        for (var song in pulledSongs) {
-          if (!collectionsData.collectionSongs.any((s) => s.id == song.id)) {
-            await collectionsData.addCollectionSong(song);
-          }
-        }
-      }
-    }
-
+    final ok = await SyncRunner.run(context);
     scaffold.showSnackBar(
       SnackBar(
-        content: Text(result != null ? 'Sync complete' : 'Sync failed'),
+        content: Text(ok ? 'Sync complete' : 'Sync failed'),
         duration: const Duration(seconds: 2),
       ),
     );

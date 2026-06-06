@@ -2,6 +2,7 @@ import 'package:believers_songbook/models/local_database.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/providers/songbook_counts.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/account_page.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  final counts = SongbookCounts();
+  await counts.load();
+
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SongSettings()),
     ChangeNotifierProvider(create: (context) => MainPageSettings()),
@@ -31,6 +35,7 @@ Future<void> main() async {
     ListenableProvider(create: (context) => SongBookSettings()),
     ChangeNotifierProvider(create: (context) => AuthProvider()),
     ChangeNotifierProvider(create: (context) => AppTourController()),
+    ChangeNotifierProvider.value(value: counts),
   ], child: ScreenSizeProvider(child: MyApp())));
 }
 
