@@ -1,0 +1,28 @@
+{
+  "total": 10717,
+  "books": {
+    "BibleTabernacle_CapeTown_SA": 597,
+    "CanticosDeLouvor_HinarioAguia": 384,
+    "Corinhos_HinarioAguia": 42,
+    "HarpaCrista_Portugues": 581,
+    "HinosAvulsos_Portugues": 143,
+    "ChesilyotWordOfLifeTabernacle_BometCounty_Kenya": 245,
+    "CifrarioTraduzInos_Portugues": 56,
+    "CorinhosEHinos_Portugues": 67,
+    "CityTabernacleBulawayo_Bulawayo_Zimbabwe": 1326,
+    "WestertimkeTabernacle_Westertimke_Germany": 819,
+    "EastleaTabernacle_Harare_Zimbabwe": 2681,
+    "EmmanuelGospelCentre_Joburg_SA": 1287,
+    "HarareChristianFellowship_Harare_Zimbabwe": 2063,
+    "HebronTabernacle_Lusaka_Zambia": 607,
+    "KenyaLocalBelievers_Nairobi_Kenya": 1505,
+    "KilsythBelieversChristianFellowship_Kilsyth_Scotland": 2077,
+    "NyimboZaInjili_Nairobi_Kenya": 270,
+    "RevealedWordTabernacle_Bulawayo_Zimbabwe": 1945,
+    "ShekinahTabernacle_Kinshasa_DRC": 782,
+    "SpokenWordChristianAssembly_QuezonCity_Philippines": 1048,
+    "InterdenominationalTabernacleOfMaputo": 416,
+    "TokenTabernacle_Soweto_SA": 1127,
+    "ThirdExodusAssembly_Trinidad": 1785
+  }
+}
