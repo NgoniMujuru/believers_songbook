@@ -120,6 +120,8 @@ class _AppPagesState extends State<AppPages> {
         }
       }
     }
+
+    await auth.markSynced();
   }
 
   Future<void> _showSyncExplainerIfNeeded() async {
