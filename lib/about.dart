@@ -2,6 +2,8 @@
 
 import 'package:believers_songbook/account_page.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
+import 'package:believers_songbook/constants/song_book_assets.dart';
+import 'package:believers_songbook/providers/songbook_counts.dart';
 import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
@@ -268,6 +270,19 @@ class _AboutPageState extends State<AboutPage> {
                               color: Styles.themeColor, size: 50.0)),
                       Text('Version: $_version'),
                       Text('Build date: $_formattedDate'),
+                      Consumer<SongbookCounts>(
+                        builder: (context, counts, _) => counts.total > 0
+                            ? Text(
+                                AppLocalizations.of(context)!
+                                    .aboutStatsSongsAcrossSongbooks(
+                                  (SongBookAssets.songList.length - 1)
+                                      .toString(),
+                                  NumberFormat.decimalPattern()
+                                      .format(counts.total),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
                     ],
                   )),
                 ),
