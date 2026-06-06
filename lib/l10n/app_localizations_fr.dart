@@ -155,6 +155,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get songBooksChangeSnackBarText => 'Recueil de chants changé en';
 
   @override
+  String songBooksCountSongs(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chansons',
+      one: '1 chanson',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get songsPageTitle => 'Chansons';
 
   @override
@@ -258,4 +269,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get songPageOptionsShare => 'Partager';
+
+  @override
+  String get songBooksNewBadge => 'Nouveau';
+
+  @override
+  String aboutStatsSongsAcrossSongbooks(Object books, Object songs) {
+    return '$songs chansons dans $books recueils';
+  }
 }

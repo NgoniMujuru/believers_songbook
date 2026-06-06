@@ -155,6 +155,17 @@ class AppLocalizationsSw extends AppLocalizations {
       'Kitabu cha nyimbo kimebadilishwa kuwa';
 
   @override
+  String songBooksCountSongs(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nyimbo',
+      one: '1 wimbo',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get songsPageTitle => 'Nyimbo';
 
   @override
@@ -257,4 +268,12 @@ class AppLocalizationsSw extends AppLocalizations {
 
   @override
   String get songPageOptionsShare => 'Shiriki';
+
+  @override
+  String get songBooksNewBadge => 'Mpya';
+
+  @override
+  String aboutStatsSongsAcrossSongbooks(Object books, Object songs) {
+    return '$songs nyimbo katika $books vitabu vya nyimbo';
+  }
 }
