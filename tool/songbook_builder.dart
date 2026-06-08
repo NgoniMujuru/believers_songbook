@@ -27,6 +27,12 @@ int titleCompare(String a, String b) {
 String _norm(dynamic t) =>
     t.toString().toLowerCase().replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
 
+/// Two song titles are considered duplicates when their similarity score
+/// (0-100) exceeds this value. 90 was chosen after testing several thresholds;
+/// it catches near-identical titles across books while avoiding false positives
+/// on songs that share a common opening phrase.
+const _dedupSimilarityThreshold = 90;
+
 /// Build the de-duplicated, renumbered rows for `All.csv` from each songbook's
 /// parsed rows (passed in registry order). Deterministic: a stable sort keeps
 /// equal-title rows in their original order so the output is reproducible.
@@ -46,7 +52,7 @@ List<List<dynamic>> buildAllRows(List<List<List<dynamic>>> books) {
   });
   final sorted = [for (final e in indexed) e.value];
   for (var i = 0; i + 1 < sorted.length; i++) {
-    if (ratio(_norm(sorted[i][1]), _norm(sorted[i + 1][1])) > 90) {
+    if (ratio(_norm(sorted[i][1]), _norm(sorted[i + 1][1])) > _dedupSimilarityThreshold) {
       sorted.removeAt(i);
       i--;
     }

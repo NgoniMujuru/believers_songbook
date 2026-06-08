@@ -35,33 +35,9 @@ class SongBookAssets {
       'Languages': ['Afrikaans', 'English']
     },
     {
-      'Title': 'Cânticos de Louvor – Hinário da Águia',
+      'Title': 'Cânticos Portugueses',
       'Location': 'Brazil',
-      'FileName': 'CanticosDeLouvor_HinarioAguia',
-      'DateAdded': '2026-06-05',
-      'DateUpdated': '2026-06-05',
-      'Languages': ['Português'],
-    },
-    {
-      'Title': 'Corinhos – Hinário da Águia',
-      'Location': 'Brazil',
-      'FileName': 'Corinhos_HinarioAguia',
-      'DateAdded': '2026-06-05',
-      'DateUpdated': '2026-06-05',
-      'Languages': ['Português'],
-    },
-    {
-      'Title': 'Harpa Cristã',
-      'Location': 'Brazil',
-      'FileName': 'HarpaCrista_Portugues',
-      'DateAdded': '2026-06-05',
-      'DateUpdated': '2026-06-05',
-      'Languages': ['Português'],
-    },
-    {
-      'Title': 'Hinos Avulsos',
-      'Location': 'Brazil',
-      'FileName': 'HinosAvulsos_Portugues',
+      'FileName': 'CanticosPortugueses_Brasil',
       'DateAdded': '2026-06-05',
       'DateUpdated': '2026-06-05',
       'Languages': ['Português'],
@@ -73,22 +49,6 @@ class SongBookAssets {
       'DateAdded': '2025-06-19',
       'DateUpdated': '2025-06-19',
       'Languages': ['Kalenjin']
-    },
-    {
-      'Title': 'Cifrário TraduzInos',
-      'Location': 'Tabernáculo Branham/VGR/YF',
-      'FileName': 'CifrarioTraduzInos_Portugues',
-      'DateAdded': '2026-06-05',
-      'DateUpdated': '2026-06-05',
-      'Languages': ['Português'],
-    },
-    {
-      'Title': 'Corinhos e Hinos',
-      'Location': 'Tabernáculo Branham/VGR/YF',
-      'FileName': 'CorinhosEHinos_Portugues',
-      'DateAdded': '2026-06-05',
-      'DateUpdated': '2026-06-05',
-      'Languages': ['Português'],
     },
     {
       'Title': 'City Tabernacle Bulawayo',
