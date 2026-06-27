@@ -78,7 +78,6 @@
   "songPageOptionsEdit": "Modifier",
   "songPageOptionsCopy": "Copier",
   "songPageOptionsShare": "Partager",
-
   "accountPageTitle": "Compte",
   "accountSignInTitle": "Se connecter pour synchroniser",
   "accountCreateAccountTitle": "Créer un compte",
@@ -110,14 +109,12 @@
   "accountSyncComplete": "Synchronisation terminée",
   "accountSyncFailed": "Échec de la synchronisation",
   "accountSignedIn": "Connecté",
-
   "syncExplainerTitle": "Quoi de neuf",
   "syncExplainerBody1": "Vous pouvez maintenant vous connecter pour sauvegarder vos collections et paramètres dans le cloud.",
   "syncExplainerBody2": "Si vous réinstallez l'application ou changez d'appareil, reconnectez-vous simplement et tout sera restauré automatiquement.",
   "syncExplainerBody3": "Vous pouvez utiliser Google, Apple ou votre adresse e-mail pour créer un compte.",
   "syncExplainerMaybeLater": "Peut-être plus tard",
   "syncExplainerSignInNow": "Se connecter",
-
   "tourStep1Title": "Options des chansons",
   "tourStep1Description": "Ouvrez les paramètres de l'écran des chansons.",
   "tourStep2Title": "Trier et rechercher",
@@ -132,11 +129,11 @@
   "tourStep6Description": "Modifiez la langue et le thème de l'application ici.",
   "tourContinue": "Continuer",
   "tourDone": "Terminer",
-
   "onboardingDescription": "Connectez-vous pour sauvegarder vos collections et paramètres dans le cloud afin qu'ils restent avec vous sur tous vos appareils.",
   "onboardingSignInButton": "Se connecter ou créer un compte",
   "collectionSongRemoved": "supprimé",
   "collectionSongUndo": "Annuler",
   "aboutVersion": "Version",
+  "songBooksNewBadge": "Nouveau",
   "aboutBuildDate": "Date de compilation"
 }
