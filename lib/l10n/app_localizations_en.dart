@@ -449,4 +449,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutBuildDate => 'Build date';
+
+  @override
+  String get songBooksNewBadge => 'New';
+
+  @override
+  String aboutStatsSongsAcrossSongbooks(Object books, Object songs) =>
+      '$songs songs across $books songbooks';
 }

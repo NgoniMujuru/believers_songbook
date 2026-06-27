@@ -135,5 +135,6 @@
   "collectionSongUndo": "Undo",
   "aboutVersion": "Version",
   "songBooksNewBadge": "New",
+  "aboutStatsSongsAcrossSongbooks": "{songs} songs across {books} songbooks",
   "aboutBuildDate": "Build date"
 }
