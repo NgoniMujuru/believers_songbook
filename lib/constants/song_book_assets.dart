@@ -40,7 +40,7 @@ class SongBookAssets {
       'Location': 'Brazil',
       'FileName': 'CanticosPortugueses_Brasil',
       'DateAdded': '2026-06-05',
-      'DateUpdated': '2026-06-05',
+      'DateUpdated': '2026-06-27',
       'Languages': ['Português'],
     },
     {
