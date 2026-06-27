@@ -54,20 +54,21 @@ class _CollectionsState extends State<Collections> {
           floatingActionButton: FloatingActionButton(
             key: _addFabKey,
             onPressed: () {
+              final l10n = AppLocalizations.of(context)!;
               final TextEditingController controller = TextEditingController();
               showDialog(
                 context: context,
                 builder: (dialogContext) {
                   return AlertDialog(
-                    title: const Text('New collection'),
+                    title: Text(l10n.collectionsNewCollection),
                     content: TextField(
                       controller: controller,
-                      decoration: InputDecoration(hintText: AppLocalizations.of(dialogContext)!.songPageCollectionNameLabel),
+                      decoration: InputDecoration(hintText: l10n.songPageCollectionNameLabel),
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(dialogContext),
-                        child: Text(AppLocalizations.of(dialogContext)!.collectionSongsDialogCancel),
+                        child: Text(l10n.collectionSongsDialogCancel),
                       ),
                       TextButton(
                         onPressed: () async {
@@ -84,7 +85,7 @@ class _CollectionsState extends State<Collections> {
                           }
                           navigator.pop();
                         },
-                        child: Text(AppLocalizations.of(dialogContext)!.songPageCreate),
+                        child: Text(l10n.songPageCreate),
                       ),
                     ],
                   );

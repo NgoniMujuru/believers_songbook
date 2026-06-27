@@ -187,13 +187,13 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
             });
             final collectionsData = Provider.of<CollectionsData>(context, listen: false);
             final scaffold = ScaffoldMessenger.of(context);
+            final l10n = AppLocalizations.of(context)!;
             await collectionsData.deleteCollectionSong(song.id);
-
             scaffold.showSnackBar(
               SnackBar(
-                content: Text('${song.title} removed'),
+                content: Text('${song.title} ${l10n.collectionSongRemoved}'),
                 action: SnackBarAction(
-                  label: 'Undo',
+                  label: l10n.collectionSongUndo,
                   onPressed: () async {
                     await collectionsData.addCollectionSong(song);
                     setState(() {

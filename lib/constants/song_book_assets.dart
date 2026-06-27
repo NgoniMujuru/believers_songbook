@@ -1,8 +1,9 @@
 class SongBookAssets {
   static List songList = [
     {
-      'Title': 'All Songs (Experimental Feature)',
+      'Title': 'All Songs',
       'Location': 'Global',
+      'Songs': '9768',
       'FileName': 'All',
       'DateAdded': '2026-02-02',
       'DateUpdated': '2026-02-02',
@@ -39,7 +40,7 @@ class SongBookAssets {
       'Location': 'Brazil',
       'FileName': 'CanticosPortugueses_Brasil',
       'DateAdded': '2026-06-05',
-      'DateUpdated': '2026-06-05',
+      'DateUpdated': '2026-06-27',
       'Languages': ['Português'],
     },
     {

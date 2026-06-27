@@ -53,7 +53,9 @@ List<List<dynamic>> buildAllRows(List<List<List<dynamic>>> books) {
   final sorted = [for (final e in indexed) e.value];
   for (var i = 0; i + 1 < sorted.length; i++) {
     if (ratio(_norm(sorted[i][1]), _norm(sorted[i + 1][1])) > _dedupSimilarityThreshold) {
-      sorted.removeAt(i);
+      final lyricsI = sorted[i][3].toString().length;
+      final lyricsNext = sorted[i + 1][3].toString().length;
+      sorted.removeAt(lyricsI >= lyricsNext ? i + 1 : i);
       i--;
     }
   }

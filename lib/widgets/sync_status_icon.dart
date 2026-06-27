@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:believers_songbook/account_page.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
 import 'package:believers_songbook/services/sync_runner.dart';
 import 'package:believers_songbook/styles.dart';
