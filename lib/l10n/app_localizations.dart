@@ -910,11 +910,6 @@ abstract class AppLocalizations {
   /// **'Version'**
   String get aboutVersion;
 
-  /// No description provided for @aboutBuildDate.
-  ///
-  /// In en, this message translates to:
-  /// **'Build date'**
-  String get aboutBuildDate;
   /// No description provided for @songBooksNewBadge.
   ///
   /// In en, this message translates to:
@@ -926,6 +921,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{songs} songs across {books} songbooks'**
   String aboutStatsSongsAcrossSongbooks(Object books, Object songs);
+
+  /// No description provided for @aboutBuildDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Build date'**
+  String get aboutBuildDate;
 }
 
 class _AppLocalizationsDelegate

@@ -453,12 +453,13 @@ class AppLocalizationsSw extends AppLocalizations {
   String get aboutVersion => 'Toleo';
 
   @override
-  String get aboutBuildDate => 'Tarehe ya ujenzi';
-
-  @override
   String get songBooksNewBadge => 'Mpya';
 
   @override
-  String aboutStatsSongsAcrossSongbooks(Object books, Object songs) =>
-      '$songs nyimbo katika $books vitabu vya nyimbo';
+  String aboutStatsSongsAcrossSongbooks(Object books, Object songs) {
+    return '$songs nyimbo katika $books vitabu vya nyimbo';
+  }
+
+  @override
+  String get aboutBuildDate => 'Tarehe ya ujenzi';
 }
