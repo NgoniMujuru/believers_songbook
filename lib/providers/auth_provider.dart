@@ -1,13 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthProvider extends ChangeNotifier {
+  static const String _lastSyncedKey = 'lastSyncedAt';
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _user;
   bool _isLoading = false;
   String? _error;
+  DateTime? _lastSyncedAt;
 
   User? get user => _user;
   bool get isLoading => _isLoading;
@@ -18,7 +22,29 @@ class AuthProvider extends ChangeNotifier {
   String? get photoUrl => _user?.photoURL;
   String? get uid => _user?.uid;
 
+  /// When the last successful cloud sync happened (persisted locally).
+  DateTime? get lastSyncedAt => _lastSyncedAt;
+
+  /// Record that a sync just completed successfully (survives app restarts).
+  Future<void> markSynced() async {
+    _lastSyncedAt = DateTime.now();
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_lastSyncedKey, _lastSyncedAt!.toIso8601String());
+  }
+
+  Future<void> _loadLastSynced() async {
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getString(_lastSyncedKey);
+    final parsed = stored == null ? null : DateTime.tryParse(stored);
+    if (parsed != null) {
+      _lastSyncedAt = parsed;
+      notifyListeners();
+    }
+  }
+
   AuthProvider() {
+    _loadLastSynced();
     // Seed _user synchronously from currentUser so that code reading isSignedIn
     // immediately after construction gets the correct value. This matters on iOS
     // where the Keychain survives app deletion: Firebase restores the session

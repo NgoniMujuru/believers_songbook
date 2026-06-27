@@ -19,7 +19,6 @@ import 'package:believers_songbook/tour/app_tour_controller.dart';
 import 'package:believers_songbook/tour/tour_ids.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'constants/song_book_assets.dart';
 import 'custom_search_bar.dart';
 import 'song.dart';
 import 'styles.dart';
@@ -100,16 +99,6 @@ class SongsState extends State<Songs> {
         _loadingSongs = false;
       });
       processSongBook();
-
-      // Use the following code anytime a new songbook is added.
-      // if (_fileName == 'All') {
-      //   processAllSongBooks();
-      // } else {
-      //   setState(() {
-      //     _loadingSongs = false;
-      //   });
-      //   processSongBook();
-      // }
     });
   }
 
@@ -223,76 +212,6 @@ class SongsState extends State<Songs> {
     });
   }
 
-  void processAllSongBooks() async {
-    for (var songBook in SongBookAssets.songList) {
-      if (songBook['FileName'] == 'All') {
-        continue;
-      }
-      _fileName = songBook['FileName'];
-      String fileData = await DefaultAssetBundle.of(context).loadString(
-        'assets/$_fileName.csv',
-      );
-      var songList = createSongList(_fileName, fileData);
-      _csvData?.addAll(songList);
-    }
-
-    if (kDebugMode) {
-      if (_csvData == null) {
-        print('CSV Data is null');
-      } else {
-        print('All songs before duplicate removal: ${_csvData!.length}');
-      }
-    }
-
-    _csvData?.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
-
-    double searchScore = 0;
-    double maxSimilarityScore = 90;
-
-    for (int i = 0; i + 1 < (_csvData?.length ?? 0); i++) {
-      var currentSong = _csvData?.elementAt(i);
-      var nextSong = _csvData?.elementAt(i + 1);
-
-      String processedSongTitle =
-          currentSong!.elementAt(1).toString().toLowerCase();
-      processedSongTitle =
-          processedSongTitle.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-      String processedNextSongTitle =
-          nextSong!.elementAt(1).toString().toLowerCase();
-      processedNextSongTitle =
-          processedNextSongTitle.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-      searchScore =
-          ratio(processedSongTitle, processedNextSongTitle).toDouble();
-      if (searchScore > maxSimilarityScore) {
-        _csvData?.removeAt(i);
-        i--;
-      }
-    }
-
-    if (kDebugMode) {
-      if (_csvData == null) {
-        print('CSV Data is null');
-      } else {
-        print('All songs after duplicate removal: ${_csvData!.length}');
-      }
-    }
-
-    // for each element in _csvData, add a number to it
-    for (int i = 0; i < (_csvData?.length ?? 0); i++) {
-      _csvData?[i][0] = i + 1;
-    }
-
-    String csv = const ListToCsvConverter(fieldDelimiter: ';', eol: '\n')
-        .convert(_csvData!);
-    // Adds csv data to clipboard: copy and paste it over the contents of 'All.csv'
-    Clipboard.setData(ClipboardData(text: csv)).then((_) {});
-
-    setState(() {
-      _csvData;
-      _loadingSongs = false;
-    });
-  }
-
   // Custom comparator that sorts strings by putting alphabets and numbers first, then special characters.
   int customComparator(String a, String b) {
     // Regular expression to match only alphabets and numbers
@@ -314,20 +233,15 @@ class SongsState extends State<Songs> {
   }
 
   List<List> createSongList(String fileName, String fileData) {
-    // if more examples exist, map for each file
-    String eol = fileName == 'ThirdExodusAssembly_Trinidad' ||
-            fileName == 'KenyaLocalBelievers_Nairobi_Kenya' ||
-            fileName == 'BibleTabernacle_CapeTown_SA' ||
-            fileName == 'HebronTabernacle_Lusaka_Zambia' ||
-            fileName == "TokenTabernacle_Soweto_SA" ||
-            fileName == 'RevealedWordTabernacle_Bulawayo_Zimbabwe' ||
-            fileName == 'CityTabernacleBulawayo_Bulawayo_Zimbabwe' ||
-            fileName == 'ChesilyotWordOfLifeTabernacle_BometCounty_Kenya' ||
-            fileName == 'SpokenWordChristianAssembly_QuezonCity_Philippines'
-        ? '\r\n'
-        : '\n';
+    // Normalise line endings / BOM so any songbook file parses the same way,
+    // regardless of how it was authored (LF, CRLF, or with a UTF-8 BOM).
+    var data = fileData;
+    if (data.isNotEmpty && data.codeUnitAt(0) == 0xFEFF) {
+      data = data.substring(1);
+    }
+    data = data.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
     return const CsvToListConverter()
-        .convert(fileData, fieldDelimiter: ';', eol: eol);
+        .convert(data, fieldDelimiter: ';', eol: '\n');
   }
 
   final int _songSearchThreshold = 70;
@@ -440,10 +354,20 @@ class SongsState extends State<Songs> {
   }
 
   Expanded _buildAlphabeticList(results) {
+    // AlphabetScrollView re-sorts its list case-insensitively by title and
+    // passes that sorted index to itemBuilder. Sort our data the same way so
+    // the index lines up; otherwise rows (and their numbers) mismatch at
+    // non-alphanumeric/accented titles — e.g. the very last entry.
+    final sorted = List.from(results)
+      ..sort((a, b) => a
+          .elementAt(1)
+          .toString()
+          .toLowerCase()
+          .compareTo(b.elementAt(1).toString().toLowerCase()));
     return Expanded(
       child: Consumer<ThemeSettings>(
           builder: (context, themeSettings, child) => ((AlphabetScrollView(
-                list: results
+                list: sorted
                     .map<AlphaModel>((e) => AlphaModel(e.elementAt(1)))
                     .toList(),
                 alignment: LetterAlignment.right,
@@ -482,7 +406,7 @@ class SongsState extends State<Songs> {
                           child: GestureDetector(
                             onTap: () {
                               _focusNode.unfocus();
-                              final songRow = results!.elementAt(index);
+                              final songRow = sorted.elementAt(index);
                               final title = capitalizeFirstLetters(songRow.elementAt(1));
                               AnalyticsService.instance.trackSongOpened(songTitle: title, source: 'songs_list');
                               Navigator.push(
@@ -503,10 +427,10 @@ class SongsState extends State<Songs> {
                                     ? AppLocalizations.of(context)!
                                         .songsPageLoading
                                     : songNumAndTitle(
-                                        results!.elementAt(index))),
+                                        sorted.elementAt(index))),
                                 trailing: songSettings.displayKey
                                     ? Text(
-                                        results!.elementAt(index).elementAt(2))
+                                        sorted.elementAt(index).elementAt(2))
                                     : null,
                               );
                             }),

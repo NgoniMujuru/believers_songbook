@@ -1,4 +1,5 @@
 import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/providers/songbook_counts.dart';
 import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/widgets/sync_status_icon.dart';
@@ -38,6 +39,25 @@ class _SongBooksState extends State<SongBooks> {
     super.dispose();
   }
 
+  /// A song book counts as "new" for ~1 month after the most recent of its
+  /// DateAdded / DateUpdated dates, so both newly added and freshly updated
+  /// books are highlighted.
+  static const int _newForDays = 30;
+  bool _isNew(Map songBook) {
+    DateTime? newest;
+    for (final key in const ['DateAdded', 'DateUpdated']) {
+      final raw = songBook[key];
+      if (raw is! String || raw.isEmpty) continue;
+      final date = DateTime.tryParse(raw);
+      if (date != null && (newest == null || date.isAfter(newest))) {
+        newest = date;
+      }
+    }
+    if (newest == null) return false;
+    final age = DateTime.now().difference(newest).inDays;
+    return age >= 0 && age <= _newForDays;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isWideScreen = MediaQuery.of(context).size.width > 600;
@@ -52,8 +72,8 @@ class _SongBooksState extends State<SongBooks> {
           padding: isWideScreen
               ? const EdgeInsets.fromLTRB(80, 0, 80, 0)
               : const EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: Consumer2<SongBookSettings, ThemeSettings>(
-            builder: (context, songBookSettings, themeSettings, child) {
+          child: Consumer3<SongBookSettings, ThemeSettings, SongbookCounts>(
+            builder: (context, songBookSettings, themeSettings, counts, child) {
               return RawScrollbar(
                 controller: _scrollController,
                 minThumbLength: isWideScreen ? 100 : 40,
@@ -67,6 +87,7 @@ class _SongBooksState extends State<SongBooks> {
                     final songBook = SongBookAssets.songList[index];
                     final isSelected =
                         songBookSettings.songBookFile == songBook['FileName'];
+                    final isNew = _isNew(songBook as Map);
 
                     final cardColor = isSelected
                         ? (themeSettings.isDarkMode
@@ -119,19 +140,61 @@ class _SongBooksState extends State<SongBooks> {
                                     ? Styles.songBookTextDark
                                     : Styles.songBookText,
                                 subtitle: Text(songBook['Location']),
+                                trailing: isNew
+                                    ? Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 3),
+                                        decoration: BoxDecoration(
+                                          color: Styles.themeColor,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          AppLocalizations.of(context)!
+                                              .songBooksNewBadge,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      )
+                                    : null,
                               ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
                                     16.0, 0, 8.0, 8.0),
-                                child: Text(
-                                  (songBook['Languages'] as List<dynamic>)
-                                      .join(', '),
-                                  style: TextStyle(
-                                    color: themeSettings.isDarkMode
-                                        ? Styles.songBookLanguagesDark
-                                        : Styles.songBookLanguages,
-                                  ),
-                                  softWrap: true,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        (songBook['Languages']
+                                                as List<dynamic>)
+                                            .join(', '),
+                                        style: TextStyle(
+                                          color: themeSettings.isDarkMode
+                                              ? Styles.songBookLanguagesDark
+                                              : Styles.songBookLanguages,
+                                        ),
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                    Builder(builder: (context) {
+                                      final n =
+                                          counts.countFor(songBook['FileName']);
+                                      if (n == 0) return const SizedBox.shrink();
+                                      return Text(
+                                        AppLocalizations.of(context)!
+                                            .songBooksCountSongs(n),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: themeSettings.isDarkMode
+                                              ? Styles.songBookLanguagesDark
+                                              : Styles.songBookLanguages,
+                                        ),
+                                      );
+                                    }),
+                                  ],
                                 ),
                               ),
                             ],

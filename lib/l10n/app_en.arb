@@ -46,7 +46,8 @@
     
     "songBooksPageTitle": "Songbooks",
     "songBooksChangeSnackBarText": "Songbook changed to",
-    
+    "songBooksCountSongs": "{count, plural, =1{1 song} other{{count} songs}}",
+
     "songsPageTitle": "Songs",
     "songsPageLoading": "Loading",
     "songsPageSortOrder": "Sort Order:",
@@ -80,6 +81,7 @@
     "songPageOptions": "Options",
     "songPageOptionsEdit": "Edit",
     "songPageOptionsCopy": "Copy",
-    "songPageOptionsShare": "Share"
-    
+    "songPageOptionsShare": "Share",
+    "songBooksNewBadge": "New",
+    "aboutStatsSongsAcrossSongbooks": "{songs} songs across {books} songbooks"
 }
