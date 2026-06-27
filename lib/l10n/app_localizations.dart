@@ -370,6 +370,12 @@ abstract class AppLocalizations {
   /// **'Songbook changed to'**
   String get songBooksChangeSnackBarText;
 
+  /// No description provided for @songBooksCountSongs.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 song} other{{count} songs}}'**
+  String songBooksCountSongs(num count);
+
   /// No description provided for @songsPageTitle.
   ///
   /// In en, this message translates to:
@@ -909,6 +915,17 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Build date'**
   String get aboutBuildDate;
+  /// No description provided for @songBooksNewBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get songBooksNewBadge;
+
+  /// No description provided for @aboutStatsSongsAcrossSongbooks.
+  ///
+  /// In en, this message translates to:
+  /// **'{songs} songs across {books} songbooks'**
+  String aboutStatsSongsAcrossSongbooks(Object books, Object songs);
 }
 
 class _AppLocalizationsDelegate

@@ -158,6 +158,17 @@ class AppLocalizationsSw extends AppLocalizations {
       'Kitabu cha nyimbo kimebadilishwa kuwa';
 
   @override
+  String songBooksCountSongs(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nyimbo',
+      one: '1 wimbo',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get songsPageTitle => 'Nyimbo';
 
   @override

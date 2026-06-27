@@ -44,6 +44,7 @@
   "collectionSongsEmptyStateText": "Kusanyo hili halina nyimbo. Ongeza nyimbo kwenye kusanyo hili kwa kufungua wimbo na kuchagua kiashiria cha makusanyo kinachopatikana kona ya juu upande wa kulia.",
   "songBooksPageTitle": "Vitabu vya nyimbo",
   "songBooksChangeSnackBarText": "Kitabu cha nyimbo kimebadilishwa kuwa",
+  "songBooksCountSongs": "{count, plural, =1{1 wimbo} other{{count} nyimbo}}",
   "songsPageTitle": "Nyimbo",
   "songsPageLoading": "Inapakia",
   "songsPageSortOrder": "Mpangilio wa Nyimbo:",
@@ -137,5 +138,7 @@
   "collectionSongRemoved": "imeondolewa",
   "collectionSongUndo": "Tendua",
   "aboutVersion": "Toleo",
-  "aboutBuildDate": "Tarehe ya ujenzi"
+  "aboutBuildDate": "Tarehe ya ujenzi",
+  "songBooksNewBadge": "Mpya",
+  "aboutStatsSongsAcrossSongbooks": "{songs} nyimbo katika {books} vitabu vya nyimbo"
 }

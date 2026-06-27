@@ -44,6 +44,7 @@
   "collectionSongsEmptyStateText": "Cette collection ne contient aucune chanson. Ajoutez des chansons à cette collection en ouvrant une chanson et en sélectionnant l'icône de menu des collections en haut à droite.",
   "songBooksPageTitle": "Congrégations",
   "songBooksChangeSnackBarText": "Recueil de chants changé en",
+  "songBooksCountSongs": "{count, plural, =1{1 chanson} other{{count} chansons}}",
   "songsPageTitle": "Chansons",
   "songsPageLoading": "Chargement",
   "songsPageSortOrder": "Ordre de tri:",

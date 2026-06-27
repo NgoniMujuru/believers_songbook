@@ -158,6 +158,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get songBooksChangeSnackBarText => 'Recueil de chants changé en';
 
   @override
+  String songBooksCountSongs(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chansons',
+      one: '1 chanson',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get songsPageTitle => 'Chansons';
 
   @override
