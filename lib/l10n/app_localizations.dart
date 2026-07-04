@@ -796,6 +796,30 @@ abstract class AppLocalizations {
   /// **'Sign in now'**
   String get syncExplainerSignInNow;
 
+  /// No description provided for @updateAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update available'**
+  String get updateAvailableTitle;
+
+  /// No description provided for @updateAvailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A new version of the app is available. Update now to get the latest features and fixes.'**
+  String get updateAvailableBody;
+
+  /// No description provided for @updateAvailableActionUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get updateAvailableActionUpdate;
+
+  /// No description provided for @updateAvailableActionLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get updateAvailableActionLater;
+
   /// No description provided for @tourStep1Title.
   ///
   /// In en, this message translates to:

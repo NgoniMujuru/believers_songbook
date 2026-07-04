@@ -392,6 +392,19 @@ class AppLocalizationsSw extends AppLocalizations {
   String get syncExplainerSignInNow => 'Ingia sasa';
 
   @override
+  String get updateAvailableTitle => 'Sasisho linapatikana';
+
+  @override
+  String get updateAvailableBody =>
+      'Toleo jipya la programu linapatikana. Sasisha sasa ili upate vipengele na marekebisho mapya zaidi.';
+
+  @override
+  String get updateAvailableActionUpdate => 'Sasisha';
+
+  @override
+  String get updateAvailableActionLater => 'Sivyo sasa';
+
+  @override
   String get tourStep1Title => 'Mipangilio ya Nyimbo';
 
   @override

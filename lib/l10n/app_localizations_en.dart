@@ -388,6 +388,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncExplainerSignInNow => 'Sign in now';
 
   @override
+  String get updateAvailableTitle => 'Update available';
+
+  @override
+  String get updateAvailableBody =>
+      'A new version of the app is available. Update now to get the latest features and fixes.';
+
+  @override
+  String get updateAvailableActionUpdate => 'Update';
+
+  @override
+  String get updateAvailableActionLater => 'Not now';
+
+  @override
   String get tourStep1Title => 'Songs Options';
 
   @override
