@@ -20,11 +20,38 @@ class _ProjectionViewState extends State<ProjectionView> {
   late int _currentIndex;
   double _fontSize = 28.0;
   final ScrollController _scrollController = ScrollController();
+  AnimationStatusListener? _routeAnimationListener;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_routeAnimationListener != null) return;
+    final animation = ModalRoute.of(context)?.animation;
+    if (animation == null) {
+      _applySystemUI();
+      return;
+    }
+    if (animation.isCompleted) {
+      _applySystemUI();
+    } else {
+      _routeAnimationListener = (status) {
+        if (status == AnimationStatus.completed) {
+          _applySystemUI();
+          animation.removeStatusListener(_routeAnimationListener!);
+        }
+      };
+      animation.addStatusListener(_routeAnimationListener!);
+    }
+  }
+
+  void _applySystemUI() {
+    if (!mounted) return;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,

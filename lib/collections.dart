@@ -246,18 +246,20 @@ class _ReorderableSongListState extends State<ReorderableSongList> {
                     builder: (context, songSettings, child) {
                       return ListTile(
                         title: Text(song.title),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (songSettings.displayKey) Text(song.key),
-                            const Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
-                            // Custom drag handle for reordering
-                            ReorderableDragStartListener(
-                              index: index,
-                              child: const Icon(Icons.menu),
-                            ),
-                          ],
+                        trailing: SizedBox(
+                          width: 80,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (songSettings.displayKey) Text(song.key),
+                              const SizedBox(width: 10),
+                              ReorderableDragStartListener(
+                                index: index,
+                                child: const Icon(Icons.menu),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
