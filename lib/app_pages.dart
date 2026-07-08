@@ -1,5 +1,5 @@
 import 'package:believers_songbook/account_page.dart';
-import 'package:believers_songbook/collections.dart';
+import 'package:believers_songbook/collection.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
@@ -81,7 +81,8 @@ class _AppPagesState extends State<AppPages> {
         songSettings.setDisplayKey(cloudSettings['displayKey'] as bool);
       }
       if (cloudSettings['displaySongNumber'] != null) {
-        songSettings.setDisplaySongNumber(cloudSettings['displaySongNumber'] as bool);
+        songSettings
+            .setDisplaySongNumber(cloudSettings['displaySongNumber'] as bool);
       }
       if (cloudSettings['isDarkMode'] != null) {
         themeSettings.setIsDarkMode(cloudSettings['isDarkMode'] as bool);
@@ -90,7 +91,8 @@ class _AppPagesState extends State<AppPages> {
         mainPageSettings.setLocale(cloudSettings['locale'] as String);
       }
       if (cloudSettings['songBookFile'] != null) {
-        songBookSettings.setSongBookFile(cloudSettings['songBookFile'] as String);
+        songBookSettings
+            .setSongBookFile(cloudSettings['songBookFile'] as String);
       }
       if (cloudSettings['sortOrder'] != null) {
         prefs.setString('sortOrder', cloudSettings['sortOrder'] as String);
@@ -139,7 +141,8 @@ class _AppPagesState extends State<AppPages> {
     final auth = context.read<AuthProvider>();
     if (auth.isSignedIn) return; // Already signed in, no need for explainer
 
-    final l10n = lookupAppLocalizations(Locale(context.read<MainPageSettings>().getLocale));
+    final l10n = lookupAppLocalizations(
+        Locale(context.read<MainPageSettings>().getLocale));
     AnalyticsService.instance.trackSyncExplainerShown();
     showDialog(
       context: context,

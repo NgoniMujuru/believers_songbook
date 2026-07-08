@@ -1,0 +1,195 @@
+import 'package:believers_songbook/models/collection_song.dart';
+import 'package:believers_songbook/models/collection.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
+import 'package:believers_songbook/widgets/sync_status_icon.dart';
+import 'package:believers_songbook/providers/collections_data.dart';
+import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
+import 'collections.dart';
+import 'styles.dart';
+import 'package:believers_songbook/l10n/app_localizations.dart';
+import 'package:believers_songbook/tour/app_tour_controller.dart';
+import 'package:believers_songbook/tour/tour_ids.dart';
+
+class Collections extends StatefulWidget {
+  const Collections({super.key});
+
+  @override
+  State<Collections> createState() => _CollectionsState();
+}
+
+class _CollectionsState extends State<Collections> {
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _addFabKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    final tour = context.read<AppTourController>();
+    tour.registerTarget(TourIds.collectionsAddFab, _addFabKey);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      tour.registerScreenContext(TourIds.collectionsScreen, context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<CollectionsData>(
+      builder: (context, collectionsData, child) => (SelectionArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.globalCollections),
+            scrolledUnderElevation: 4,
+            actions: const [SyncStatusIcon()],
+          ),
+          floatingActionButton: FloatingActionButton(
+            key: _addFabKey,
+            onPressed: () {
+              final l10n = AppLocalizations.of(context)!;
+              final TextEditingController controller = TextEditingController();
+              showDialog(
+                context: context,
+                builder: (dialogContext) {
+                  return AlertDialog(
+                    title: Text(l10n.collectionsNewCollection),
+                    content: TextField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                          hintText: l10n.songPageCollectionNameLabel),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: Text(l10n.collectionSongsDialogCancel),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          final name = controller.text.trim();
+                          final navigator = Navigator.of(dialogContext);
+                          if (name.isNotEmpty) {
+                            final newCollection = Collection(
+                              id: const Uuid().v4(),
+                              name: name,
+                              dateCreated: DateTime.now().toIso8601String(),
+                            );
+                            await collectionsData.addCollection(newCollection);
+                            AnalyticsService.instance.trackCollectionCreated();
+                          }
+                          navigator.pop();
+                        },
+                        child: Text(l10n.songPageCreate),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
+          body: SafeArea(
+            child: collectionsData.collections.isNotEmpty
+                ? _buildCollectionList(collectionsData, context)
+                : Center(
+                    child: Padding(
+                      padding: MediaQuery.of(context).size.width > 600
+                          ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
+                          : const EdgeInsets.all(20.0),
+                      child: Consumer<ThemeSettings>(
+                        builder: (context, themeSettings, child) => (Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .collectionsEmptyStateText,
+                              style: themeSettings.isDarkMode
+                                  ? Styles.aboutHeaderDark
+                                  : Styles.aboutHeader,
+                            ),
+                          ],
+                        )),
+                      ),
+                    ),
+                  ),
+          ),
+        ),
+      )),
+    );
+  }
+
+  Widget _buildCollectionList(collectionsData, context) {
+    Map<String, List<CollectionSong>> songsByCollection =
+        collectionsData.songsByCollection;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+      child: RawScrollbar(
+        controller: _scrollController,
+        minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
+        thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
+        radius: const Radius.circular(5.0),
+        thumbVisibility: true,
+        trackVisibility: true,
+        thumbColor: Colors.grey.withOpacity(0.5),
+        trackColor: Colors.grey.withOpacity(0.1),
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: collectionsData.collections.length,
+          itemBuilder: (context, index) {
+            int? numSongs =
+                songsByCollection[collectionsData.collections[index].id]
+                    ?.length;
+            String numSongsString = numSongs == 1
+                ? AppLocalizations.of(context)!.globalSong
+                : AppLocalizations.of(context)!.collectionsSongs;
+            DateTime dateTime =
+                DateTime.parse(collectionsData.collections[index].dateCreated);
+            String formattedDate = DateFormat('dd MMMM yyyy').format(dateTime);
+
+            return Padding(
+              padding: MediaQuery.of(context).size.width > 600
+                  ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
+                  : const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              child: Column(
+                children: [
+                  ListTile(
+                      title: Text(collectionsData.collections[index].name),
+                      trailing: Text('$numSongs $numSongsString'),
+                      subtitle: Text(
+                          '${AppLocalizations.of(context)!.collectionsCreated}: $formattedDate'),
+                      onTap: () {
+                        String collectionId =
+                            collectionsData.collections[index].id;
+                        AnalyticsService.instance.trackCollectionOpened(
+                          collectionName:
+                              collectionsData.collections[index].name,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CollectionSongs(
+                              collectionId: collectionId,
+                            ),
+                          ),
+                        );
+                      }),
+                  const Divider(
+                    height: 0.5,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
