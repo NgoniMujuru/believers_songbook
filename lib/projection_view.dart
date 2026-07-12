@@ -99,11 +99,12 @@ class _ProjectionViewState extends State<ProjectionView> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _NavButton(
-                icon: Icons.chevron_left,
-                enabled: canGoPrev,
-                onTap: _goToPrevious,
-              ),
+              if (widget.songs.length > 1)
+                _NavButton(
+                  icon: Icons.chevron_left,
+                  enabled: canGoPrev,
+                  onTap: _goToPrevious,
+                ),
               Expanded(
                 child: SingleChildScrollView(
                   controller: _scrollController,
@@ -133,11 +134,12 @@ class _ProjectionViewState extends State<ProjectionView> {
                   ),
                 ),
               ),
-              _NavButton(
-                icon: Icons.chevron_right,
-                enabled: canGoNext,
-                onTap: _goToNext,
-              ),
+              if (widget.songs.length > 1)
+                _NavButton(
+                  icon: Icons.chevron_right,
+                  enabled: canGoNext,
+                  onTap: _goToNext,
+                ),
             ],
           ),
           Positioned(

@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 import 'models/collection.dart';
+import 'projection_view.dart';
 import 'styles.dart';
 
 class Song extends StatefulWidget {
@@ -52,6 +53,7 @@ class _SongState extends State<Song> {
       child: Scaffold(
         appBar: AppBar(
             title: Text(widget.songTitle),
+            titleSpacing: 0,
             shadowColor: Styles.themeColor,
             scrolledUnderElevation: 4,
             actions: <Widget>[
@@ -59,6 +61,24 @@ class _SongState extends State<Song> {
                   icon: const Icon(Icons.playlist_add),
                   onPressed: () {
                     collectionsBottomSheet(context, screenSize);
+                  }),
+              IconButton(
+                  icon: const Icon(Icons.cast),
+                  onPressed: () {
+                    final song = CollectionSong(
+                      id: const Uuid().v4(),
+                      collectionId: '',
+                      title: widget.songTitle,
+                      key: _key,
+                      lyrics: _lyrics,
+                      songPosition: 0,
+                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProjectionView(songs: [song]),
+                      ),
+                    );
                   }),
               IconButton(
                   icon: const Icon(Icons.more_vert),
