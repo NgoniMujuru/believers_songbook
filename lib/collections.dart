@@ -1,189 +1,290 @@
+import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/models/collection_song.dart';
-import 'package:believers_songbook/models/collection.dart';
-import 'package:believers_songbook/services/analytics_service.dart';
-import 'package:believers_songbook/widgets/sync_status_icon.dart';
+import 'package:believers_songbook/projection_view.dart';
 import 'package:believers_songbook/providers/collections_data.dart';
+import 'package:believers_songbook/providers/main_page_settings.dart';
+import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/services/analytics_service.dart';
+import 'package:believers_songbook/song.dart';
+import 'package:believers_songbook/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
-import 'collections_songs.dart';
-import 'styles.dart';
-import 'package:believers_songbook/l10n/app_localizations.dart';
-import 'package:believers_songbook/tour/app_tour_controller.dart';
-import 'package:believers_songbook/tour/tour_ids.dart';
 
-class Collections extends StatefulWidget {
-  const Collections({super.key});
-
-  @override
-  State<Collections> createState() => _CollectionsState();
-}
-
-class _CollectionsState extends State<Collections> {
+class CollectionSongs extends StatelessWidget {
+  final String collectionId;
   final ScrollController _scrollController = ScrollController();
-  final GlobalKey _addFabKey = GlobalKey();
 
-  @override
-  void initState() {
-    super.initState();
-    final tour = context.read<AppTourController>();
-    tour.registerTarget(TourIds.collectionsAddFab, _addFabKey);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      tour.registerScreenContext(TourIds.collectionsScreen, context);
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
+  CollectionSongs({
+    required this.collectionId,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CollectionsData>(
-      builder: (context, collectionsData, child) => (SelectionArea(
+      builder: (context, collectionsData, child) => SelectionArea(
         child: Scaffold(
           appBar: AppBar(
-            title: Text(AppLocalizations.of(context)!.globalCollections),
+            title: Text(getCollectionName(collectionsData, collectionId)),
             scrolledUnderElevation: 4,
-            actions: const [SyncStatusIcon()],
-          ),
-          floatingActionButton: FloatingActionButton(
-            key: _addFabKey,
-            onPressed: () {
-              final l10n = AppLocalizations.of(context)!;
-              final TextEditingController controller = TextEditingController();
-              showDialog(
-                context: context,
-                builder: (dialogContext) {
-                  return AlertDialog(
-                    title: Text(l10n.collectionsNewCollection),
-                    content: TextField(
-                      controller: controller,
-                      decoration: InputDecoration(hintText: l10n.songPageCollectionNameLabel),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(dialogContext),
-                        child: Text(l10n.collectionSongsDialogCancel),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          final name = controller.text.trim();
-                          final navigator = Navigator.of(dialogContext);
-                          if (name.isNotEmpty) {
-                            final newCollection = Collection(
-                              id: const Uuid().v4(),
-                              name: name,
-                              dateCreated: DateTime.now().toIso8601String(),
-                            );
-                            await collectionsData.addCollection(newCollection);
-                            AnalyticsService.instance.trackCollectionCreated();
-                          }
-                          navigator.pop();
-                        },
-                        child: Text(l10n.songPageCreate),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: const Icon(Icons.add),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () => _showDeleteDialog(context, collectionsData),
+              ),
+              IconButton(
+                icon: const Icon(Icons.cast),
+                onPressed: () => _enterProjectionMode(context, collectionsData),
+              ),
+            ],
           ),
           body: SafeArea(
-            child: collectionsData.collections.isNotEmpty
-                ? _buildCollectionList(collectionsData, context)
-                : Center(
+            child: collectionsData.songsByCollection[collectionId] == null ||
+                    collectionsData.songsByCollection[collectionId]!.isEmpty
+                ? Center(
                     child: Padding(
                       padding: MediaQuery.of(context).size.width > 600
                           ? const EdgeInsets.fromLTRB(80, 20, 80, 40)
                           : const EdgeInsets.all(20.0),
                       child: Consumer<ThemeSettings>(
-                        builder: (context, themeSettings, child) => (Column(
+                        builder: (context, themeSettings, child) => Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
-                              AppLocalizations.of(context)!.collectionsEmptyStateText,
+                              AppLocalizations.of(context)!
+                                  .collectionSongsEmptyStateText,
                               style: themeSettings.isDarkMode
                                   ? Styles.aboutHeaderDark
                                   : Styles.aboutHeader,
                             ),
                           ],
-                        )),
+                        ),
                       ),
                     ),
+                  )
+                : _buildCollectionList(
+                    context,
+                    collectionsData.songsByCollection[collectionId]!
+                      ..sort(
+                          (a, b) => a.songPosition.compareTo(b.songPosition)),
                   ),
           ),
         ),
-      )),
+      ),
     );
   }
 
-  Widget _buildCollectionList(collectionsData, context) {
-    Map<String, List<CollectionSong>> songsByCollection = collectionsData.songsByCollection;
+  Widget _buildCollectionList(context, songs) {
+    return RawScrollbar(
+      minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
+      thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
+      radius: const Radius.circular(5.0),
+      thumbVisibility: true,
+      trackVisibility: true,
+      thumbColor: Colors.grey.withOpacity(0.5),
+      trackColor: Colors.grey.withOpacity(0.1),
+      controller: _scrollController, // Use the class-level _scrollController
+      child: ReorderableSongList(
+        songs,
+        scrollController: _scrollController, // Pass the same controller
+      ),
+    );
+  }
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-      child: RawScrollbar(
-        controller: _scrollController,
-        minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
-        thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
-        radius: const Radius.circular(5.0),
-        thumbVisibility: true,
-        trackVisibility: true,
-        thumbColor: Colors.grey.withOpacity(0.5),
-        trackColor: Colors.grey.withOpacity(0.1),
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: collectionsData.collections.length,
-          itemBuilder: (context, index) {
-            int? numSongs =
-                songsByCollection[collectionsData.collections[index].id]?.length;
-            String numSongsString = numSongs == 1
-                ? AppLocalizations.of(context)!.globalSong
-                : AppLocalizations.of(context)!.collectionsSongs;
-            DateTime dateTime =
-                DateTime.parse(collectionsData.collections[index].dateCreated);
-            String formattedDate = DateFormat('dd MMMM yyyy').format(dateTime);
-
-            return Padding(
-              padding: MediaQuery.of(context).size.width > 600
-                  ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
-                  : const EdgeInsets.fromLTRB(0, 0, 15, 0),
-              child: Column(
-                children: [
-                  ListTile(
-                      title: Text(collectionsData.collections[index].name),
-                      trailing: Text('$numSongs $numSongsString'),
-                      subtitle: Text(
-                          '${AppLocalizations.of(context)!.collectionsCreated}: $formattedDate'),
-                      onTap: () {
-                        String collectionId = collectionsData.collections[index].id;
-                        AnalyticsService.instance.trackCollectionOpened(
-                          collectionName: collectionsData.collections[index].name,
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CollectionSongs(
-                              collectionId: collectionId,
-                            ),
-                          ),
-                        );
-                      }),
-                  const Divider(
-                    height: 0.5,
+  void _showDeleteDialog(
+      BuildContext context, CollectionsData collectionsData) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Consumer<MainPageSettings>(
+          builder: (context, mainPageSettings, child) => Localizations.override(
+            context: context,
+            locale: Locale(mainPageSettings.getLocale),
+            child: AlertDialog(
+              title: Text(
+                  AppLocalizations.of(context)!.collectionSongsDialogTitle),
+              content:
+                  Text(AppLocalizations.of(context)!.collectionSongsDialogText),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    final navigator = Navigator.of(context);
+                    await collectionsData.deleteCollection(collectionId);
+                    AnalyticsService.instance.trackCollectionDeleted();
+                    navigator.pop();
+                    navigator.pop();
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.collectionSongsDialogDelete,
+                    style: const TextStyle(color: Colors.red),
                   ),
-                ],
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(AppLocalizations.of(context)!
+                      .collectionSongsDialogCancel),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _enterProjectionMode(
+      BuildContext context, CollectionsData collectionsData) {
+    final songs = List<CollectionSong>.from(
+      collectionsData.songsByCollection[collectionId] ?? [],
+    )..sort((a, b) => a.songPosition.compareTo(b.songPosition));
+    if (songs.isEmpty) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ProjectionView(songs: songs)),
+    );
+  }
+
+  String getCollectionName(collectionsData, collectionId) {
+    String name = '';
+    for (var collection in collectionsData.collections) {
+      if (collection.id == collectionId) {
+        name = collection.name;
+      }
+    }
+    return name;
+  }
+}
+
+class ReorderableSongList extends StatefulWidget {
+  final List<CollectionSong> songs;
+  final ScrollController scrollController;
+  const ReorderableSongList(this.songs,
+      {required this.scrollController, super.key});
+
+  @override
+  State<ReorderableSongList> createState() => _ReorderableSongListState();
+}
+
+class _ReorderableSongListState extends State<ReorderableSongList> {
+  late List<CollectionSong> _songs;
+
+  @override
+  void initState() {
+    super.initState();
+    _songs =
+        List.from(widget.songs); // Initialize _songs with the provided list
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ReorderableListView(
+      // controller: widget.scrollController, // Use the passed controller
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      buildDefaultDragHandles: false, // Custom drag handles
+      children: List.generate(_songs.length, (index) {
+        final song = _songs[index];
+        return Dismissible(
+          key: ValueKey('collection_song_${song.id}'),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            color: Colors.red,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 20),
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          onDismissed: (direction) async {
+            // remove locally and from provider/db
+            setState(() {
+              _songs.removeAt(index);
+            });
+            final collectionsData =
+                Provider.of<CollectionsData>(context, listen: false);
+            final scaffold = ScaffoldMessenger.of(context);
+            final l10n = AppLocalizations.of(context)!;
+            await collectionsData.deleteCollectionSong(song.id);
+            scaffold.showSnackBar(
+              SnackBar(
+                content: Text('${song.title} ${l10n.collectionSongRemoved}'),
+                action: SnackBarAction(
+                  label: l10n.collectionSongUndo,
+                  onPressed: () async {
+                    await collectionsData.addCollectionSong(song);
+                    setState(() {
+                      _songs.insert(index, song);
+                    });
+                  },
+                ),
               ),
             );
           },
-        ),
-      ),
+          child: Container(
+            key: ValueKey(song.id),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    String lyrics = song.lyrics;
+                    String title = song.title;
+                    String key = song.key;
+
+                    AnalyticsService.instance.trackSongOpened(
+                        songTitle: title, source: 'collection');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Song(
+                          songText: lyrics,
+                          songKey: key,
+                          songTitle: title,
+                          isCollectionSong: true,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Consumer<SongSettings>(
+                    builder: (context, songSettings, child) {
+                      return ListTile(
+                        title: Text(song.title),
+                        trailing: SizedBox(
+                          width: 80,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (songSettings.displayKey) Text(song.key),
+                              const SizedBox(width: 10),
+                              ReorderableDragStartListener(
+                                index: index,
+                                child: const Icon(Icons.menu),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const Divider(height: 0.5),
+              ],
+            ),
+          ),
+        );
+      }),
+      onReorder: (int oldIndex, int newIndex) {
+        setState(() {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final CollectionSong song = _songs.removeAt(oldIndex);
+          _songs.insert(newIndex, song);
+
+          // Update song positions after reordering
+          for (int i = 0; i < _songs.length; i++) {
+            _songs[i].songPosition = i;
+          }
+        });
+      },
     );
   }
 }
