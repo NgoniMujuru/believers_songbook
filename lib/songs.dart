@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:alphabet_scroll_view/alphabet_scroll_view.dart';
 import 'package:believers_songbook/bottom_sheet.dart';
 import 'package:believers_songbook/l10n/app_localizations.dart';
 import 'package:believers_songbook/services/analytics_service.dart';
@@ -33,8 +32,10 @@ class Songs extends StatefulWidget {
 }
 
 class SongsState extends State<Songs> {
+  static const double _songRowExtent = 60;
+
   late final TextEditingController _controller;
-  final ScrollController _numericScrollController = ScrollController();
+  final ScrollController _songListScrollController = ScrollController();
   Timer? _debounce;
   late final FocusNode _focusNode;
   final GlobalKey _settingsMenuKey = GlobalKey();
@@ -76,11 +77,10 @@ class SongsState extends State<Songs> {
       songBookSettings.setSongBookFile(prefs.getString('songBookFile') ??
           'CityTabernacleBulawayo_Bulawayo_Zimbabwe');
 
-      if (prefs.getString('sortOrder') == 'alphabetic') {
-        _sortBy = SortOrder.alphabetic;
-      } else {
-        _sortBy = SortOrder.numerical;
-      }
+      _sortBy = SortOrder.values.firstWhere(
+        (order) => order.name == prefs.getString('sortOrder'),
+        orElse: () => SortOrder.numerical,
+      );
 
       if (prefs.getString('searchBy') == 'title') {
         _searchBy = SearchBy.title;
@@ -130,7 +130,7 @@ class SongsState extends State<Songs> {
     _controller.removeListener(_onTextChanged);
     _focusNode.dispose();
     _controller.dispose();
-    _numericScrollController.dispose();
+    _songListScrollController.dispose();
     super.dispose();
   }
 
@@ -200,10 +200,21 @@ class SongsState extends State<Songs> {
     );
 
     var songList = createSongList(_fileName, fileData);
-    if (_sortBy == SortOrder.alphabetic) {
-      songList.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
-    } else {
-      songList.sort((a, b) => a.elementAt(0) - b.elementAt(0));
+    switch (_sortBy) {
+      case SortOrder.alphabetic:
+        songList.sort((a, b) => customComparator(a.elementAt(1), b.elementAt(1)));
+        break;
+      case SortOrder.key:
+        songList.sort((a, b) {
+          int primary = customComparator(a.elementAt(2), b.elementAt(2));
+          if (primary != 0) return primary;
+          return a.elementAt(1).compareTo(b.elementAt(1));
+        });
+        break;
+      case SortOrder.numerical:
+      default:
+        songList.sort((a, b) => a.elementAt(0) - b.elementAt(0));
+        break;
     }
     setState(() {
       _csvData = songList;
@@ -352,96 +363,96 @@ class SongsState extends State<Songs> {
   }
 
   Expanded _buildAlphabeticList(results) {
-    // AlphabetScrollView re-sorts its list case-insensitively by title and
-    // passes that sorted index to itemBuilder. Sort our data the same way so
-    // the index lines up; otherwise rows (and their numbers) mismatch at
-    // non-alphanumeric/accented titles — e.g. the very last entry.
     final sorted = List.from(results)
       ..sort((a, b) => a
           .elementAt(1)
           .toString()
           .toLowerCase()
           .compareTo(b.elementAt(1).toString().toLowerCase()));
+
+    // Map each letter present to the index of its first song, so the index
+    // bar can jump straight to the right scroll offset.
+    final Map<String, int> firstIndexForLetter = {};
+    for (var i = 0; i < sorted.length; i++) {
+      final title = sorted[i].elementAt(1).toString().toLowerCase();
+      final letter = RegExp(r'^[a-z]').hasMatch(title) ? title[0] : '#';
+      firstIndexForLetter.putIfAbsent(letter, () => i);
+    }
+    final letters = firstIndexForLetter.keys.toList()..sort();
+
     return Expanded(
-      child: Consumer<ThemeSettings>(
-          builder: (context, themeSettings, child) => ((AlphabetScrollView(
-                list: sorted
-                    .map<AlphaModel>((e) => AlphaModel(e.elementAt(1)))
-                    .toList(),
-                alignment: LetterAlignment.right,
-                itemExtent: 60,
-                unselectedTextStyle: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color:
-                        themeSettings.isDarkMode ? Colors.white : Colors.black),
-                selectedTextStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: Styles.themeColor),
-                overlayWidget: (value) => Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Styles.themeColor.withOpacity(0.6),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    value.toUpperCase(),
-                    style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                itemBuilder: (context, index, id) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
-                    child: Column(
-                      children: [
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () {
-                              _focusNode.unfocus();
-                              final songRow = sorted.elementAt(index);
-                              final title = capitalizeFirstLetters(songRow.elementAt(1));
-                              AnalyticsService.instance.trackSongOpened(songTitle: title, source: 'songs_list');
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Song(
-                                          isCollectionSong: false,
-                                          songText:
-                                              songRow.elementAt(3),
-                                          songKey:
-                                              songRow.elementAt(2),
-                                          songTitle: title)));
-                            },
-                            child: Consumer<SongSettings>(
-                                builder: (context, songSettings, child) {
-                              return ListTile(
-                                title: Text(results == null
-                                    ? AppLocalizations.of(context)!
-                                        .songsPageLoading
-                                    : songNumAndTitle(
-                                        sorted.elementAt(index))),
-                                trailing: songSettings.displayKey
-                                    ? Text(
-                                        sorted.elementAt(index).elementAt(2))
-                                    : null,
-                              );
-                            }),
+      child: Stack(
+        children: [
+          ListView.builder(
+            controller: _songListScrollController,
+            itemExtent: _songRowExtent,
+            itemCount: sorted.length,
+            itemBuilder: (context, index) {
+              final songRow = sorted[index];
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
+                child: Column(
+                  children: [
+                    Flexible(
+                      child: Builder(builder: (context) {
+                        final displayKey = context.select<SongSettings,
+                            (bool, bool)>((s) =>
+                            (s.displayKey, s.displaySongNumber)).$1;
+                        return ListTile(
+                          onTap: () {
+                            _focusNode.unfocus();
+                            final title =
+                                capitalizeFirstLetters(songRow.elementAt(1));
+                            AnalyticsService.instance.trackSongOpened(
+                                songTitle: title, source: 'songs_list');
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Song(
+                                        isCollectionSong: false,
+                                        songText: songRow.elementAt(3),
+                                        songKey: songRow.elementAt(2),
+                                        songTitle: title)));
+                          },
+                          title: Text(
+                            songNumAndTitle(songRow),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        const Divider(
-                          height: 5,
-                        ),
-                      ],
+                          trailing: displayKey
+                              ? Text(songRow.elementAt(2))
+                              : null,
+                        );
+                      }),
                     ),
-                  );
-                },
-              )))),
+                    const Divider(
+                      height: 5,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          Positioned(
+            right: 4,
+            top: 0,
+            bottom: 0,
+            width: 32,
+            child: _AlphabetIndexBar(
+              letters: letters,
+              onLetterChanged: (index) {
+                final targetIndex = firstIndexForLetter[letters[index]]!;
+                if (!_songListScrollController.hasClients) return;
+                final maxScroll =
+                    _songListScrollController.position.maxScrollExtent;
+                _songListScrollController.jumpTo(
+                  (targetIndex * _songRowExtent).clamp(0.0, maxScroll),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -450,52 +461,59 @@ class SongsState extends State<Songs> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
         child: RawScrollbar(
-          controller: _numericScrollController,
+          controller: _songListScrollController,
           minThumbLength: MediaQuery.of(context).size.width > 600 ? 100 : 40,
           thickness: MediaQuery.of(context).size.width > 600 ? 20 : 10.0,
           radius: const Radius.circular(5.0),
           thumbVisibility: true,
           child: ListView.builder(
-            controller: _numericScrollController,
-            itemBuilder: (context, index) => Padding(
-              padding: MediaQuery.of(context).size.width > 600
-                  ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
-                  : const EdgeInsets.fromLTRB(0, 0, 15, 0),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      _focusNode.unfocus();
-                      final songRow = results!.elementAt(index);
-                      final title = songNumAndTitle(songRow);
-                      AnalyticsService.instance.trackSongOpened(songTitle: title, source: 'songs_list');
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Song(
-                                  isCollectionSong: false,
-                                  songText: songRow.elementAt(3),
-                                  songKey: songRow.elementAt(2),
-                                  songTitle: title)));
-                    },
-                    child: Consumer<SongSettings>(
-                        builder: (context, songSettings, child) {
-                      return ListTile(
-                        title: Text(results == null
-                            ? AppLocalizations.of(context)!.songsPageLoading
-                            : songNumAndTitle(results!.elementAt(index))),
-                        trailing: songSettings.displayKey
-                            ? Text(results!.elementAt(index).elementAt(2))
-                            : null,
-                      );
-                    }),
-                  ),
-                  const Divider(
-                    height: 0.5,
-                  ),
-                ],
-              ),
-            ),
+            controller: _songListScrollController,
+            itemExtent: _songRowExtent,
+            itemBuilder: (context, index) {
+              final songRow = results!.elementAt(index);
+              return Padding(
+                padding: MediaQuery.of(context).size.width > 600
+                    ? const EdgeInsets.fromLTRB(0, 0, 25, 0)
+                    : const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                child: Column(
+                  children: [
+                    Flexible(
+                      child: Builder(builder: (context) {
+                        final displayKey = context.select<SongSettings,
+                            (bool, bool)>((s) =>
+                            (s.displayKey, s.displaySongNumber)).$1;
+                        return ListTile(
+                          onTap: () {
+                            _focusNode.unfocus();
+                            final title = songNumAndTitle(songRow);
+                            AnalyticsService.instance.trackSongOpened(
+                                songTitle: title, source: 'songs_list');
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Song(
+                                        isCollectionSong: false,
+                                        songText: songRow.elementAt(3),
+                                        songKey: songRow.elementAt(2),
+                                        songTitle: title)));
+                          },
+                          title: Text(
+                            songNumAndTitle(songRow),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing:
+                              displayKey ? Text(songRow.elementAt(2)) : null,
+                        );
+                      }),
+                    ),
+                    const Divider(
+                      height: 0.5,
+                    ),
+                  ],
+                ),
+              );
+            },
             itemCount: results == null ? 0 : results!.length,
           ),
         ),
@@ -614,5 +632,123 @@ class SongsState extends State<Songs> {
       }
     });
     return songSearchResults;
+  }
+}
+
+/// A-Z index bar for jumping to a letter in the alphabetic song list.
+///
+/// Each letter is given an equal share of the bar's full height (rather than
+/// just the width of its glyph plus a couple of pixels of padding), so the
+/// touch target is large enough to hit reliably while scrubbing up and down.
+class _AlphabetIndexBar extends StatefulWidget {
+  final List<String> letters;
+  final ValueChanged<int> onLetterChanged;
+
+  const _AlphabetIndexBar({
+    required this.letters,
+    required this.onLetterChanged,
+  });
+
+  @override
+  State<_AlphabetIndexBar> createState() => _AlphabetIndexBarState();
+}
+
+class _AlphabetIndexBarState extends State<_AlphabetIndexBar> {
+  // Drives the floating bubble — only set while actively tapping/dragging.
+  int? _activeIndex;
+  // Drives the letter's green highlight — persists after lift-off, so the
+  // last-selected letter stays highlighted until a different one is picked.
+  int? _lastSelectedIndex;
+
+  void _updateFromLocalPosition(double dy, double totalHeight) {
+    if (widget.letters.isEmpty || totalHeight <= 0) return;
+    final rowHeight = totalHeight / widget.letters.length;
+    final index = (dy / rowHeight).floor().clamp(0, widget.letters.length - 1);
+    if (index != _activeIndex) {
+      setState(() {
+        _activeIndex = index;
+        _lastSelectedIndex = index;
+      });
+      widget.onLetterChanged(index);
+    }
+  }
+
+  void _endInteraction() {
+    setState(() => _activeIndex = null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = context.watch<ThemeSettings>().isDarkMode;
+    return LayoutBuilder(builder: (context, constraints) {
+      final rowHeight = widget.letters.isEmpty
+          ? 0.0
+          : constraints.maxHeight / widget.letters.length;
+      final bubbleTop = _activeIndex == null
+          ? 0.0
+          : ((_activeIndex! + 0.5) * rowHeight - 50)
+              .clamp(0.0, (constraints.maxHeight - 100).clamp(0.0, double.infinity));
+
+      return Stack(
+        clipBehavior: Clip.none,
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (details) => _updateFromLocalPosition(
+                details.localPosition.dy, constraints.maxHeight),
+            onTapUp: (_) => _endInteraction(),
+            onVerticalDragStart: (details) => _updateFromLocalPosition(
+                details.localPosition.dy, constraints.maxHeight),
+            onVerticalDragUpdate: (details) => _updateFromLocalPosition(
+                details.localPosition.dy, constraints.maxHeight),
+            onVerticalDragEnd: (_) => _endInteraction(),
+            child: Column(
+              children: List.generate(widget.letters.length, (i) {
+                final selected = i == (_activeIndex ?? _lastSelectedIndex);
+                return Expanded(
+                  child: Center(
+                    child: Text(
+                      widget.letters[i].toUpperCase(),
+                      style: selected
+                          ? const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: Styles.themeColor)
+                          : TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: isDarkMode ? Colors.white : Colors.black),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+          if (_activeIndex != null)
+            Positioned(
+              right: 40,
+              top: bubbleTop,
+              child: IgnorePointer(
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Styles.themeColor.withOpacity(0.6),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    widget.letters[_activeIndex!].toUpperCase(),
+                    style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      );
+    });
   }
 }
