@@ -3,6 +3,7 @@
 import 'package:believers_songbook/account_page.dart';
 import 'package:believers_songbook/providers/auth_provider.dart';
 import 'package:believers_songbook/constants/song_book_assets.dart';
+import 'package:believers_songbook/constants/store_urls.dart';
 import 'package:believers_songbook/providers/songbook_counts.dart';
 import 'package:believers_songbook/widgets/sync_status_icon.dart';
 import 'package:believers_songbook/providers/main_page_settings.dart';
@@ -326,11 +327,12 @@ class _AboutPageState extends State<AboutPage> {
   }
 
   void manualReview(context) async {
-    String url = Platform.isIOS
-        ? "https://apps.apple.com/app/songbook-for-believers/id1667531237"
-        : "https://play.google.com/store/apps/details?id=com.ngonimujuru.songbook_for_believers";
+    String url = AppStoreLinks.currentPlatformUrl;
     if (await canLaunchUrlString(url)) {
-      await launchUrlString(url);
+      // App Store links must open externally — apps.apple.com refuses to
+      // load inside an in-app browser (the platform-default mode), which
+      // surfaces as Safari's "address is invalid" error.
+      await launchUrlString(url, mode: LaunchMode.externalApplication);
     } else {
       createDialog(
           context,

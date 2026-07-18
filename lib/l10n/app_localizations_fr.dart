@@ -396,6 +396,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncExplainerSignInNow => 'Se connecter';
 
   @override
+  String get updateAvailableTitle => 'Mise à jour disponible';
+
+  @override
+  String get updateAvailableBody =>
+      'Une nouvelle version de l\'application est disponible. Mettez à jour maintenant pour profiter des dernières fonctionnalités et corrections.';
+
+  @override
+  String get updateAvailableActionUpdate => 'Mettre à jour';
+
+  @override
+  String get updateAvailableActionLater => 'Pas maintenant';
+
+  @override
   String get tourStep1Title => 'Options des chansons';
 
   @override

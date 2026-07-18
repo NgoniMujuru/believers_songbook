@@ -516,6 +516,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  new_version_plus:
+    dependency: "direct main"
+    description:
+      name: new_version_plus
+      sha256: "595001d98f2c6bea05eff2cd6614c1c42e344a13f2dc2aed3b836593d0a9621c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.12"
   package_info_plus:
     dependency: "direct main"
     description:

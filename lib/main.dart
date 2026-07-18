@@ -5,6 +5,8 @@ import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/songbook_counts.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/account_page.dart';
+import 'package:believers_songbook/services/update_check_service.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -26,6 +28,13 @@ Future<void> main() async {
 
   final counts = SongbookCounts();
   await counts.load();
+
+  if (kDebugMode) {
+    // Forces the "update available" popup to show on this launch, for
+    // manual testing only — never active in release builds.
+    UpdateCheckService.debugForcedStoreVersion = '99.0.0';
+    UpdateCheckService.debugForceOverdue = true;
+  }
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => SongSettings()),

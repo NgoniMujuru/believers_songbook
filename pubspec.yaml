@@ -60,6 +60,7 @@ dependencies:
   package_info_plus: ^8.3.0
   flutter_svg: ^2.2.4
   flutter_welcome_kit: ^2.0.0
+  new_version_plus: ^0.0.12
 
 flutter_icons:
   image_path: "assets/icon.png"

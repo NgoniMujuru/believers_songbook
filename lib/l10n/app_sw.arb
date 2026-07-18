@@ -117,6 +117,10 @@
   "syncExplainerBody3": "Unaweza kutumia Google, Apple, au barua pepe kuunda akaunti.",
   "syncExplainerMaybeLater": "Labda baadaye",
   "syncExplainerSignInNow": "Ingia sasa",
+  "updateAvailableTitle": "Sasisho linapatikana",
+  "updateAvailableBody": "Toleo jipya la programu linapatikana. Sasisha sasa ili upate vipengele na marekebisho mapya zaidi.",
+  "updateAvailableActionUpdate": "Sasisha",
+  "updateAvailableActionLater": "Sivyo sasa",
 
   "tourStep1Title": "Mipangilio ya Nyimbo",
   "tourStep1Description": "Fungua mipangilio ya skrini ya nyimbo.",

@@ -7,13 +7,17 @@ import 'package:believers_songbook/providers/main_page_settings.dart';
 import 'package:believers_songbook/providers/song_book_settings.dart';
 import 'package:believers_songbook/providers/song_settings.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
+import 'package:believers_songbook/constants/store_urls.dart';
 import 'package:believers_songbook/services/analytics_service.dart';
 import 'package:believers_songbook/services/sync_service.dart';
+import 'package:believers_songbook/services/update_check_service.dart';
 import 'package:believers_songbook/songs.dart';
 import 'package:believers_songbook/styles.dart';
+import 'package:believers_songbook/widgets/update_available_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'about.dart';
 import 'song_books.dart';
 
@@ -57,8 +61,13 @@ class _AppPagesState extends State<AppPages> {
   @override
   void initState() {
     super.initState();
-    _showSyncExplainerIfNeeded();
+    _runStartupChecks();
     _syncOnStartup();
+  }
+
+  Future<void> _runStartupChecks() async {
+    await _showSyncExplainerIfNeeded();
+    await _checkForAppUpdate();
   }
 
   /// Pull cloud settings/collections when the user is already signed in.
@@ -189,6 +198,28 @@ class _AppPagesState extends State<AppPages> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _checkForAppUpdate() async {
+    final result = await UpdateCheckService.instance.checkForUpdate();
+    if (!result.shouldShowPopup) return;
+    if (!mounted) return;
+
+    await showUpdateAvailableDialog(
+      context,
+      onUpdate: () async {
+        final url = AppStoreLinks.currentPlatformUrl;
+        if (await canLaunchUrlString(url)) {
+          // App Store links must open externally — apps.apple.com refuses
+          // to load inside an in-app browser (the platform-default mode),
+          // which surfaces as Safari's "address is invalid" error.
+          await launchUrlString(url, mode: LaunchMode.externalApplication);
+        }
+      },
+      onDismiss: () {
+        UpdateCheckService.instance.markDismissed(result.storeVersion);
+      },
     );
   }
 
