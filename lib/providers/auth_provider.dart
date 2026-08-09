@@ -291,6 +291,12 @@ class AuthProvider extends ChangeNotifier {
         defaultTargetPlatform == TargetPlatform.macOS;
   }
 
+  /// Check if Google Sign-In is available on this device (no Windows plugin)
+  bool get isGoogleSignInAvailable {
+    if (kIsWeb) return true;
+    return defaultTargetPlatform != TargetPlatform.windows;
+  }
+
   /// Clear error
   void clearError() {
     _error = null;

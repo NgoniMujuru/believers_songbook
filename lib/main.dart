@@ -6,7 +6,8 @@ import 'package:believers_songbook/providers/songbook_counts.dart';
 import 'package:believers_songbook/providers/theme_settings.dart';
 import 'package:believers_songbook/account_page.dart';
 import 'package:believers_songbook/services/update_check_service.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart'
+    show kDebugMode, kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -118,7 +119,9 @@ class _MyAppState extends State<MyApp> {
     return Consumer<ThemeSettings>(
       builder: (context, themeSettings, child) => MaterialApp(
         navigatorObservers: [
-          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          // firebase_analytics has no Windows implementation.
+          if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows)
+            FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
         ],
         localizationsDelegates: const [
           AppLocalizations.delegate,

@@ -76,8 +76,9 @@ ios/Gemfile
 ios/Gemfile.lock
 ios/fastlane/
 
-# GitHub Actions
-.github/
+# GitHub Actions (workflows are tracked; ignore everything else under .github/)
+.github/*
+!.github/workflows/
 
 # Claude Code project config
 .claude/

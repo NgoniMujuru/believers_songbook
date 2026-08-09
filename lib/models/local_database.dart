@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'collection.dart';
 import 'collection_song.dart';
@@ -12,6 +14,10 @@ class LocalDatabase {
   static var database;
 
   static initDatabase() async {
+    if (Platform.isWindows || Platform.isLinux) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
     database = openDatabase(
       join(await getDatabasesPath(), 'local_database.db'),
       onCreate: createDatabase,

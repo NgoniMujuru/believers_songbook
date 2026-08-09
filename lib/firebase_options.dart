@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -83,4 +80,13 @@ class DefaultFirebaseOptions {
     iosBundleId: 'com.ngonimujuru.songbookForBelievers',
   );
 
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAXEPkRbJ7VCkhTRryRQtmUXx5QMcKwP2U',
+    appId: '1:767948267709:web:46d4acf273ae5a581397d4',
+    messagingSenderId: '767948267709',
+    projectId: 'believers-songbook-v2-11edb',
+    authDomain: 'believers-songbook-v2-11edb.firebaseapp.com',
+    storageBucket: 'believers-songbook-v2-11edb.firebasestorage.app',
+    measurementId: 'G-37KTG02NFR',
+  );
 }
