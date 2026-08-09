@@ -83,6 +83,12 @@ flutter_icons:
 #   store: true
 msix_config:
   display_name: Songbook for Believers
+  # msix normally prompts interactively to install its self-signed test
+  # certificate on the build machine; that hangs/crashes in CI's
+  # non-interactive shell, so skip it. The .msix is still produced -- to
+  # install it locally you'd trust build/windows/x64/runner/Release/*.pfx
+  # first, or just run the .exe directly (no signing needed for that).
+  install_certificate: false
   msix_version: 1.22.1.0
   logo_path: assets/icon.png
   capabilities: internetClient
