@@ -72,13 +72,17 @@ flutter_icons:
     icon_size: 256
 
 # MSIX packaging config for Microsoft Store distribution (dart run msix:create).
-# publisher_display_name/identity_name/publisher are placeholders until the
-# Microsoft Partner Center app reservation is complete.
+# publisher_display_name/identity_name/publisher/store are intentionally
+# unset until the Microsoft Partner Center app reservation is complete --
+# msix falls back to a self-signed sideload package (com.flutter.<app_name>
+# identity) without them, which is enough to build and test locally/in CI.
+# Once Partner Center gives you the real values, add:
+#   publisher_display_name: <from Partner Center>
+#   identity_name: <from Partner Center>
+#   publisher: <CN=... from Partner Center>
+#   store: true
 msix_config:
   display_name: Songbook for Believers
-  publisher_display_name: TODO_PARTNER_CENTER_PUBLISHER_DISPLAY_NAME
-  identity_name: TODO_PARTNER_CENTER_IDENTITY_NAME
-  publisher: TODO_PARTNER_CENTER_PUBLISHER_CN
   msix_version: 1.22.1.0
   logo_path: assets/icon.png
   capabilities: internetClient
