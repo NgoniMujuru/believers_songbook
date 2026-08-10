@@ -1,0 +1,38 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.44.1"
+          channel: stable
+
+      - run: flutter pub get
+
+      - run: flutter test
+
+      - run: flutter build windows --release
+        env:
+          # The runner's CMake is newer than the Firebase C++ SDK vendored by
+          # firebase_core/_auth/cloud_firestore's Windows plugin supports
+          # (its CMakeLists.txt requires < CMake 3.5, which recent CMake
+          # refuses to configure). This tells CMake to treat it as 3.5.
+          CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+
+      - run: dart run msix:create
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/windows/x64/runner/Release/

@@ -1,0 +1,5 @@
+# Normalize line endings to LF on checkout for all platforms, including
+# Windows runners (where git's default core.autocrlf=true would otherwise
+# convert text files to CRLF and break byte-exact comparisons like the
+# assets/All.csv freshness check in test/songbooks_test.dart).
+* text=auto eol=lf

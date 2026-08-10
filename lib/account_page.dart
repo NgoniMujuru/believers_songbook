@@ -140,24 +140,26 @@ class _SignInViewState extends State<_SignInView> {
                           child: Text(l10n.accountBackToSignInOptions),
                         ),
                       ] else ...[
-                        // Google Sign-In button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: OutlinedButton.icon(
-                            onPressed: auth.isLoading
-                                ? null
-                                : () => _handleGoogleSignIn(context),
-                            icon: const GoogleLogo(size: 22),
-                            label: Text(l10n.accountContinueWithGoogle),
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                        // Google Sign-In button (no Windows plugin)
+                        if (auth.isGoogleSignInAvailable) ...[
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: OutlinedButton.icon(
+                              onPressed: auth.isLoading
+                                  ? null
+                                  : () => _handleGoogleSignIn(context),
+                              icon: const GoogleLogo(size: 22),
+                              label: Text(l10n.accountContinueWithGoogle),
+                              style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
+                          const SizedBox(height: 12),
+                        ],
                         // Apple Sign-In button (iOS/macOS only)
                         if (!kIsWeb &&
                             (defaultTargetPlatform == TargetPlatform.iOS ||

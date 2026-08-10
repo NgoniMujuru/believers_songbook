@@ -225,8 +225,9 @@ class _AboutPageState extends State<AboutPage> {
                             ),
                             onPressed: () async {
                               AnalyticsService.instance.trackRateAppClicked();
-                              if (Platform.isAndroid) {
+                              if (Platform.isAndroid || Platform.isWindows) {
                                 //android does not support in app review from button press
+                                //in_app_review has no Windows implementation
                                 manualReview(context);
                               } else {
                                 try {

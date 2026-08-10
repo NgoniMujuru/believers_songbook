@@ -43,11 +43,12 @@ dependencies:
   provider: ^6.0.5
   shared_preferences: ^2.3.2
   url_launcher: ^6.1.7
-  flutter_launcher_icons: ^0.11.0
+  flutter_launcher_icons: ^0.14.4
   in_app_review: ^2.0.11
   share_plus: ^10.0.2
   wakelock_plus: ^1.2.8
   sqflite: ^2.2.8+4
+  sqflite_common_ffi: ^2.3.2
   path: ^1.8.2
   intl: any
   firebase_core: ^4.2.0
@@ -65,6 +66,25 @@ flutter_icons:
   image_path: "assets/icon.png"
   android: true
   ios: true
+  windows:
+    generate: true
+    image_path: "assets/icon.png"
+    icon_size: 256
+
+# MSIX packaging config for Microsoft Store distribution (dart run msix:create).
+# Identity values are from the Microsoft Partner Center app reservation
+# (Product > Product identity). store: true means msix leaves the package
+# unsigned -- the Store re-signs it with its own certificate during
+# certification, so this .msix is submission-ready, not sideload-installable.
+msix_config:
+  display_name: Songbook for Believers
+  publisher_display_name: Ngoni Mujuru
+  identity_name: NgoniMujuru.SongbookforBelievers
+  publisher: CN=A2355582-D879-476C-9BC0-36D50756BF93
+  store: true
+  msix_version: 1.22.1.0
+  logo_path: assets/icon.png
+  capabilities: internetClient
 
 dev_dependencies:
   flutter_test:
@@ -76,7 +96,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  sqflite_common_ffi: ^2.3.2
+  msix: ^3.18.0
 
 dependency_overrides:
   flutter_welcome_kit:

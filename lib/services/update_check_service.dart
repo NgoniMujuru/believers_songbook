@@ -113,6 +113,9 @@ class UpdateCheckService {
     await prefs.setString(_dismissedVersionKey, version);
   }
 
+  // new_version_plus has no Microsoft Store parameter, so this silently
+  // returns null on Windows (caught below) and the update prompt never
+  // fires there. Accepted gap — no MS Store version-check API to use instead.
   Future<String?> _fetchStoreVersion() async {
     try {
       final newVersion = NewVersionPlus(
