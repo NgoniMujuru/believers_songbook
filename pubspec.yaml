@@ -72,23 +72,16 @@ flutter_icons:
     icon_size: 256
 
 # MSIX packaging config for Microsoft Store distribution (dart run msix:create).
-# publisher_display_name/identity_name/publisher/store are intentionally
-# unset until the Microsoft Partner Center app reservation is complete --
-# msix falls back to a self-signed sideload package (com.flutter.<app_name>
-# identity) without them, which is enough to build and test locally/in CI.
-# Once Partner Center gives you the real values, add:
-#   publisher_display_name: <from Partner Center>
-#   identity_name: <from Partner Center>
-#   publisher: <CN=... from Partner Center>
-#   store: true
+# Identity values are from the Microsoft Partner Center app reservation
+# (Product > Product identity). store: true means msix leaves the package
+# unsigned -- the Store re-signs it with its own certificate during
+# certification, so this .msix is submission-ready, not sideload-installable.
 msix_config:
   display_name: Songbook for Believers
-  # msix normally prompts interactively to install its self-signed test
-  # certificate on the build machine; that hangs/crashes in CI's
-  # non-interactive shell, so skip it. The .msix is still produced -- to
-  # install it locally you'd trust build/windows/x64/runner/Release/*.pfx
-  # first, or just run the .exe directly (no signing needed for that).
-  install_certificate: false
+  publisher_display_name: Ngoni Mujuru
+  identity_name: NgoniMujuru.SongbookforBelievers
+  publisher: CN=A2355582-D879-476C-9BC0-36D50756BF93
+  store: true
   msix_version: 1.22.1.0
   logo_path: assets/icon.png
   capabilities: internetClient
