@@ -56,6 +56,7 @@
   "songsPageSearchSongsByTitle": "Kichwa",
   "songsPageSearchSongsByLyrics": "Maneno",
   "songsPageSearchSongsByKey": "Kifunguo",
+  "songsPageSearchExactMatch": "Linganisho kamili",
   "songsPageLoadingSongbooksText": "Inapakia nyimbo. Tafadhali kuwa na subira, hii inaweza kuchukua muda kidogo.",
   "songsPageNoSongsFoundWord": "Kitabu cha nyimbo: hakuna nyimbo zilizopatikana na maneno",
   "songsPageNoSongsFoundKey": "Kitabu cha nyimbo: hakuna nyimbo zilizopatikana na kifunguo",

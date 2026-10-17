@@ -10,7 +10,7 @@ import 'package:believers_songbook/models/collection_song.dart';
 /// Firestore structure:
 /// ```
 /// users/{uid}/
-///   settings: { fontSize, displayKey, displaySongNumber, isDarkMode, songBookFile, locale, sortOrder, searchBy }
+///   settings: { fontSize, displayKey, displaySongNumber, isDarkMode, songBookFile, locale, sortOrder, searchBy, strictMatch }
 ///   collections/{collectionId}: { name, dateCreated }
 ///   collections/{collectionId}/songs/{songId}: { title, key, lyrics, songPosition }
 /// ```
@@ -52,6 +52,7 @@ class SyncService {
     required String locale,
     String? sortOrder,
     String? searchBy,
+    bool? strictMatch,
   }) async {
     final doc = _userDoc;
     if (doc == null) return;
@@ -67,6 +68,7 @@ class SyncService {
           'locale': locale,
           if (sortOrder != null) 'sortOrder': sortOrder,
           if (searchBy != null) 'searchBy': searchBy,
+          if (strictMatch != null) 'strictMatch': strictMatch,
         },
         'lastSyncedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
@@ -353,6 +355,7 @@ class SyncService {
     required String locale,
     String? sortOrder,
     String? searchBy,
+    bool? strictMatch,
     required List<Collection> collections,
     required List<CollectionSong> collectionSongs,
   }) async {
@@ -369,6 +372,7 @@ class SyncService {
         locale: locale,
         sortOrder: sortOrder,
         searchBy: searchBy,
+        strictMatch: strictMatch,
       );
 
       // Push collections

@@ -56,6 +56,7 @@
   "songsPageSearchSongsByTitle": "Titre",
   "songsPageSearchSongsByLyrics": "Paroles",
   "songsPageSearchSongsByKey": "Clé",
+  "songsPageSearchExactMatch": "Correspondance exacte",
   "songsPageLoadingSongbooksText": "Chargement des chansons. Veuillez patienter, cela peut prendre un peu de temps.",
   "songsPageNoSongsFoundWord": "Recueil de chants : aucune chanson trouvée avec les mots",
   "songsPageNoSongsFoundKey": "Recueil de chants : aucune chanson trouvée avec la clé",

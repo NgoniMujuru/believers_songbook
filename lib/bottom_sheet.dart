@@ -14,9 +14,11 @@ class BottomSheetSettings extends StatefulWidget {
   final List<List<dynamic>>? csvData;
   final SortOrder? sortBy;
   final SearchBy? searchBy;
+  final bool strictMatch;
   final Function(List<List<dynamic>>?)? onCsvDataChanged;
   final Function(SortOrder)? onSortByChanged;
   final Function(SearchBy)? onSearchByChanged;
+  final Function(bool)? onStrictMatchChanged;
   final int Function(String, String) customComparator;
 
   const BottomSheetSettings({
@@ -24,9 +26,11 @@ class BottomSheetSettings extends StatefulWidget {
     this.csvData,
     this.sortBy,
     this.searchBy,
+    this.strictMatch = false,
     this.onCsvDataChanged,
     this.onSortByChanged,
     this.onSearchByChanged,
+    this.onStrictMatchChanged,
     required this.customComparator,
   }) : super(key: key);
 
@@ -34,9 +38,11 @@ class BottomSheetSettings extends StatefulWidget {
       {List<List<dynamic>>? csvData,
       SortOrder? sortBy,
       SearchBy? searchBy,
+      bool strictMatch = false,
       Function(List<List<dynamic>>?)? onCsvDataChanged,
       Function(SortOrder)? onSortByChanged,
       Function(SearchBy)? onSearchByChanged,
+      Function(bool)? onStrictMatchChanged,
       required int Function(String, String) customComparator}) {
     return showModalBottomSheet<void>(
       context: context,
@@ -57,9 +63,11 @@ class BottomSheetSettings extends StatefulWidget {
           csvData: csvData,
           sortBy: sortBy,
           searchBy: searchBy,
+          strictMatch: strictMatch,
           onCsvDataChanged: onCsvDataChanged,
           onSortByChanged: onSortByChanged,
           onSearchByChanged: onSearchByChanged,
+          onStrictMatchChanged: onStrictMatchChanged,
           customComparator: customComparator,
         );
       },
@@ -78,6 +86,7 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
   List<List<dynamic>>? get _csvData => widget.csvData;
   late SortOrder? _localSortBy;
   late SearchBy? _localSearchBy;
+  late bool _localStrictMatch;
   int Function(String, String) get customComparator => widget.customComparator;
 
   @override
@@ -85,6 +94,7 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     super.initState();
     _localSortBy = widget.sortBy;
     _localSearchBy = widget.searchBy;
+    _localStrictMatch = widget.strictMatch;
     final tour = context.read<AppTourController>();
     tour.registerTarget(TourIds.songsSettingsSortChip, _sortOrderKey);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -148,6 +158,19 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     prefs.setString('searchBy', searchBy.name);
     SyncService.pushSetting('searchBy', searchBy.name);
     AnalyticsService.instance.trackSearchByChanged(searchBy: searchBy.name);
+  }
+
+  Future<void> _handleStrictMatchChange(bool value) async {
+    if (widget.onStrictMatchChanged != null) {
+      widget.onStrictMatchChanged!(value);
+    }
+    setState(() {
+      _localStrictMatch = value;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('strictMatch', value);
+    SyncService.pushSetting('strictMatch', value);
+    AnalyticsService.instance.trackStrictMatchChanged(enabled: value);
   }
 
   Widget _buildSortOrderChips(BuildContext context) {
@@ -224,6 +247,18 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
           );
         }).toList(),
       ),
+    );
+  }
+
+  Widget _buildStrictMatchToggle(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Switch(
+          value: _localStrictMatch,
+          onChanged: _handleStrictMatchChange,
+        ),
+      ],
     );
   }
 
@@ -347,6 +382,10 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
           _buildSettingSection(
             AppLocalizations.of(context)!.songsPageSearchSongsBy,
             _buildSearchByChips(context),
+          ),
+          _buildSettingSection(
+            AppLocalizations.of(context)!.songsPageSearchExactMatch,
+            _buildStrictMatchToggle(context),
           ),
         ],
       ),

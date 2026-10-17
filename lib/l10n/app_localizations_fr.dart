@@ -202,6 +202,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get songsPageSearchSongsByKey => 'Clé';
 
   @override
+  String get songsPageSearchExactMatch => 'Correspondance exacte';
+
+  @override
   String get songsPageLoadingSongbooksText =>
       'Chargement des chansons. Veuillez patienter, cela peut prendre un peu de temps.';
 

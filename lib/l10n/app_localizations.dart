@@ -442,6 +442,12 @@ abstract class AppLocalizations {
   /// **'Key'**
   String get songsPageSearchSongsByKey;
 
+  /// No description provided for @songsPageSearchExactMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact match'**
+  String get songsPageSearchExactMatch;
+
   /// No description provided for @songsPageLoadingSongbooksText.
   ///
   /// In en, this message translates to:
