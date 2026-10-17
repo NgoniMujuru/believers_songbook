@@ -442,6 +442,24 @@ abstract class AppLocalizations {
   /// **'Key'**
   String get songsPageSearchSongsByKey;
 
+  /// No description provided for @songsPageSearchType.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Type:'**
+  String get songsPageSearchType;
+
+  /// No description provided for @songsPageSearchTypeApproximate.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar'**
+  String get songsPageSearchTypeApproximate;
+
+  /// No description provided for @songsPageSearchTypeExact.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact'**
+  String get songsPageSearchTypeExact;
+
   /// No description provided for @songsPageLoadingSongbooksText.
   ///
   /// In en, this message translates to:

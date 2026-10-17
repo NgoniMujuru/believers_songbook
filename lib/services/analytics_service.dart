@@ -148,6 +148,13 @@ class AnalyticsService {
     );
   }
 
+  Future<void> trackStrictMatchChanged({required bool enabled}) {
+    return _analytics.logEvent(
+      name: 'strict_match_changed',
+      parameters: {'enabled': enabled ? 1 : 0},
+    );
+  }
+
   // --- Collection Management ---
 
   Future<void> trackCollectionOpened({required String collectionName}) {

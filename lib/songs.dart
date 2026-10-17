@@ -43,6 +43,7 @@ class SongsState extends State<Songs> {
   String _terms = '';
   SortOrder? _sortBy;
   SearchBy? _searchBy;
+  bool _strictMatch = false;
   Expanded _songList = const Expanded(
     child: Center(
       child: Text('...'),
@@ -92,6 +93,8 @@ class SongsState extends State<Songs> {
         _searchBy = SearchBy.titleAndLyrics;
       }
 
+      _strictMatch = prefs.getBool('strictMatch') ?? false;
+
       _fileName = context.read<SongBookSettings>().songBookFile;
       setState(() {
         _loadingSongs = false;
@@ -106,6 +109,7 @@ class SongsState extends State<Songs> {
       csvData: _csvData,
       sortBy: _sortBy,
       searchBy: _searchBy,
+      strictMatch: _strictMatch,
       customComparator: customComparator,
       onCsvDataChanged: (newCsvData) {
         setState(() {
@@ -120,6 +124,11 @@ class SongsState extends State<Songs> {
       onSortByChanged: (newSortBy) {
         setState(() {
           _sortBy = newSortBy;
+        });
+      },
+      onStrictMatchChanged: (newStrictMatch) {
+        setState(() {
+          _strictMatch = newStrictMatch;
         });
       },
     );
@@ -274,6 +283,18 @@ class SongsState extends State<Songs> {
         }
       }
       return results;
+    }
+
+    final trimmed = _terms.trim();
+    final quoted = trimmed.length >= 3 &&
+        trimmed.startsWith('"') &&
+        trimmed.endsWith('"');
+    final effectiveTerm =
+        quoted ? trimmed.substring(1, trimmed.length - 1) : _terms;
+    final useStrict =
+        (quoted || _strictMatch) && effectiveTerm.trim().isNotEmpty;
+    if (useStrict) {
+      return strictFilter(effectiveTerm);
     }
 
     List<SongSearchResult> songSearchResults = searchSongs(_searchBy);
@@ -605,6 +626,36 @@ class SongsState extends State<Songs> {
         ),
       ),
     );
+  }
+
+  List<dynamic> strictFilter(String term) {
+    final pattern = RegExp(
+      r'(?<![\p{L}\p{N}])' + RegExp.escape(term),
+      caseSensitive: false,
+      unicode: true,
+    );
+    final titleHits = <dynamic>[];
+    final lyricsHits = <dynamic>[];
+    for (final song in _csvData ?? const []) {
+      final title = song.elementAt(1).toString();
+      final lyrics = song.elementAt(3).toString();
+      final titleHit =
+          _searchBy != SearchBy.lyrics && pattern.hasMatch(title);
+      final lyricsHit = (_searchBy == SearchBy.lyrics ||
+              _searchBy == SearchBy.titleAndLyrics) &&
+          pattern.hasMatch(lyrics);
+      if (titleHit) {
+        titleHits.add(song);
+      } else if (lyricsHit) {
+        lyricsHits.add(song);
+      }
+      if (titleHits.length + lyricsHits.length >= _maxSearchResults) break;
+    }
+    final combined = [...titleHits, ...lyricsHits];
+    if (combined.length > _maxSearchResults) {
+      return combined.sublist(0, _maxSearchResults);
+    }
+    return combined;
   }
 
   List<SongSearchResult> searchSongs(SearchBy? criteria) {

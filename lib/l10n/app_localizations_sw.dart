@@ -202,6 +202,15 @@ class AppLocalizationsSw extends AppLocalizations {
   String get songsPageSearchSongsByKey => 'Kifunguo';
 
   @override
+  String get songsPageSearchType => 'Aina ya Utafutaji:';
+
+  @override
+  String get songsPageSearchTypeApproximate => 'Takriban';
+
+  @override
+  String get songsPageSearchTypeExact => 'Kamili';
+
+  @override
   String get songsPageLoadingSongbooksText =>
       'Inapakia nyimbo. Tafadhali kuwa na subira, hii inaweza kuchukua muda kidogo.';
 

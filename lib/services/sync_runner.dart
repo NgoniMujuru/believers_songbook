@@ -33,6 +33,7 @@ class SyncRunner {
       locale: mainPageSettings.getLocale,
       sortOrder: prefs.getString('sortOrder'),
       searchBy: prefs.getString('searchBy'),
+      strictMatch: prefs.getBool('strictMatch'),
       collections: collectionsData.collections,
       collectionSongs: collectionsData.collectionSongs,
     );

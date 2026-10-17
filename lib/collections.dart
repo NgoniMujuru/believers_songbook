@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 class CollectionSongs extends StatelessWidget {
   final String collectionId;
   final ScrollController _scrollController = ScrollController();
-x
+
   CollectionSongs({
     required this.collectionId,
     Key? key,
