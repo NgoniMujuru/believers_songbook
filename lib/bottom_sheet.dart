@@ -250,13 +250,21 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
     );
   }
 
-  Widget _buildStrictMatchToggle(BuildContext context) {
+  Widget _buildSearchTypeChips(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Switch(
-          value: _localStrictMatch,
-          onChanged: _handleStrictMatchChange,
+        ChoiceChip(
+          label: Text(
+              AppLocalizations.of(context)!.songsPageSearchTypeApproximate),
+          selected: !_localStrictMatch,
+          onSelected: (bool selected) => _handleStrictMatchChange(false),
+        ),
+        const SizedBox(width: _chipSpacing),
+        ChoiceChip(
+          label: Text(AppLocalizations.of(context)!.songsPageSearchTypeExact),
+          selected: _localStrictMatch,
+          onSelected: (bool selected) => _handleStrictMatchChange(true),
         ),
       ],
     );
@@ -384,8 +392,8 @@ class _BottomSheetSettingsState extends State<BottomSheetSettings> {
             _buildSearchByChips(context),
           ),
           _buildSettingSection(
-            AppLocalizations.of(context)!.songsPageSearchExactMatch,
-            _buildStrictMatchToggle(context),
+            AppLocalizations.of(context)!.songsPageSearchType,
+            _buildSearchTypeChips(context),
           ),
         ],
       ),

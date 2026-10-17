@@ -202,7 +202,13 @@ class AppLocalizationsSw extends AppLocalizations {
   String get songsPageSearchSongsByKey => 'Kifunguo';
 
   @override
-  String get songsPageSearchExactMatch => 'Linganisho kamili';
+  String get songsPageSearchType => 'Aina ya Utafutaji:';
+
+  @override
+  String get songsPageSearchTypeApproximate => 'Takriban';
+
+  @override
+  String get songsPageSearchTypeExact => 'Kamili';
 
   @override
   String get songsPageLoadingSongbooksText =>
